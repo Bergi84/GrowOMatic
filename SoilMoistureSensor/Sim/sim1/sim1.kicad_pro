@@ -306,7 +306,7 @@
       "meta": {
         "version": 0
       },
-      "model_mode": 2,
+      "model_mode": 4,
       "workbook_filename": "sim1.wbk"
     },
     "page_layout_descr_file": "",
