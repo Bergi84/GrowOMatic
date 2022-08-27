@@ -1,0 +1,10 @@
+1
+9
+.TRAN 1n 10u UIC
+2
+1
+Cout
+V
+1
+Net-(U15-Pad1)
+V
