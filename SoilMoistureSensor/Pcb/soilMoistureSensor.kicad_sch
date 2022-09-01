@@ -1971,7 +1971,7 @@
   (symbol (lib_id "power:GND") (at 115.57 134.62 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 032f2f6d-38fb-4cfd-b1e2-8ce4fd3468ff)
-    (property "Reference" "#PWR?" (id 0) (at 115.57 140.97 0)
+    (property "Reference" "#PWR0116" (id 0) (at 115.57 140.97 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 115.57 138.43 0))
@@ -2575,7 +2575,7 @@
   (symbol (lib_id "Device:R") (at 115.57 130.81 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 50ee3373-70e7-44df-a412-82d31b286840)
-    (property "Reference" "R?" (id 0) (at 113.03 130.81 90)
+    (property "Reference" "R30" (id 0) (at 113.03 130.81 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "10k" (id 1) (at 115.57 129.54 90)
@@ -3609,7 +3609,7 @@
   (symbol (lib_id "Device:R") (at 115.57 123.19 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid e54d112e-51e3-4af7-babc-96386e4bdecc)
-    (property "Reference" "R?" (id 0) (at 113.03 123.19 90)
+    (property "Reference" "R29" (id 0) (at 113.03 123.19 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "4.3k" (id 1) (at 115.57 120.65 90)
@@ -4205,7 +4205,7 @@
       (reference "#PWR0115") (unit 1) (value "GND") (footprint "")
     )
     (path "/032f2f6d-38fb-4cfd-b1e2-8ce4fd3468ff"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0116") (unit 1) (value "GND") (footprint "")
     )
     (path "/bc1c1471-bf88-411b-af46-c3b0c9f2824d"
       (reference "C1") (unit 1) (value "12p") (footprint "Capacitor_SMD:C_0603_1608Metric")
@@ -4447,11 +4447,11 @@
     (path "/12dbac44-96c1-4a7b-b3a4-dfcfee935f2c/a694a3ba-a416-4660-b7b7-77488bcd8284"
       (reference "R28") (unit 1) (value "20k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
-    (path "/50ee3373-70e7-44df-a412-82d31b286840"
-      (reference "R?") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
-    )
     (path "/e54d112e-51e3-4af7-babc-96386e4bdecc"
-      (reference "R?") (unit 1) (value "4.3k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R29") (unit 1) (value "4.3k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/50ee3373-70e7-44df-a412-82d31b286840"
+      (reference "R30") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/596a3a1e-6f3a-4b5d-9915-c32063e13f7e"
       (reference "U1") (unit 1) (value "W25Q16JVUXIQ") (footprint "Bergi:DFN-8-1EP_3x2mm_P0.5mm_EP0.3x1.6mm")
