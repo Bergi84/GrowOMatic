@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 44,
+    "active_layer": 0,
     "active_layer_preset": "",
     "auto_track_width": false,
     "hidden_nets": [],
@@ -62,11 +62,11 @@
       35,
       36
     ],
-    "visible_layers": "8001130_ffffffff",
+    "visible_layers": "80010f0_ffffffff",
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "DualLevelSensor.kicad_prl",
+    "filename": "FluidPresenceSensor.kicad_prl",
     "version": 3
   },
   "project": {
