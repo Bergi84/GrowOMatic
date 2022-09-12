@@ -3942,7 +3942,7 @@
     (property "Reference" "Q1" (id 0) (at 128.27 113.03 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "MMBZ3904LP" (id 1) (at 128.27 110.49 0)
+    (property "Value" "MMBT3904LP" (id 1) (at 128.27 110.49 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Package_DFN_QFN:Diodes_DFN1006-3" (id 2) (at 143.51 113.03 0)
@@ -4922,7 +4922,7 @@
       (reference "L4") (unit 1) (value "1µ") (footprint "Inductor_SMD:L_0805_2012Metric")
     )
     (path "/cbffc1e8-9877-44a2-a34a-37ff86214e49"
-      (reference "Q1") (unit 1) (value "MMBZ3904LP") (footprint "Package_DFN_QFN:Diodes_DFN1006-3")
+      (reference "Q1") (unit 1) (value "MMBT3904LP") (footprint "Package_DFN_QFN:Diodes_DFN1006-3")
     )
     (path "/a9bd6db7-101e-488d-b0d8-6ad60600008c"
       (reference "R1") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
