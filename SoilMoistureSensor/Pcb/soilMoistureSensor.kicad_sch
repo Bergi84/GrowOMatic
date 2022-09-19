@@ -2031,6 +2031,11 @@
     (uuid ff51ca33-b963-4a5b-a1e6-d3fc5f424204)
   )
 
+  (text "Adr: 0x4C" (at 190.5 120.65 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 7477887b-d168-40f6-ad9d-ae57e6412d8d)
+  )
+
   (label "GAIN_U{slash}ND" (at 105.41 106.68 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 04c2820e-8a1e-4047-bed4-24eff5fff087)
