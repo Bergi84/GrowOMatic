@@ -258,19 +258,19 @@
     (property "Sheetname" "")
     (path "/6c1c0c7e-e177-420e-a4e5-394e3d68a554")
     (attr smd)
-    (fp_text reference "J1" (at 0 -3.3) (layer "F.SilkS")
+    (fp_text reference "J1" (at 0 -3.3) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp b15214ef-94b9-4a16-b81f-dd975370dd31)
     )
-    (fp_text value "USB_B_Micro" (at 0 5.2) (layer "F.Fab")
+    (fp_text value "USB_B_Micro" (at 0 5.2) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e18fd9fc-ec5f-4d13-9a7c-d50fc1a22745)
     )
-    (fp_text user "PCB Edge" (at 0 2.65) (layer "Dwgs.User")
+    (fp_text user "PCB Edge" (at 0 2.65) (layer "Dwgs.User") hide
       (effects (font (size 0.5 0.5) (thickness 0.08)))
       (tstamp 57247963-4afd-4c14-a499-8cfa1a456147)
     )
-    (fp_text user "${REFERENCE}" (at 0 0.85) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0.85) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6a791383-6609-4755-882b-a82bf3e3f078)
     )
@@ -334,15 +334,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/637b8b90-76ad-45bc-9580-c68263f5f28c")
     (attr through_hole)
-    (fp_text reference "J11" (at 1.27 -4.12) (layer "F.SilkS")
+    (fp_text reference "J11" (at 1.27 -4.12) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d9214d36-cf31-44f5-9f56-5db2376e6744)
     )
-    (fp_text value "Conn_01x02" (at 1.27 4.08) (layer "F.Fab")
+    (fp_text value "Conn_01x02" (at 1.27 4.08) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 3071e0da-bfb6-4163-aa90-f7c3d3ef3074)
     )
-    (fp_text user "${REFERENCE}" (at 1.27 -2.22) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.27 -2.22) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 83a2a77f-cd14-471d-94d4-0ea75c9ab579)
     )
@@ -395,15 +395,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/aa7ab4be-dafc-425a-8bab-369faef81073")
     (attr smd)
-    (fp_text reference "C36" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "C36" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d4f1405a-4ecb-4ae5-8c50-340581078dcf)
     )
-    (fp_text value "DNP" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "DNP" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 5310206e-7e68-4b8e-ae4b-48c1ab91ad6b)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 7f8537a5-df43-457b-ad1a-e68e06f04c20)
     )
@@ -437,15 +437,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/4e810eaf-1734-4649-8491-2de1c66bf73d")
     (attr through_hole)
-    (fp_text reference "J15" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J15" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8002ef9a-a0f9-4cb1-b035-883b512545e2)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e183af07-3e67-44e2-aa28-77eb07bfd10e)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a0aa0056-6a8e-4532-9f36-a8237172a6f8)
     )
@@ -500,15 +500,15 @@
     (property "Sheetname" "")
     (path "/28dd2d63-6a85-455b-b051-f2951cd7f4f4")
     (attr smd)
-    (fp_text reference "R5" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "R5" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 397ec57e-791e-4976-81e6-0282d4c6a1ed)
     )
-    (fp_text value "27" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "27" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 4fef8a74-0270-47ec-9f8e-40dae96fd7d5)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 39e2423e-4386-41ad-8090-c19c42eb60fa)
     )
@@ -542,15 +542,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/0b86b5c2-91e9-49d8-bbd7-f40657f60be2")
     (attr through_hole)
-    (fp_text reference "J16" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J16" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d32764b1-a23a-4a94-a9e7-57b7312b44d3)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e71d222a-9644-4ec9-80e2-3b82181d6d4b)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp cf2071b6-787b-40ba-b914-3d7978f3ba65)
     )
@@ -605,15 +605,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/013d5b9b-6f04-41a0-a56c-6950d45620eb")
     (attr smd)
-    (fp_text reference "U19" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U19" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp fe9542a0-ce84-4f17-a969-2d093b98c7b5)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c7f81a61-4ad3-41bf-95ce-45e732cc5782)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 9b33b81f-c24a-4083-813f-39ce16ef1d87)
     )
@@ -670,15 +670,15 @@
     (property "Sheetname" "")
     (path "/9949db42-bae1-459b-9ba2-840e30901f29")
     (attr through_hole)
-    (fp_text reference "J2" (at 0 -2.33 90) (layer "F.SilkS")
+    (fp_text reference "J2" (at 0 -2.33 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6262fc6c-3f70-463d-b6c3-c2dcfcaf642b)
     )
-    (fp_text value "Conn_01x03" (at 0 7.41 90) (layer "F.Fab")
+    (fp_text value "Conn_01x03" (at 0 7.41 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ccfc2e78-eb1b-4488-8ea4-c64d04d5b4d0)
     )
-    (fp_text user "${REFERENCE}" (at 0 2.54) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 2.54) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp bfc39537-fa6d-41a6-9561-5f0485120563)
     )
@@ -719,15 +719,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/cf4de05e-bade-4b08-a3b6-5933fa755822")
     (attr smd)
-    (fp_text reference "U17" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U17" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 5c1b9f61-aa38-41b8-8ee9-6607f3cdfb15)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e7360724-bec6-4575-8cb5-e171c4f3b166)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 42be4a76-9d94-49df-9ae8-08d663e9392c)
     )
@@ -784,15 +784,15 @@
     (property "Sheetname" "")
     (path "/b818538a-853d-4f8e-bb9d-c5b9db19b61b")
     (attr smd)
-    (fp_text reference "R10" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R10" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 50a02894-eb05-4498-ba55-c3d4428373cb)
     )
-    (fp_text value "470R" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "470R" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 9762c891-3ef5-46df-8671-6c0346df2931)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp cbb5a7a1-1c6a-4389-9237-673acdf5dac5)
     )
@@ -826,15 +826,15 @@
     (property "Sheetname" "")
     (path "/888cb931-e6b6-4b3d-bedc-1b20397d4063")
     (attr through_hole)
-    (fp_text reference "J4" (at 2.5 -2.8 90) (layer "F.SilkS")
+    (fp_text reference "J4" (at 2.5 -2.8 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 046e82d4-05d3-4b75-a3a1-3bacf25f0c7e)
     )
-    (fp_text value "Conn_01x03" (at 2.5 3.4 90) (layer "F.Fab")
+    (fp_text value "Conn_01x03" (at 2.5 3.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e59e41e1-af22-4835-8227-f8a8a964617a)
     )
-    (fp_text user "${REFERENCE}" (at 2.5 1.5 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 2.5 1.5 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ef1ab77d-20ea-4428-8fc2-73810cb1bd35)
     )
@@ -885,15 +885,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/eb182071-8cb2-41bb-81d4-0a7ede6ebee0")
     (attr smd)
-    (fp_text reference "U13" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U13" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 1dd7fa9b-ecd3-43d4-87c3-5d6232d8b887)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 63e9a0ba-6efb-42f4-9220-ae320a1e0c59)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp e11a393c-fd25-406a-ae18-06b0ceaf3829)
     )
@@ -950,15 +950,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/70917d07-e6d3-4644-a890-e5796a4bddea")
     (attr smd)
-    (fp_text reference "U20" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U20" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8e57f8c7-4193-4b91-a078-d166ff896172)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d0a2a530-2e3e-4857-98a1-64833878459d)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 15a68fb4-17f7-4c85-9dc9-0e17ea2ef45a)
     )
@@ -1015,15 +1015,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/175d35a2-2e0f-4ab4-871f-3a67ee31b101")
     (attr smd)
-    (fp_text reference "U18" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U18" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 0b19ba25-a8e9-40a6-832c-35cc82536625)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp bd6fe39d-3291-47c1-82d0-136fc166b109)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 2cee3b3a-e17d-483e-b0bc-5b7a386d450f)
     )
@@ -1080,15 +1080,15 @@
     (property "Sheetname" "")
     (path "/aee627ae-0c75-4100-933b-ae03e23085ea")
     (attr through_hole)
-    (fp_text reference "J3" (at 0 -2.77) (layer "F.SilkS")
+    (fp_text reference "J3" (at 0 -2.77) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6d829099-70f1-40db-89d5-57ee3fd12167)
     )
-    (fp_text value "Conn_01x02" (at 0 5.31) (layer "F.Fab")
+    (fp_text value "Conn_01x02" (at 0 5.31) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 482a3c38-355a-4e56-a59e-3c9618d102c2)
     )
-    (fp_text user "${REFERENCE}" (at 0 1.27 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 1.27 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6cd50afc-fe14-4241-b603-bdadb48aa4ce)
     )
@@ -1127,15 +1127,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/083cbcc1-1f18-4994-ae16-4247d8762de3")
     (attr through_hole)
-    (fp_text reference "J18" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J18" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 44a37dfc-ed47-4d9e-860c-b7e74cb4cc56)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e91d4a9e-c168-4825-a22a-52316c1818bf)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d1ebc28a-9fbf-49bd-a8f6-73d1965d9ef2)
     )
@@ -1190,15 +1190,15 @@
     (property "Sheetname" "")
     (path "/571f6d5e-59b7-44e1-852d-cf47bc65ea21")
     (attr through_hole)
-    (fp_text reference "J6" (at 1.25 -2.8 90) (layer "F.SilkS")
+    (fp_text reference "J6" (at 1.25 -2.8 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6e843b24-a446-448b-b5f0-d5a329944821)
     )
-    (fp_text value "Conn_01x02" (at 1.25 3.4 90) (layer "F.Fab")
+    (fp_text value "Conn_01x02" (at 1.25 3.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 72af5fbc-9ae2-495a-9ed5-02944e3236a9)
     )
-    (fp_text user "${REFERENCE}" (at 1.25 1.5 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.25 1.5 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 5f526089-9280-48c0-a581-691f204c24f4)
     )
@@ -1247,15 +1247,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/f883abf5-a8ea-4941-8bc1-e97098b83963")
     (attr through_hole)
-    (fp_text reference "J10" (at 1.27 -4.12) (layer "F.SilkS")
+    (fp_text reference "J10" (at 1.27 -4.12) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 2a92f131-04e7-4246-b842-75862f99a033)
     )
-    (fp_text value "Conn_01x02" (at 1.27 4.08) (layer "F.Fab")
+    (fp_text value "Conn_01x02" (at 1.27 4.08) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 313c4d30-f196-4170-bcfb-dbef1f49a040)
     )
-    (fp_text user "${REFERENCE}" (at 1.27 -2.22) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.27 -2.22) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 1bfc48c3-c419-404d-abc8-3e26023359ea)
     )
@@ -1308,15 +1308,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/a1a11a54-1958-4104-993e-7c3ca3c1f189")
     (attr through_hole)
-    (fp_text reference "J17" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J17" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 48fe729e-05ec-4ccc-a205-4e560edf64c0)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 106d472e-9f05-4ddc-94ca-192a7559b30d)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c2d11dbf-2b2c-437c-b46f-d0686a4f258d)
     )
@@ -1371,15 +1371,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/fecd3d66-027e-40b7-a01f-3cc7cab9d71e")
     (attr smd)
-    (fp_text reference "R30" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "R30" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e6a7642c-856d-4c41-8c22-a17bdaa06b12)
     )
-    (fp_text value "1.1k" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "1.1k" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 1cbbdf5d-6cad-4c65-96d0-2702d6d144ad)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp b6b3133e-a3ea-4553-a60a-d870f4180320)
     )
@@ -1413,15 +1413,15 @@
     (property "Sheetname" "")
     (path "/116b1d26-d7be-4274-a9fd-1e5101ff22f1")
     (attr through_hole)
-    (fp_text reference "J8" (at 2.54 -4.12 -270) (layer "F.SilkS")
+    (fp_text reference "J8" (at 2.54 -4.12 -270) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c584133a-4df7-4878-bc48-7c2803d67389)
     )
-    (fp_text value "Conn_01x03" (at 2.54 4.08 -270) (layer "F.Fab")
+    (fp_text value "Conn_01x03" (at 2.54 4.08 -270) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a0ab27f9-0851-4d11-9e71-02d373e9c6ad)
     )
-    (fp_text user "${REFERENCE}" (at 2.54 -2.22 -270) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 2.54 -2.22 -270) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6a0440a3-1325-45b8-978e-8b623ac6cbfb)
     )
@@ -1479,15 +1479,15 @@
     (property "Sheetname" "")
     (path "/f17e608c-08fc-4554-a7b6-32528d7968ab")
     (attr exclude_from_pos_files)
-    (fp_text reference "H1" (at 0 -3.8) (layer "F.SilkS")
+    (fp_text reference "H1" (at 0 -3.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6160b239-2df5-4549-8577-3b284f151204)
     )
-    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp bf72ccf4-c305-4104-9213-07a679f4e6ae)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ee6b11f8-0d80-416d-932e-fda40edb8c82)
     )
@@ -1505,15 +1505,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/e8befd55-2a06-45c6-82ba-907f5662eddf")
     (attr smd)
-    (fp_text reference "C45" (at 0 -1.85) (layer "F.SilkS")
+    (fp_text reference "C45" (at 0 -1.85) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d28cc3c3-7fe9-43ca-807c-70bde038dc13)
     )
-    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab")
+    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a2e9b337-13c5-4d61-9b40-d53eee89e07d)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp 2a95ae51-9a18-4224-837a-61ebcb2d4489)
     )
@@ -1547,15 +1547,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/2f92b7b1-cce5-4bac-8b65-e366859bd5c6")
     (attr through_hole)
-    (fp_text reference "J12" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J12" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 46d92bd4-9fbd-4127-b002-ddb51fbfe5b1)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 851f524c-e89d-4e16-b7c4-7b96b8f18363)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 148fb9e6-f1f3-4729-a426-41cdf9833307)
     )
@@ -1610,15 +1610,15 @@
     (property "Sheetname" "")
     (path "/413ac8d6-dcac-403d-bca7-f73f9ad6662f")
     (attr smd)
-    (fp_text reference "D2" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "D2" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 43826bc4-b6a3-4dac-93cd-b5606a382a28)
     )
-    (fp_text value "Green" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "Green" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 203ca95b-4e38-4d8e-bf71-93577d1d4f25)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 4af9acee-1842-413b-ba60-c825f024d843)
     )
@@ -1654,15 +1654,15 @@
     (property "Sheetname" "")
     (path "/28148c69-58da-4886-a060-49722176a895")
     (attr smd)
-    (fp_text reference "D1" (at 0 -1.85 90) (layer "F.SilkS")
+    (fp_text reference "D1" (at 0 -1.85 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8fbc34ab-2518-41d0-97ee-725bd2f568a0)
     )
-    (fp_text value "BAT54W" (at 0.1 1.9 90) (layer "F.Fab")
+    (fp_text value "BAT54W" (at 0.1 1.9 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 363559b5-c21a-4b6d-829c-5778d9ba8c8d)
     )
-    (fp_text user "${REFERENCE}" (at 0 -1.85 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 -1.85 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 9089ee3c-efac-428f-baff-9e4723426359)
     )
@@ -1703,15 +1703,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/87b8a5f1-229c-4f11-a508-bc199aa2de98")
     (attr smd)
-    (fp_text reference "C46" (at 0 -1.85) (layer "F.SilkS")
+    (fp_text reference "C46" (at 0 -1.85) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a6b24822-2b5f-49e8-b433-cc369741704f)
     )
-    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab")
+    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 3b68e4c9-74c1-46d4-bab1-325ac9600913)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp 832fb320-5ad7-40f3-9848-9e40c9ff4721)
     )
@@ -1745,15 +1745,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/88250daf-26b0-4db4-b108-129087859d07")
     (attr through_hole)
-    (fp_text reference "J13" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J13" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e07c5a1c-c4ef-49e0-a768-6e4ad77aaea3)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c03e5cb9-e421-4429-93f1-7980623cb699)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 1579d5c2-da5f-4959-8cb4-ad73780934bf)
     )
@@ -1808,15 +1808,15 @@
     (property "Sheetname" "")
     (path "/6ec504b1-e94f-4b12-b4b6-98b0ed13b189")
     (attr smd)
-    (fp_text reference "R4" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "R4" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp fd8adc26-8f71-433a-a769-4fed18084767)
     )
-    (fp_text value "27" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "27" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e0f8174c-1aed-42a0-ab64-5b34fa0a4023)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 6ac51131-dc25-430e-b039-0dc3daa74d2e)
     )
@@ -1850,15 +1850,15 @@
     (property "Sheetname" "")
     (path "/84d59883-506b-4b69-8ca9-15f0596bd96f")
     (attr smd)
-    (fp_text reference "R11" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R11" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp cafffbec-fb2b-4b81-a945-294619dc4e86)
     )
-    (fp_text value "5.6k" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "5.6k" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f79cc324-ef6b-4888-bb47-06a9d63fbd74)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 9e60a859-00c6-4e28-aac1-714238044015)
     )
@@ -1892,15 +1892,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/e4ec106d-d68d-49cf-b559-c9e75d499696")
     (attr through_hole)
-    (fp_text reference "C38" (at 1.25 -4.4) (layer "F.SilkS")
+    (fp_text reference "C38" (at 1.25 -4.4) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp eeefe6b6-0067-4ac1-81bd-84214f0a7f09)
     )
-    (fp_text value "100µ" (at 1.25 4.4) (layer "F.Fab")
+    (fp_text value "100µ" (at 1.25 4.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 4383a1c5-8bb2-4fb3-90d6-5b9b7aae90f4)
     )
-    (fp_text user "${REFERENCE}" (at 1.25 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.25 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 41590bcc-4446-4a0a-a1bc-e2f34d86464e)
     )
@@ -2065,15 +2065,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/4790b6b3-e0df-4f21-9f95-3d6b2fd95a5f")
     (attr smd)
-    (fp_text reference "C40" (at 0 -2.3 90) (layer "F.SilkS")
+    (fp_text reference "C40" (at 0 -2.3 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ab53d48a-770b-473c-ab91-e04400257804)
     )
-    (fp_text value "10µ" (at 0 2.3 90) (layer "F.Fab")
+    (fp_text value "10µ" (at 0 2.3 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 9f207d1e-0713-4733-8c24-73911d61ae8c)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp 18773022-5277-4af7-beba-51c518efaa84)
     )
@@ -2107,15 +2107,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/72f2341a-cb5e-4cd2-9fc5-bb59d6adccae")
     (attr smd)
-    (fp_text reference "C49" (at 0 -1.85) (layer "F.SilkS")
+    (fp_text reference "C49" (at 0 -1.85) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a489de91-878b-440f-96b6-5205a497c01d)
     )
-    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab")
+    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 3e3c8ae4-a7b4-4bd7-ba24-3c4f4efb915b)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp edddc601-0565-4e79-8c1b-17277b9b8ffc)
     )
@@ -2149,15 +2149,15 @@
     (property "Sheetname" "")
     (path "/79bb1336-38a1-4bc8-9d63-970f2ecd6b1e")
     (attr exclude_from_pos_files)
-    (fp_text reference "H3" (at 0 -3.8) (layer "F.SilkS")
+    (fp_text reference "H3" (at 0 -3.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 2bae3257-07d6-47c2-9f47-6fc0cddfeede)
     )
-    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d103df12-c008-4015-b6cd-63c4976e82b6)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 03b9aafa-35e1-43a6-9c42-480ad1e60612)
     )
@@ -2175,15 +2175,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/5d461529-9b41-4e6a-96da-ada8189320e1")
     (attr through_hole)
-    (fp_text reference "C41" (at 1.25 -4.4 90) (layer "F.SilkS")
+    (fp_text reference "C41" (at 1.25 -4.4 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp eee003b0-74e4-4b8c-bea9-1664b340d6e8)
     )
-    (fp_text value "100µ" (at 1.25 4.4 90) (layer "F.Fab")
+    (fp_text value "100µ" (at 1.25 4.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp aef6308a-e76c-430c-81c8-df8596be31a6)
     )
-    (fp_text user "${REFERENCE}" (at 1.25 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.25 0 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 59b32bce-86fa-483d-8d12-faa778b3f908)
     )
@@ -2348,15 +2348,15 @@
     (property "Sheetname" "")
     (path "/038f88d0-25cb-4cbc-9f1a-53363bad139d")
     (attr through_hole)
-    (fp_text reference "J7" (at 1.25 -2.8 90) (layer "F.SilkS")
+    (fp_text reference "J7" (at 1.25 -2.8 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 35ba6a0b-bd77-424d-aac2-c090b6cfbdc2)
     )
-    (fp_text value "Conn_01x02" (at 1.25 3.4 90) (layer "F.Fab")
+    (fp_text value "Conn_01x02" (at 1.25 3.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c9b9e5dd-0839-4461-a6fd-10a805c16455)
     )
-    (fp_text user "${REFERENCE}" (at 1.25 1.5 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.25 1.5 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 2249089d-f3cd-4f99-8d9b-c010d853d866)
     )
@@ -2405,15 +2405,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/b6ad762f-3827-4deb-ae04-2e93887c0d4a")
     (attr smd)
-    (fp_text reference "L7" (at 0 -7.4 90) (layer "F.SilkS")
+    (fp_text reference "L7" (at 0 -7.4 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 44cfc5b5-cd42-4de7-8629-88f8b1e3fe6e)
     )
-    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab")
+    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d836fa07-4f91-4900-9e70-9eaff21a762b)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 95cbee24-6cb5-4691-8009-63e38c64a936)
     )
@@ -2509,15 +2509,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/8d9face8-4e81-462c-b138-78d254645107")
     (attr smd)
-    (fp_text reference "U11" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U11" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d9ed553e-5b43-44a6-ab35-116b694d35ce)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 4fda9ea3-16b3-4f6e-a78a-222b45ee1221)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp eb54e2d7-0b8f-4dd2-9154-6302f8d7a656)
     )
@@ -2574,15 +2574,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/e37eddbc-6ee1-4c30-87ab-f51a68c63270")
     (attr smd)
-    (fp_text reference "R31" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "R31" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 7f2ff3a9-de43-423e-bb52-a02e58fe64a2)
     )
-    (fp_text value "1.1k" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "1.1k" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 18e202f9-3b2c-46bd-9325-4e5ce0b0bd49)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 03843480-3c79-4ee5-b96a-9fed231ddb3f)
     )
@@ -2616,15 +2616,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/ad3b1769-0378-4eb9-9bf4-0f0ae5eb23b6")
     (attr through_hole)
-    (fp_text reference "J19" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J19" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 5f7e4ec5-99a0-4a18-81d8-f1cf3a9640cb)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c39bec80-e1d9-4eb1-b780-1d7742ab1a04)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 052b4745-cf14-4b70-9ccc-5904f8f65da5)
     )
@@ -2679,15 +2679,15 @@
     (property "Sheetname" "")
     (path "/4580eefb-df2d-4a58-85d5-0d2cf57c26fb")
     (attr smd)
-    (fp_text reference "R16" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R16" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 78fe1e31-1eae-4c13-9994-a0f5e154fa4f)
     )
-    (fp_text value "1k" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "1k" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 59077325-0bda-4299-8dea-5a0551d92d03)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp c9631e3a-a0c2-486f-94c7-586c5aa3d4b6)
     )
@@ -2721,15 +2721,15 @@
     (property "Sheetname" "")
     (path "/66728931-6ce0-4b36-9e13-20e2120fc4ad")
     (attr smd)
-    (fp_text reference "U2" (at 0 -4.82) (layer "F.SilkS")
+    (fp_text reference "U2" (at 0 -4.82) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 58dcae6e-00b5-46f8-841e-943b1845738e)
     )
-    (fp_text value "RP2040" (at 0 4.82) (layer "F.Fab")
+    (fp_text value "RP2040" (at 0 4.82) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a172cfd5-3a47-4d5a-9444-abda369b2feb)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f2de06b1-8b97-4baa-9def-e94db28be980)
     )
@@ -2883,15 +2883,15 @@
     (property "Sheetname" "")
     (path "/d78dd9c1-8369-438f-acd2-96205a413fb2")
     (attr smd)
-    (fp_text reference "R12" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R12" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f4f9af3c-7e18-421d-931e-85ba4f2344ca)
     )
-    (fp_text value "10k" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "10k" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp fd5b460f-cd7a-4561-90c4-faa3377f4b92)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp ff5e1ce3-3c31-4abf-80cf-b78b5910f292)
     )
@@ -2925,15 +2925,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/895ce2a6-3cd1-4abf-92a9-48b316ddf73d")
     (attr through_hole)
-    (fp_text reference "C42" (at 1.25 -4.4 90) (layer "F.SilkS")
+    (fp_text reference "C42" (at 1.25 -4.4 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 177e5792-89df-467b-967a-64948f253deb)
     )
-    (fp_text value "100µ" (at 1.25 4.4 90) (layer "F.Fab")
+    (fp_text value "100µ" (at 1.25 4.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 4222617a-0494-4b48-b31e-4b5c04bb4839)
     )
-    (fp_text user "${REFERENCE}" (at 1.25 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 1.25 0 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f9c2c39b-6774-4bb7-a3c1-20eb1db6bf66)
     )
@@ -3098,15 +3098,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/03aba738-d917-499d-9bee-7c917c061893")
     (attr smd)
-    (fp_text reference "C50" (at 0 -1.85) (layer "F.SilkS")
+    (fp_text reference "C50" (at 0 -1.85) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a5658994-9afa-418d-b3e6-c2b0456d2e2f)
     )
-    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab")
+    (fp_text value "22µ" (at 0 1.85) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp eb2b9f87-a816-4c57-b19b-f606ec0e6961)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp 1b493196-4265-40c1-820d-15997c04e8a4)
     )
@@ -3140,15 +3140,15 @@
     (property "Sheetname" "")
     (path "/f7e68db2-91ce-4d89-ad89-96baaf960fb5")
     (attr through_hole)
-    (fp_text reference "J5" (at 2.5 -2.8 90) (layer "F.SilkS")
+    (fp_text reference "J5" (at 2.5 -2.8 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d222dd2a-6e98-4229-95d4-d6c647ae5e8f)
     )
-    (fp_text value "Conn_01x03" (at 2.5 3.4 90) (layer "F.Fab")
+    (fp_text value "Conn_01x03" (at 2.5 3.4 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c5a01474-434c-4fbc-b808-6357d18783af)
     )
-    (fp_text user "${REFERENCE}" (at 2.5 1.5 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 2.5 1.5 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d355fedc-936f-4056-b6f9-938d380ef396)
     )
@@ -3199,15 +3199,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/f9cf9ba1-a550-46cf-8ee1-023b166f0a46")
     (attr smd)
-    (fp_text reference "L5" (at 0 -7.4 90) (layer "F.SilkS")
+    (fp_text reference "L5" (at 0 -7.4 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 37a0a1e0-2933-4064-b7ae-db7b0035de46)
     )
-    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab")
+    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c0eb3729-930c-4ac0-b667-5a2d22a4c73a)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c28a1d5c-a433-48ae-b5c9-fed1e4e66bc5)
     )
@@ -3303,15 +3303,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/7adcf03c-d9d2-487e-b91b-e9d4ac4af226")
     (attr smd)
-    (fp_text reference "U14" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U14" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e063c70d-34e3-41ff-9885-9fbbfc4cbe84)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 24696bff-4f6c-4f08-bafc-74e986c17eae)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 1f6b87b3-6402-48ff-89ff-e2b9f659df43)
     )
@@ -3368,15 +3368,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/749822bb-2ea0-4066-aeeb-e3906f5afe63")
     (attr smd)
-    (fp_text reference "C39" (at 0 -2.3) (layer "F.SilkS")
+    (fp_text reference "C39" (at 0 -2.3) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp db294587-a7be-459f-bf01-e29b76f4b275)
     )
-    (fp_text value "10µ" (at 0 2.3) (layer "F.Fab")
+    (fp_text value "10µ" (at 0 2.3) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e0ffad0d-27c4-4289-85e8-1c314f0a3a68)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)))
       (tstamp df411ed0-555f-4d1d-8660-cfa2027b6890)
     )
@@ -3410,15 +3410,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/0a738ffb-b0cb-420c-b125-8b7fadde3364")
     (attr smd)
-    (fp_text reference "U12" (at 0 -2.45) (layer "F.SilkS")
+    (fp_text reference "U12" (at 0 -2.45) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f479bd2c-4431-4bb3-9510-0531bf73a629)
     )
-    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab")
+    (fp_text value "ULN2003F12" (at 0 2.45) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8f5813e4-9d21-4518-bba8-1425a5040085)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.75 0.75) (thickness 0.11)))
       (tstamp 146f08fc-a3de-407f-8724-766d248bcb37)
     )
@@ -3475,15 +3475,15 @@
     (property "Sheetname" "")
     (path "/cc6c009c-5422-45a1-9a24-4695de27c195")
     (attr smd)
-    (fp_text reference "R7" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R7" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 98265319-fd42-405b-887c-7c6f9ceca392)
     )
-    (fp_text value "1k" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "1k" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 513ee479-c933-4a85-869b-1424727c0431)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp bab3c5e4-8c6b-42e8-8e43-bfe9fd54c10f)
     )
@@ -3517,15 +3517,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/d62c2e30-1a3b-4a1a-84d3-5f53b0793b6f")
     (attr through_hole)
-    (fp_text reference "J14" (at 5 -2.8) (layer "F.SilkS")
+    (fp_text reference "J14" (at 5 -2.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 57ba35dd-be01-44ad-b42e-f7f558cbd03b)
     )
-    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab")
+    (fp_text value "Conn_01x05" (at 5 3.4) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 7e0e47ed-774d-4094-8567-ae3163b4b927)
     )
-    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 5 1.5) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp da0bfde5-c7fe-47a5-be2a-19975efa312d)
     )
@@ -3580,15 +3580,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/2f779262-6186-4993-a201-64b276771628")
     (attr smd)
-    (fp_text reference "C35" (at 0 -1.43 90) (layer "F.SilkS")
+    (fp_text reference "C35" (at 0 -1.43 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp cdc9e94d-2c14-4dba-a019-cbd8b0e3f03a)
     )
-    (fp_text value "DNP" (at 0 1.43 90) (layer "F.Fab")
+    (fp_text value "DNP" (at 0 1.43 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp dc3d8628-c3ea-481f-b8d1-e92e92821a7a)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 989b767f-10b8-4a66-86b8-813b11ef8234)
     )
@@ -3622,15 +3622,15 @@
     (property "Sheetname" "")
     (path "/87e568d4-5cea-49a3-bb17-5754ec4c853c")
     (attr smd)
-    (fp_text reference "R2" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R2" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d7d79541-0642-41b2-8be8-2a83e72f52dc)
     )
-    (fp_text value "20R" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "20R" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 4b622528-e11f-4d34-a3da-84139bd00462)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp daad6b6d-a4e1-48e6-9a5f-9c7a2f71f730)
     )
@@ -3664,15 +3664,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/c3d2f714-beb4-4f1c-b41a-98b8c767b35f")
     (attr smd)
-    (fp_text reference "L6" (at 0 -7.4 90) (layer "F.SilkS")
+    (fp_text reference "L6" (at 0 -7.4 90) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 2dfed61c-6676-4eaa-b24f-622a5c7ada71)
     )
-    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab")
+    (fp_text value "33µ" (at 0 7.6 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp b900f589-d448-4d3b-83d9-f890cc0935a4)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 774fe905-972f-477a-bfda-93c15d7a04ef)
     )
@@ -3768,15 +3768,15 @@
     (property "Sheetname" "")
     (path "/33438755-e77b-449a-88b5-d45c705c28f2")
     (attr exclude_from_pos_files)
-    (fp_text reference "H4" (at 0 -3.8) (layer "F.SilkS")
+    (fp_text reference "H4" (at 0 -3.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 92027ec0-3663-4160-8b83-a96332c8ef0d)
     )
-    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d781361c-dec6-43c8-883b-d0b5082d49e1)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 260f44cf-ce0e-4cb7-810b-364aaa868fcc)
     )
@@ -3794,15 +3794,15 @@
     (property "Sheetname" "")
     (path "/63900c90-3411-4f47-a561-1b9315c23a54")
     (attr smd)
-    (fp_text reference "R1" (at 0 -1.43) (layer "F.SilkS")
+    (fp_text reference "R1" (at 0 -1.43) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp eea32a23-657d-4da6-8b62-d8a99122b58f)
     )
-    (fp_text value "20R" (at 0 1.43) (layer "F.Fab")
+    (fp_text value "20R" (at 0 1.43) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 430cc11c-b992-4d26-8d7c-85d2da9a31c8)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)))
       (tstamp 6c3ed622-5328-4783-9d09-7be2ae9c983e)
     )
@@ -3836,15 +3836,15 @@
     (property "Sheetname" "")
     (path "/dc1d9952-5957-4740-b417-af600fd25be9")
     (attr exclude_from_pos_files)
-    (fp_text reference "H2" (at 0 -3.8) (layer "F.SilkS")
+    (fp_text reference "H2" (at 0 -3.8) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a1423e4e-8e9f-4260-8718-62005e66f2d5)
     )
-    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 3.8) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 179894f1-41e9-4305-80ee-ab0df51442d0)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8a62ae19-3784-4f2f-9081-7ed4fa32138b)
     )
@@ -3862,15 +3862,15 @@
     (property "Sheetname" "")
     (path "/24515138-01c7-4445-9e60-61983d072591")
     (attr through_hole)
-    (fp_text reference "J9" (at 2.54 -4.12 -270) (layer "F.SilkS")
+    (fp_text reference "J9" (at 2.54 -4.12 -270) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 25d8cd11-a650-4987-8239-3202942241a9)
     )
-    (fp_text value "Conn_01x03" (at 2.54 4.08 -270) (layer "F.Fab")
+    (fp_text value "Conn_01x03" (at 2.54 4.08 -270) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 140b7b83-c75e-4606-a83c-76c1c7fecb47)
     )
-    (fp_text user "${REFERENCE}" (at 2.54 -2.22 -270) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 2.54 -2.22 -270) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d8b8a66a-2ffc-41d7-bddd-397fc71297ba)
     )
@@ -3928,15 +3928,15 @@
     (property "Sheetname" "")
     (path "/93e91b7e-89f6-4f1a-8dc2-d15ace4055a6")
     (attr smd)
-    (fp_text reference "C2" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C2" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 17e7ae27-3f15-4408-9ff9-5e9023800277)
     )
-    (fp_text value "12p" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "12p" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 50403530-5a45-45e1-8acc-12b25b2d20f5)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 73fcacfb-9530-4dec-b693-075e04252e61)
     )
@@ -3970,15 +3970,15 @@
     (property "Sheetname" "")
     (path "/ef3fe419-54ef-4cc2-a084-79bf7e3147f8")
     (attr smd)
-    (fp_text reference "R26" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R26" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3500e94d-31be-4f3e-8986-0bfa8d5eda6c)
     )
-    (fp_text value "91k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "91k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ee00b097-c25e-40dc-8c32-f58da059635c)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 75cbb3a5-d19a-4c7f-afbc-15cd7237196b)
     )
@@ -4012,15 +4012,15 @@
     (property "Sheetname" "")
     (path "/a8e2ff61-ccd2-466e-9ba0-abed6dc3e36a")
     (attr smd)
-    (fp_text reference "U3" (at 0 2.4) (layer "B.SilkS")
+    (fp_text reference "U3" (at 0 2.4) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5000eb64-3a17-4cbf-ac2d-95eda94e4bbc)
     )
-    (fp_text value "AP2127K-ADJ" (at 0 -2.4) (layer "B.Fab")
+    (fp_text value "AP2127K-ADJ" (at 0 -2.4) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9d9e2c8d-a6b2-4ad2-acbd-8a561a870b9b)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 6404b5d1-d54c-4381-a927-b33ff2d5d978)
     )
@@ -4063,15 +4063,15 @@
     (property "Sheetname" "")
     (path "/79bef1e3-34b3-4646-a5d2-94170e2cf42b")
     (attr smd)
-    (fp_text reference "R22" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R22" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp bf723c55-1817-49d3-b501-6de433a573ef)
     )
-    (fp_text value "1R" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "1R" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f8554fe4-ed76-49d8-9acf-e58238be75b0)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 168f3847-c400-4d48-9795-dd1296509840)
     )
@@ -4105,15 +4105,15 @@
     (property "Sheetname" "")
     (path "/e14696d9-4db0-4211-93f9-fe19ce3ecf1f")
     (attr smd)
-    (fp_text reference "C29" (at 0 1.85) (layer "B.SilkS")
+    (fp_text reference "C29" (at 0 1.85) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp da3a05da-a6da-443a-93ce-7d41c13f924d)
     )
-    (fp_text value "22µ" (at 0 -1.85) (layer "B.Fab")
+    (fp_text value "22µ" (at 0 -1.85) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d23ae5cf-626c-47df-9906-05acd95cb383)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 9b50ac4a-9363-4311-a759-42fe7e5c178a)
     )
@@ -4147,15 +4147,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/1cbeae16-85ec-426a-9e49-f2451cfea8b5")
     (attr smd)
-    (fp_text reference "C33" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C33" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 279d4b97-94c1-4743-b0d2-2298ad44c115)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 98fff1ff-fb83-4c69-8042-156a96dfa53c)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7a5b9026-8e0a-4763-8f9e-1c72fa20f79a)
     )
@@ -4189,15 +4189,15 @@
     (property "Sheetname" "")
     (path "/465873ae-77dc-4e42-beb3-83c84ae83b3f")
     (attr smd)
-    (fp_text reference "C4" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C4" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 0a75e306-24f2-4e66-8537-347cfb2406dc)
     )
-    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 1c8a1f4c-234d-4a73-a92e-f824ee8bd7b6)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp baae8c62-091f-4b93-afb1-d0df030dcccd)
     )
@@ -4231,15 +4231,15 @@
     (property "Sheetname" "")
     (path "/3e01fbd3-2dcb-4064-80fd-a9ab6c695306")
     (attr smd)
-    (fp_text reference "R23" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R23" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp e8a36238-0819-4e74-af93-53c99f5f5873)
     )
-    (fp_text value "27k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "27k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9a1b09a2-2e36-4ed0-bf6f-065e2b4a36c9)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp e66e1a05-6463-4477-9cb3-bfacee289a5a)
     )
@@ -4273,15 +4273,15 @@
     (property "Sheetname" "")
     (path "/ab4bff62-ea6d-41b4-b863-5a9115e520d1")
     (attr smd)
-    (fp_text reference "R25" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R25" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp db307a20-10f3-406b-9eda-e6a0157d4ef7)
     )
-    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 7ba740f2-d649-481f-8218-7b24ba4eccbf)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp a6c79815-5679-4e60-8340-4a4bb8b386db)
     )
@@ -4315,15 +4315,15 @@
     (property "Sheetname" "")
     (path "/e97d4bb7-140d-45c0-b23d-54dff55d5b73")
     (attr smd)
-    (fp_text reference "C18" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C18" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 4bd61e59-7972-4747-8dce-104ecf35f6f5)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp bdf13343-a5b5-4564-9bc9-1219c63d36ec)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp e5a73c42-22ea-46fc-a5de-799332b392fd)
     )
@@ -4357,15 +4357,15 @@
     (property "Sheetname" "")
     (path "/ce1f87f4-36a5-459a-a038-8cb8ec4ecc5f")
     (attr smd)
-    (fp_text reference "C21" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C21" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 6b123c0a-ff15-4add-8b3f-77c8a2206e9d)
     )
-    (fp_text value "100n" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100n" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 01223cc7-b57f-4459-a9a7-95c445cce4db)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7a9de974-7a2c-48b6-afd2-45640802c291)
     )
@@ -4400,15 +4400,15 @@
     (property "Sheetname" "")
     (path "/05a9cfa7-ea97-4aae-92e1-25047a07fed6")
     (attr smd)
-    (fp_text reference "L4" (at 0 2.5 90) (layer "B.SilkS")
+    (fp_text reference "L4" (at 0 2.5 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5c066e21-ef55-4c2b-87f1-db7207602d97)
     )
-    (fp_text value "6.8u" (at 0 -3 90) (layer "B.Fab")
+    (fp_text value "6.8u" (at 0 -3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9f51ee17-f016-45ec-9e9c-aa8339f91983)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.7 0.7) (thickness 0.105)) (justify mirror))
       (tstamp e60ac5da-2b08-4cc7-832c-402efcce0966)
     )
@@ -4446,15 +4446,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/dd3eec30-2591-42b8-a7a2-ca7834c53c51")
     (attr smd)
-    (fp_text reference "C32" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C32" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 822912a3-b90e-4282-9166-6754f1754783)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f6d043e4-34e5-4986-8cd6-77addff867b2)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp a9cd8920-168c-4623-a99f-47820a14c567)
     )
@@ -4488,15 +4488,15 @@
     (property "Sheetname" "")
     (path "/4b9c6311-7c2f-4843-b3eb-dec7d4058033")
     (attr smd)
-    (fp_text reference "R15" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R15" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 7e93ae30-2080-4f04-bff1-747fddf85e06)
     )
-    (fp_text value "62k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "62k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp b353f4c9-25b4-4139-ba5a-32f465e52c7f)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp b3ac478c-f7f3-4754-82a5-2ac8fef25308)
     )
@@ -4530,15 +4530,15 @@
     (property "Sheetname" "")
     (path "/ad4f32e6-7c56-4ee7-91d2-0348f01db115")
     (attr smd)
-    (fp_text reference "C28" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C28" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 8fbf73b3-d7ae-48f7-98c8-4862e08e0fbf)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 7d1bc22e-5637-4f17-b95c-72467b1c4456)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 73576e0e-5fb7-4c62-9174-f0a686c4631c)
     )
@@ -4572,15 +4572,15 @@
     (property "Sheetname" "")
     (path "/d374c91b-24f9-4e8c-a184-de06b1e9546f")
     (attr smd)
-    (fp_text reference "C5" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C5" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 511a45a5-eaae-40e0-ad52-7fdb1ebb67a3)
     )
-    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 95a97fae-e24c-4439-aa73-678b3187524f)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 0c605d50-f0f9-4a41-b95c-2e4d7e378758)
     )
@@ -4615,15 +4615,15 @@
     (property "Sheetname" "")
     (path "/71e2a85c-5bc4-4103-8314-a44234d2543f")
     (attr smd)
-    (fp_text reference "L2" (at 0 2.5 90) (layer "B.SilkS")
+    (fp_text reference "L2" (at 0 2.5 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5bb94bda-33dd-46ea-9eef-9287aecad3f1)
     )
-    (fp_text value "6.8u" (at 0 -3 90) (layer "B.Fab")
+    (fp_text value "6.8u" (at 0 -3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3aac3a7b-3851-4736-a6a5-6cf2b24651e9)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.7 0.7) (thickness 0.105)) (justify mirror))
       (tstamp f58721d3-42c8-48a5-9b2e-1ae1018448d5)
     )
@@ -4661,15 +4661,15 @@
     (property "Sheetname" "")
     (path "/debe08d4-a478-4288-99a3-c073e16e2aec")
     (attr smd)
-    (fp_text reference "C24" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C24" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 8e6929e4-96a5-4522-ad4f-4cb410752ed1)
     )
-    (fp_text value "DNP" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "DNP" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp eb2c31d7-5190-42d4-bd7e-e38e2a7daf1d)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp ad64014c-593e-4817-999b-bd0272226379)
     )
@@ -4703,15 +4703,15 @@
     (property "Sheetname" "")
     (path "/2b4f270f-803d-4120-abf1-dafa5b16c19d")
     (attr smd)
-    (fp_text reference "R8" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R8" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 95418196-8702-4fff-aab1-dd13c3f9adc5)
     )
-    (fp_text value "100k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3ac3cf4c-5fb1-4917-b3fe-a8dadaf0eb94)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp baedcb95-7fc7-498c-b504-4f8c9a220605)
     )
@@ -4745,15 +4745,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/8b9758ce-a9b2-40da-8d0d-22de19cffd1f")
     (attr smd)
-    (fp_text reference "R29" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R29" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 56d5f4c5-c0c9-4912-9242-56b594197bfa)
     )
-    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 24e80c75-2729-402f-a8e2-4ba0f84afcc6)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp bfc524d1-55a5-4766-8284-16c96409494d)
     )
@@ -4787,15 +4787,15 @@
     (property "Sheetname" "")
     (path "/a00c3501-c450-4ff5-8341-4a39d68d0fb8")
     (attr smd)
-    (fp_text reference "R17" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R17" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3db6ff27-65d9-4cc2-85e9-edd3c28c2125)
     )
-    (fp_text value "56k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "56k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 2e7d7381-cdc2-4852-9e9f-4f8ba4b96119)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp e7d0d913-08b5-40a3-8943-a92d13cf71c2)
     )
@@ -4829,15 +4829,15 @@
     (property "Sheetname" "")
     (path "/e8379187-d5ce-4637-ae6e-b776c95a55bb")
     (attr smd)
-    (fp_text reference "C25" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C25" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d26b7ab5-25dd-4b14-b140-8e396a3d597e)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d9fe6aa7-cfd7-4301-a8c9-14d0e5984e49)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp fa2860e8-8164-4e58-bb45-a0544a9f6b5f)
     )
@@ -4871,15 +4871,15 @@
     (property "Sheetname" "")
     (path "/85a6c696-19de-44be-bc88-261f5e1db175")
     (attr smd)
-    (fp_text reference "R20" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R20" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 453a11fa-8503-480c-8b69-7609bdb68eef)
     )
-    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp dc2bcba7-84d8-4a3f-84b5-4db05d36d36a)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 891a02da-ef92-40fe-8f68-197693565639)
     )
@@ -4911,15 +4911,15 @@
     (property "Sheetname" "")
     (path "/f94cfe24-3635-4f73-9e88-39cf7fe32e8f")
     (attr smd)
-    (fp_text reference "U6" (at 0 3.15 unlocked) (layer "B.SilkS")
+    (fp_text reference "U6" (at 0 3.15 unlocked) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ce38c3d0-4256-4917-816c-aeba3a2bfedc)
     )
-    (fp_text value "AP63357Q" (at 0 -2.8 unlocked) (layer "B.Fab")
+    (fp_text value "AP63357Q" (at 0 -2.8 unlocked) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3b274380-aa5b-42cc-871f-0044bf63b78f)
     )
-    (fp_text user "${REFERENCE}" (at 0 -4.5 unlocked) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 -4.5 unlocked) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 11c3ce6c-9d43-4ae3-bca6-1b00b343e965)
     )
@@ -4956,15 +4956,15 @@
     (property "Sheetname" "")
     (path "/9378a4de-c6f7-4001-8989-36b3587b91de")
     (attr smd)
-    (fp_text reference "C17" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C17" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d9a54c0e-d54b-4d42-82cd-81cc2b18bedb)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp de194b8f-0d67-40a7-916d-20dfd96ee7bb)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7a1ab50c-59b4-4268-ac00-8ef239cd0cce)
     )
@@ -4998,15 +4998,15 @@
     (property "Sheetname" "")
     (path "/bbaef335-97cf-436c-9343-9e896ddc98c2")
     (attr smd)
-    (fp_text reference "C9" (at 0 2.3 90) (layer "B.SilkS")
+    (fp_text reference "C9" (at 0 2.3 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 592c8d3e-c990-4210-8316-6f4c18080659)
     )
-    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp afb62f01-4e78-405f-8812-9cf591ca4a1f)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 47ce964b-308e-4b8c-91e4-3bd0879014e6)
     )
@@ -5040,15 +5040,15 @@
     (property "Sheetname" "")
     (path "/e0ffeb2c-31d9-44c2-9b51-7e209f3c90f2")
     (attr smd)
-    (fp_text reference "C23" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C23" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 38b534ce-c836-4a66-a877-aa38c27bf461)
     )
-    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9d86d7cf-14f2-489a-b551-2ee5a32a6d65)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7df3ba52-6654-4003-86d5-790b4757b20f)
     )
@@ -5080,15 +5080,15 @@
     (property "Sheetname" "")
     (path "/56629bec-c175-4a82-af61-c1b54be13dff")
     (attr smd)
-    (fp_text reference "U4" (at -0.025 2.5 90 unlocked) (layer "B.SilkS")
+    (fp_text reference "U4" (at -0.025 2.5 90 unlocked) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 94023049-59be-412a-aa63-86bab18f5f25)
     )
-    (fp_text value "TPS92200DxRXL" (at -0.025 -2.05 90 unlocked) (layer "B.Fab")
+    (fp_text value "TPS92200DxRXL" (at -0.025 -2.05 90 unlocked) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 65f3ea72-35ab-4c92-a7da-098a4ec2795c)
     )
-    (fp_text user "${REFERENCE}" (at 0 -3.45 90 unlocked) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 -3.45 90 unlocked) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 66725342-e69e-49c2-8647-d90e56a0e14f)
     )
@@ -5157,15 +5157,15 @@
     (property "Sheetname" "")
     (path "/26bdc034-9f1e-4ad5-a5e8-a7352c8c8717")
     (attr smd)
-    (fp_text reference "R19" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R19" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 4a63f8a2-4585-483c-839d-f572a06248aa)
     )
-    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 942d54a3-398a-4e5e-ace3-c474520c0865)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp e90e05d2-109c-4690-ad43-5f7f61be5450)
     )
@@ -5199,15 +5199,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/281b8f6f-cb0d-457a-801c-619929c03917")
     (attr smd)
-    (fp_text reference "U9" (at 0 3.45) (layer "B.SilkS")
+    (fp_text reference "U9" (at 0 3.45) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 49cac5b7-0ce8-4c86-86b9-24f99e4bce24)
     )
-    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab")
+    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9fac6260-9665-40ba-b616-c7aa73569415)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f7e5adba-4c1b-43e4-a4d1-1f96838a1d67)
     )
@@ -5272,15 +5272,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/7ef2229e-0fd5-432e-92dc-a251fa393c28")
     (attr smd)
-    (fp_text reference "U16" (at 0 3.45) (layer "B.SilkS")
+    (fp_text reference "U16" (at 0 3.45) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 416c818b-f69c-4d56-963f-86260d6c3974)
     )
-    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab")
+    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 865974e1-dee3-463c-a71d-d5d71be8eb50)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 357ff44b-9b35-480d-a9cd-01f45adbee94)
     )
@@ -5345,15 +5345,15 @@
     (property "Sheetname" "")
     (path "/6dd58dd0-7c5e-4488-ad11-f041dac4a23b")
     (attr smd)
-    (fp_text reference "C26" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C26" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 802d9b83-db94-431e-97c6-ff2148a6ac33)
     )
-    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3a6196cf-4643-4c19-bdbf-4e57568783ff)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp df01ab44-bbd3-42b3-9ddd-124049c7ade0)
     )
@@ -5387,15 +5387,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/dd03de4d-004d-48f8-bc3f-926a4088f6d5")
     (attr smd)
-    (fp_text reference "C44" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C44" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp c6c14c64-32c4-4efb-b44a-0926c4052b39)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 683f8628-91ff-489b-bd3c-c38d6e2941ec)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 9c2868dc-e231-4a3b-8070-aee26f141e6c)
     )
@@ -5429,15 +5429,15 @@
     (property "Sheetname" "")
     (path "/9c692c65-e907-451d-b10c-4281999a9633")
     (attr smd)
-    (fp_text reference "C10" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C10" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 75cd1e39-b6f1-4450-a715-2bfa4c560fe4)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 497d099f-2ffd-4dc9-84a0-7dbe94b8b537)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 6c3ba27e-7f0a-4f1c-84c0-a1d0b3592bb5)
     )
@@ -5471,15 +5471,15 @@
     (property "Sheetname" "")
     (path "/9d2d6d68-8ce6-42e9-b34a-650d02a73d9e")
     (attr smd)
-    (fp_text reference "R9" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R9" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ac777603-61da-4787-ae7e-a49c421c3b12)
     )
-    (fp_text value "62k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "62k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 7bc60126-f92c-46eb-b9bd-d4caebac9022)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 6398a410-6df4-4911-b90d-f9f8f561440b)
     )
@@ -5513,15 +5513,15 @@
     (property "Sheetname" "")
     (path "/9f1ffac8-47b9-4555-9727-f60425405e62")
     (attr smd)
-    (fp_text reference "R3" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R3" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 6177449b-e4f1-4260-b1cb-f4d014c1af66)
     )
-    (fp_text value "1k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "1k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 8eb41013-1338-4426-bbca-803c0292174e)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 8379fff7-f012-446d-9625-5acfa7215247)
     )
@@ -5555,15 +5555,15 @@
     (property "Sheetname" "")
     (path "/8b9e9ee2-c286-44a1-afdd-4cd3721bbe08")
     (attr smd)
-    (fp_text reference "C31" (at 0 1.85) (layer "B.SilkS")
+    (fp_text reference "C31" (at 0 1.85) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fded84fb-ab65-408f-bea6-9b2ee069dddc)
     )
-    (fp_text value "22µ" (at 0 -1.85) (layer "B.Fab")
+    (fp_text value "22µ" (at 0 -1.85) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp aeaf0f3d-b53e-45ff-a9b9-546457e8b2e0)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 40d1e358-864e-4bbd-a770-c3d2acf4a1f4)
     )
@@ -5597,15 +5597,15 @@
     (property "Sheetname" "")
     (path "/dde6ef57-c0e9-43da-bcca-e11441e663bc")
     (attr smd)
-    (fp_text reference "C8" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C8" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp b1e48b19-c721-429a-bf56-de4cb2bf38eb)
     )
-    (fp_text value "100n" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100n" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 8e201926-ede9-43e1-8231-3de7fd07b27d)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp ae5d54ad-883b-428b-a5f8-e81b60e2e508)
     )
@@ -5639,15 +5639,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/6e3c482c-9779-4d78-b6d9-91fa53cbde0a")
     (attr smd)
-    (fp_text reference "U7" (at 0.38 1.9 90) (layer "B.SilkS")
+    (fp_text reference "U7" (at 0.38 1.9 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp db90ec38-7ad6-42c7-b107-501d5160835d)
     )
-    (fp_text value "DRV8231ADSGR" (at 0.01 -2.14 90) (layer "B.Fab")
+    (fp_text value "DRV8231ADSGR" (at 0.01 -2.14 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp e3932ae9-b963-4aea-9ded-464784e66594)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.7 0.7) (thickness 0.1)) (justify mirror))
       (tstamp e7a2b5ab-1aa0-4c20-9de8-197739d464e9)
     )
@@ -5698,15 +5698,15 @@
     (property "Sheetname" "")
     (path "/1c63a835-6f14-421d-8da7-260c2c9cd32b")
     (attr smd)
-    (fp_text reference "C20" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C20" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp da0ba1b8-b45a-4a37-8430-c6c03d39ab96)
     )
-    (fp_text value "3.3n" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "3.3n" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 3916b3b0-5b69-402d-8bdb-55cdbe4b6e89)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 4923711e-38d5-4973-93dd-2e6881275ccb)
     )
@@ -5740,15 +5740,15 @@
     (property "Sheetname" "")
     (path "/a2230bb5-604a-41bc-82c8-375990ce405c")
     (attr smd)
-    (fp_text reference "C51" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C51" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 2122a416-05e2-4ff4-bb11-7564106c65c3)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp c75fde26-ff5a-447d-9fee-e06c57b00476)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp b39b44ec-51f0-4c23-9f5a-6a021463155b)
     )
@@ -5782,15 +5782,15 @@
     (property "Sheetname" "")
     (path "/20a484f9-565f-4448-a622-83788cb59744")
     (attr smd)
-    (fp_text reference "C22" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C22" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5f9576f1-13c3-4985-b620-c4f1c16587a1)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 113eefa0-5972-4d3b-aee8-35a7170572d9)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 5e5bf954-3424-4e25-bbf5-84f17df7a8ba)
     )
@@ -5824,15 +5824,15 @@
     (property "Sheetname" "")
     (path "/2fecfd25-57b8-4211-afef-43fe96b2e816")
     (attr smd)
-    (fp_text reference "C1" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C1" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp e66bb536-8901-44b4-893a-d81234983729)
     )
-    (fp_text value "12p" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "12p" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 6a75c85d-6dbc-4c29-b9b5-690632aa9d1d)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7987bb13-bba3-4e75-b1d8-167482110747)
     )
@@ -5866,15 +5866,15 @@
     (property "Sheetname" "")
     (path "/f21d7fe0-0ec4-4a88-889d-e8a6d3b033f4")
     (attr smd)
-    (fp_text reference "R27" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R27" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a5712f26-be42-4ce8-8f60-768db3d59ea6)
     )
-    (fp_text value "30k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "30k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 988e9103-74e6-48fb-91a2-22eeb8313890)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7e3f8022-eba8-4c84-9361-f2302e3ac328)
     )
@@ -5908,15 +5908,15 @@
     (property "Sheetname" "")
     (path "/d89803b4-b2b9-4863-ad55-0b4d3cd8e725")
     (attr smd)
-    (fp_text reference "C7" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C7" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp cbf9bde4-a52a-4482-91bb-80896f9cbe61)
     )
-    (fp_text value "390p" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "390p" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f8fd8fa2-38bd-4642-8943-e41564d3e01b)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp ca6e85df-b8c2-4c39-8aaf-2a371f943b53)
     )
@@ -5950,15 +5950,15 @@
     (property "Sheetname" "")
     (path "/6399db25-d1ae-4299-81d4-d65c1db1dd1b")
     (attr smd)
-    (fp_text reference "C16" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C16" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 503dbad4-5173-41eb-8a2e-a7900e628c54)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fd69a5cd-14bd-4ff6-8891-27aa23d4bf94)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 2e36c3db-bed1-4a3b-82f9-91ffe38f993e)
     )
@@ -5992,15 +5992,15 @@
     (property "Sheetname" "")
     (path "/d14c4765-591d-4cb7-8c13-bf02d74563c6")
     (attr smd)
-    (fp_text reference "R32" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R32" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f02536e9-7d75-4d3a-993e-c8ec8caa2aa5)
     )
-    (fp_text value "1R" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1R" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9c036c1d-b094-4e49-b694-103c6565b263)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 59a906a7-b141-46e3-88bf-96a87386307f)
     )
@@ -6034,15 +6034,15 @@
     (property "Sheetname" "")
     (path "/c29a2639-bb37-41b5-9789-3c1c7a74f502")
     (attr smd)
-    (fp_text reference "R21" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R21" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 84b9b2b2-331c-4992-802a-9228e4faf8e7)
     )
-    (fp_text value "1M" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "1M" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp c33c3c09-da04-4b21-9031-acc6607b119c)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp ebd7a995-3e47-4e73-81fd-83698e41a483)
     )
@@ -6076,15 +6076,15 @@
     (property "Sheetname" "")
     (path "/a523232e-5c12-4704-9bfb-0489909ecb15")
     (attr smd)
-    (fp_text reference "C3" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C3" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ed5d18ae-ce04-4e17-8e63-889bbf74d446)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 08d26657-1e7e-4b78-a86f-ab19203b5f12)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 3771dea2-442f-4b8f-82da-bd6c887b3f40)
     )
@@ -6118,15 +6118,15 @@
     (property "Sheetname" "")
     (path "/6887853b-0ea9-4cbe-847f-56bb08a0825a")
     (attr smd)
-    (fp_text reference "C14" (at 0 2.3) (layer "B.SilkS")
+    (fp_text reference "C14" (at 0 2.3) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5f3e6c86-3210-46f4-9b63-31aea9fe9ced)
     )
-    (fp_text value "10µ" (at 0 -2.3) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 763527b2-ccbd-4227-bfc0-d2560db8f085)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp a5b6bb84-5a92-4274-a68e-f5a1dbd97193)
     )
@@ -6160,15 +6160,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/17000740-1ec6-4181-a6e5-7b56e7e232a5")
     (attr smd)
-    (fp_text reference "C34" (at 0 2.3 90) (layer "B.SilkS")
+    (fp_text reference "C34" (at 0 2.3 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp c29891b0-f7d6-4ed6-87d0-7d4dbdd53885)
     )
-    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d1ab9c1c-8eba-4f07-bcf2-130144a88815)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp afdb8c96-6911-4806-99a7-fb850f9b8316)
     )
@@ -6202,15 +6202,15 @@
     (property "Sheetname" "")
     (path "/2f5198be-dc90-41e7-89b8-da03fba0cbd7")
     (attr smd)
-    (fp_text reference "R18" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "R18" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 18a932c6-9456-4253-94de-5ac55b97be20)
     )
-    (fp_text value "18k" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "18k" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp dcaf0c2c-7ce2-4d34-becf-85de2fa82c74)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp a7c0b9c6-dd62-4071-8011-00ec49f0ad55)
     )
@@ -6244,15 +6244,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/327a2afa-a47b-4e64-b310-dc4903e6bfa4")
     (attr smd)
-    (fp_text reference "C43" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C43" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 4a13ed1b-55b1-49c5-8c8e-1f494aacd691)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 0d5ff7b1-3716-4ab1-a30e-31ecce057be9)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 5f8a09cc-1f62-433a-b677-43a8a904b54e)
     )
@@ -6287,15 +6287,15 @@
     (property "Voltage" "50V")
     (path "/098534af-160e-4c32-a456-5a2f7ba4439c")
     (attr smd)
-    (fp_text reference "C12" (at 0 2.3) (layer "B.SilkS")
+    (fp_text reference "C12" (at 0 2.3) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d95a4ba1-f10a-47ba-8a8f-b35e24798974)
     )
-    (fp_text value "10µ" (at 0 -2.3) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fd1dc8b4-99d7-41f3-ad97-28b7bfa7fc39)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 70857412-e515-4fc0-9d3f-bd951149c6b7)
     )
@@ -6329,15 +6329,15 @@
     (property "Sheetname" "")
     (path "/6879fd1b-660a-4083-8afd-74a963dd94d8")
     (attr smd)
-    (fp_text reference "R13" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R13" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 44fb9d43-7dbc-4014-904b-1a83d3fec2e2)
     )
-    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5e22e2b0-6df3-4ad4-9a16-537768c69e05)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 7afe3bc2-a003-4140-bb24-7fa2b70b5a64)
     )
@@ -6371,15 +6371,15 @@
     (property "Sheetname" "")
     (path "/bd15bc22-b40c-4ec4-b884-040237901fe3")
     (attr smd)
-    (fp_text reference "C13" (at 0 2.3 90) (layer "B.SilkS")
+    (fp_text reference "C13" (at 0 2.3 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp b4df59cd-c827-4c79-8292-37a9c78927b4)
     )
-    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 808e07bf-2e00-4e3f-9894-82fb9b88ecd3)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 8aa815ee-f9f5-478b-b9a3-8c234fc3a2a4)
     )
@@ -6413,15 +6413,15 @@
     (property "Sheetname" "")
     (path "/b61ec1ed-0168-4f25-9f19-921cc4714e44")
     (attr smd)
-    (fp_text reference "L1" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "L1" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 34e03d9b-14fd-4579-9a26-b1350c95e688)
     )
-    (fp_text value "600R" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "600R" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a5887f67-727f-47b9-acab-7442016181c4)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 510188b0-07d9-4638-9f88-ac0f845455ff)
     )
@@ -6455,15 +6455,15 @@
     (property "Sheetname" "")
     (path "/cf2e6574-619f-4c93-a0df-49630805243c")
     (attr smd)
-    (fp_text reference "U5" (at 0 2.4 90) (layer "B.SilkS")
+    (fp_text reference "U5" (at 0 2.4 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 80fcd458-1eaa-4ec2-b180-4052b70bfcf2)
     )
-    (fp_text value "MCP6001R" (at 0 -2.4 90) (layer "B.Fab")
+    (fp_text value "MCP6001R" (at 0 -2.4 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 5f73e126-d9a5-44c4-a44a-d7c39aac5110)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp b53f2058-fda6-451f-aa32-bff2ecc88af9)
     )
@@ -6507,15 +6507,15 @@
     (property "Voltage" "50V")
     (path "/c83399aa-9e68-418b-8ea9-7518077b2b88")
     (attr smd)
-    (fp_text reference "C11" (at 0 2.3 90) (layer "B.SilkS")
+    (fp_text reference "C11" (at 0 2.3 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f0b7b3ef-ddbd-454d-bae6-ab6be49df007)
     )
-    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp b4a10238-4a45-4865-b794-a6d3e3d7c732)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 93ce713d-7dff-4090-8ba7-6e594ef80a01)
     )
@@ -6549,15 +6549,15 @@
     (property "Sheetname" "")
     (path "/967b2eb0-a4d2-4431-b37b-26c4be46628f")
     (attr smd)
-    (fp_text reference "C52" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C52" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a8c1c3f8-97be-48a8-9596-ec3cd8a1b84d)
     )
-    (fp_text value "1µF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "1µF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 47a90ccc-2fda-4cf2-bd8f-aa271a7a1aa4)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp ccdc5bed-f087-4913-b11e-201bf40a6e36)
     )
@@ -6591,15 +6591,15 @@
     (property "Sheetname" "")
     (path "/d8e3e56d-6325-4604-ab08-de1b0386dda6")
     (attr smd)
-    (fp_text reference "C6" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C6" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d9d30f47-9353-4970-a4e0-f9360b162d21)
     )
-    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "DNP" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 054b2227-a3b5-4052-aac0-382be90364a4)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 0c1b44c2-e74c-42b3-918e-bdf44b2ee4f4)
     )
@@ -6633,15 +6633,15 @@
     (property "Sheetname" "")
     (path "/6fe2d0b3-d5d2-440f-8c36-3e2037eaa51e")
     (attr smd)
-    (fp_text reference "C15" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C15" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a72f28af-5d70-4ea9-9ff0-1ea7402fcc40)
     )
-    (fp_text value "100n" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100n" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 50da1f22-c5d1-409f-8e67-66741928dccf)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 22588675-e9c0-4099-89d5-e0886082caa5)
     )
@@ -6676,15 +6676,15 @@
     (property "Sheetname" "")
     (path "/19a0a6bf-52b4-49b9-bf17-1cf021b5ece3")
     (attr smd)
-    (fp_text reference "Y1" (at 0 2.2) (layer "B.SilkS")
+    (fp_text reference "Y1" (at 0 2.2) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ea7fdd52-b1a3-4aef-874f-b71265412c2e)
     )
-    (fp_text value "12Mhz" (at 0 -2.2) (layer "B.Fab")
+    (fp_text value "12Mhz" (at 0 -2.2) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a6bf5c68-1227-46bb-a519-b77b304b8481)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.6 0.6) (thickness 0.09)) (justify mirror))
       (tstamp 6c0adf7a-1895-45b5-9a8f-4ed87e45e918)
     )
@@ -6727,15 +6727,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/32913122-b98d-42f4-b3e3-bed41d7b43bd")
     (attr smd)
-    (fp_text reference "U10" (at 0 3.45) (layer "B.SilkS")
+    (fp_text reference "U10" (at 0 3.45) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 81d2cd0f-a03e-45e2-9027-8352ef8015ca)
     )
-    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab")
+    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp ab712268-9000-4805-b190-d807cee9c0b7)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp e5c2d66d-bd14-4d55-b8e8-9c690ab572df)
     )
@@ -6800,15 +6800,15 @@
     (property "Sheetname" "")
     (path "/bd8ef2fd-a2c2-4330-9d96-218d5ac1d574")
     (attr smd)
-    (fp_text reference "C27" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C27" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 03325115-ceb3-453b-ba3c-0248009529ab)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 35b57aa9-c899-47aa-8894-564cf72aaa95)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp a3b164fe-5e1f-4b7e-9a34-ec945d41d957)
     )
@@ -6842,15 +6842,15 @@
     (property "Sheetname" "")
     (path "/a48c4ba0-10ac-4627-9034-433faed9bb26")
     (attr smd)
-    (fp_text reference "C30" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C30" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 0005fc8b-b003-401c-ba1f-af242280232d)
     )
-    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1µF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 4b70222d-4b97-473e-bde8-c3a7d70ce5d1)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 5049b764-ba4a-4a49-9aa3-9372114d3dfe)
     )
@@ -6884,15 +6884,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/8180025e-0d70-408f-bac5-0ebff3328d00")
     (attr smd)
-    (fp_text reference "U8" (at 0.38 1.9 90) (layer "B.SilkS")
+    (fp_text reference "U8" (at 0.38 1.9 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fefce698-7b62-49d4-866b-77577f34c565)
     )
-    (fp_text value "DRV8231ADSGR" (at 0.01 -2.14 90) (layer "B.Fab")
+    (fp_text value "DRV8231ADSGR" (at 0.01 -2.14 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d906be29-b1ac-49d8-9c3b-b603ce7b8f7f)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.7 0.7) (thickness 0.1)) (justify mirror))
       (tstamp 2beca22f-7363-4a16-9112-835658610a93)
     )
@@ -6943,15 +6943,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/9976cce5-00d4-4a55-8a4c-a18230818e83")
     (attr smd)
-    (fp_text reference "U15" (at 0 3.45) (layer "B.SilkS")
+    (fp_text reference "U15" (at 0 3.45) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp dc6671cd-29eb-4c6c-8809-04ac8a3c1450)
     )
-    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab")
+    (fp_text value "74HC595" (at 0 -3.45) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 9c1ffd40-cf02-4274-948d-190ba5204af5)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp d8424732-2b09-42f4-b6db-7529adf3d3f7)
     )
@@ -7016,15 +7016,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/fe77a976-62f1-4773-a3f3-1619317d6ed3")
     (attr smd)
-    (fp_text reference "R28" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R28" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 72fa2f73-4466-446a-836b-52c373687f5e)
     )
-    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 018cdf94-fc5e-48f3-9a1f-3ccdd2f86cc6)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 10896796-c5d8-4573-8f8d-599fb0e67f11)
     )
@@ -7058,15 +7058,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/62fd3012-40cf-434e-b0b7-b2b3b11ea25d")
     (attr smd)
-    (fp_text reference "C37" (at 0 2.3 90) (layer "B.SilkS")
+    (fp_text reference "C37" (at 0 2.3 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 8e3dfc65-0c1d-4709-a718-e6799b3b252e)
     )
-    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab")
+    (fp_text value "10µ" (at 0 -2.3 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 27a7f21d-a69c-4c79-9555-f6fa5526a94f)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.8 0.8) (thickness 0.12)) (justify mirror))
       (tstamp 89f068ed-0859-4329-9945-809044935753)
     )
@@ -7100,15 +7100,15 @@
     (property "Sheetname" "")
     (path "/64e4c45e-2790-461b-8350-3a4b913f4f00")
     (attr smd)
-    (fp_text reference "R24" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R24" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 51b84f76-61da-439d-a5bd-c0e1a5418930)
     )
-    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp e55df07e-01e2-48da-9bda-c93ad6596618)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp dcbab701-15af-459a-b13b-8513e8318837)
     )
@@ -7142,15 +7142,15 @@
     (property "Sheetname" "")
     (path "/442db2a5-293c-4727-a86a-a3a6aa694346")
     (attr smd)
-    (fp_text reference "C19" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "C19" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 002c101d-c29b-4c24-a1f5-a6f1f127e794)
     )
-    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 89b7c48a-66da-4c00-8a58-26f721002515)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 992be148-a51d-46f3-b21f-3d6919770371)
     )
@@ -7184,15 +7184,15 @@
     (property "Sheetname" "")
     (path "/cd1a0824-5270-4dae-a15c-2109703f72e0")
     (attr smd)
-    (fp_text reference "R33" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R33" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fb212faf-05e3-43cb-89eb-1dcb5ba80456)
     )
-    (fp_text value "1R" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "1R" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp da8101ad-439b-4524-83e3-65a9d464174e)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp b87b1070-0175-4572-9ad8-9ec7c2560fd8)
     )
@@ -7226,15 +7226,15 @@
     (property "Sheetname" "")
     (path "/c6c82006-26c7-4641-9e87-e0fdb5b42a77")
     (attr smd)
-    (fp_text reference "U1" (at 0 2.05 90) (layer "B.SilkS")
+    (fp_text reference "U1" (at 0 2.05 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp f4fa3d2b-620c-4384-8942-f3116b94b183)
     )
-    (fp_text value "W25Q16JVUXIQ" (at 0 -2.05 90) (layer "B.Fab")
+    (fp_text value "W25Q16JVUXIQ" (at 0 -2.05 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 80b718a6-265a-4b98-a4dd-4b092cc055de)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.7 0.7) (thickness 0.105)) (justify mirror))
       (tstamp c2a93bd2-8024-420e-9583-fdbc5c85c3bd)
     )
@@ -7283,15 +7283,15 @@
     (property "Sheetname" "")
     (path "/1fdd1952-f51f-44e9-9713-583f0576d001")
     (attr smd)
-    (fp_text reference "R14" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R14" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 38517812-487d-4517-84f8-978555353c4b)
     )
-    (fp_text value "100k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "100k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 99e6c5ed-27e8-4eea-9cab-49da49431357)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp d59b5009-5b62-49d5-8b72-62fdd412b688)
     )
@@ -7325,15 +7325,15 @@
     (property "Sheetname" "")
     (path "/76027eb7-86df-4858-928a-2e5de7e3316e")
     (attr smd)
-    (fp_text reference "R6" (at 0 1.43 90) (layer "B.SilkS")
+    (fp_text reference "R6" (at 0 1.43 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 6ae10cc7-1c2e-4596-aa56-be8088d75464)
     )
-    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab")
+    (fp_text value "10k" (at 0 -1.43 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp da7acedc-05db-4dce-891f-cba3e5a873b3)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp e4c269f9-5c49-4167-bd68-b8a965259bf9)
     )
@@ -7368,15 +7368,15 @@
     (property "Sheetname" "")
     (path "/de7958cb-55e7-477b-959a-1073c3c3e0e8")
     (attr smd)
-    (fp_text reference "L3" (at 0 3.45 90) (layer "B.SilkS")
+    (fp_text reference "L3" (at 0 3.45 90) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 7c5e42f4-3df5-425e-b45e-9777e9b6b13a)
     )
-    (fp_text value "15µ" (at 0 -3.95 90) (layer "B.Fab")
+    (fp_text value "15µ" (at 0 -3.95 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp fb46a4f5-e7f8-4873-baeb-62558d3e67a8)
     )
-    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a68b0bbd-33cb-4e43-b991-5a8aa35fdb8f)
     )
@@ -7414,15 +7414,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/62d1f8fa-00b4-433a-b280-56bcaac03d39")
     (attr smd)
-    (fp_text reference "C48" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C48" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 4588748d-a1b3-4967-b841-ba359589c499)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp a5767ea9-99e1-4b67-872b-4d8829201264)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 4ab8db88-5319-4307-ba9c-bc38b52fd2ea)
     )
@@ -7456,15 +7456,15 @@
     (property "Sheetname" "pumpDrivers")
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/7a2b6fc1-1234-4d54-b1e0-3609c963294f")
     (attr smd)
-    (fp_text reference "C47" (at 0 1.43) (layer "B.SilkS")
+    (fp_text reference "C47" (at 0 1.43) (layer "B.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 2474182e-12c8-4b17-8f66-f9fbabaf8cef)
     )
-    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab")
+    (fp_text value "100nF" (at 0 -1.43) (layer "B.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
       (tstamp 51c5f111-e187-4e8f-95d6-2257884b7366)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "B.Fab") hide
       (effects (font (size 0.4 0.4) (thickness 0.06)) (justify mirror))
       (tstamp 906d34a4-5d08-4945-a388-93039764528b)
     )
