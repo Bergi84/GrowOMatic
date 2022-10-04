@@ -2761,7 +2761,7 @@
     (property "Value" "Conn_01x02" (id 1) (at 177.8 102.8699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical" (id 2) (at 175.26 100.33 0)
+    (property "Footprint" "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical" (id 2) (at 175.26 100.33 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 175.26 100.33 0)
@@ -3555,7 +3555,7 @@
     (property "Value" "Conn_01x02" (id 1) (at 177.8 115.5699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical" (id 2) (at 175.26 113.03 0)
+    (property "Footprint" "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical" (id 2) (at 175.26 113.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 175.26 113.03 0)
@@ -4513,6 +4513,12 @@
     (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/bf266f3d-b237-4372-8b05-680ea5307e04"
       (reference "#PWR0106") (unit 1) (value "GND") (footprint "")
     )
+    (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/09d05fb7-c215-4b97-959c-aef053489bcf"
+      (reference "#PWR0107") (unit 1) (value "+3.3VA") (footprint "")
+    )
+    (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/724e0950-55a2-4d6c-9992-c1ea33034899"
+      (reference "#PWR0108") (unit 1) (value "GND") (footprint "")
+    )
     (path "/0692e74b-e302-4a34-90af-db2585783550"
       (reference "C1") (unit 1) (value "12p") (footprint "Capacitor_SMD:C_0603_1608Metric")
     )
@@ -4633,6 +4639,9 @@
     (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/a7e08d99-f888-48fa-93bd-beb79d173ca1"
       (reference "C40") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0603_1608Metric")
     )
+    (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/0b8a4588-ef44-476d-adee-e382bc10e04a"
+      (reference "C41") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0603_1608Metric")
+    )
     (path "/66dc639d-7a71-46bd-817f-6bf6b9796248"
       (reference "D1") (unit 1) (value "BAT54W") (footprint "Diode_SMD:D_SOD-323")
     )
@@ -4667,10 +4676,10 @@
       (reference "J5") (unit 1) (value "Conn_01x03") (footprint "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical")
     )
     (path "/6979771c-d22f-452c-b217-491fd4f9d2c2"
-      (reference "J6") (unit 1) (value "Conn_01x02") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+      (reference "J6") (unit 1) (value "Conn_01x02") (footprint "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical")
     )
     (path "/b356c174-35fc-43c2-a045-48c2c655266c"
-      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical")
     )
     (path "/8671f67a-7a0d-4f43-8358-c29ef9469ead/1f5174f9-1965-428a-bbfe-1a9fff31937f"
       (reference "J8") (unit 1) (value "Conn_01x02") (footprint "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical")
