@@ -5951,11 +5951,11 @@
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/bd218a07-6d23-442c-8189-9149042e75c6"
       (reference "#PWR0187") (unit 1) (value "+5V") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/0181afcc-80e0-42e7-84cd-57dedee6ee57"
-      (reference "#PWR0188") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/30c05c01-833d-479d-97cb-adb060cb5d83"
+      (reference "#PWR0188") (unit 1) (value "+3V3") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/236d3073-b8f5-456c-bc2f-e2e00c4b4c82"
-      (reference "#PWR0189") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/d7c1018f-e75d-4bc5-9a5d-1bf261d5ed1e"
+      (reference "#PWR0189") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/6ce9bdd6-4c32-4957-8f14-2282e8ff3b08"
       (reference "#PWR0190") (unit 1) (value "+5V") (footprint "")
@@ -5972,14 +5972,14 @@
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/d7c628ca-ec7b-4fdf-87bd-970144873bf8"
       (reference "#PWR0194") (unit 1) (value "+5V") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/17e5f1a2-e2d6-46a6-bb31-ca02938c901f"
-      (reference "#PWR0195") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/4bdfec4d-8e83-4e7d-b4e1-0286fc6fd5c5"
+      (reference "#PWR0195") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/cb0cb7e0-2ee8-4d7a-9ca5-143c4502bd26"
       (reference "#PWR0196") (unit 1) (value "GND") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/9fe19f78-fc68-490c-ad58-cdbf11b5f82a"
-      (reference "#PWR0197") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/8c4bf702-72d1-4699-bb6a-d417e90e11a4"
+      (reference "#PWR0197") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/fcdd363c-71d7-4cc8-b4ff-db35ef5bee3f"
       (reference "#PWR0198") (unit 1) (value "GND") (footprint "")
@@ -6050,11 +6050,11 @@
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/e344b7d7-bf45-4bf1-8851-f59147a40d7d"
       (reference "#PWR0220") (unit 1) (value "GND") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/1c969739-23f0-46cb-8822-4a7ff75e7d33"
-      (reference "#PWR0221") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/0d19cd4d-5532-4d20-b63a-0d2fd207ecb5"
+      (reference "#PWR0221") (unit 1) (value "+3V3") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/af769f1b-1653-42c1-bd64-b8eca73bc9a1"
-      (reference "#PWR0222") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/dcd898d0-21a9-4350-932d-43618fe6f0de"
+      (reference "#PWR0222") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/8b83df4e-c4d7-4598-900d-c91bd9ed4b80"
       (reference "#PWR0223") (unit 1) (value "+3V3") (footprint "")
@@ -6098,11 +6098,11 @@
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/12d08eef-627b-4dfc-9031-8e5b561d27c3"
       (reference "#PWR0236") (unit 1) (value "GND") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/18d5cd12-547e-48ff-b24c-26737bbc82ea"
-      (reference "#PWR0237") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/1388f3ae-ca76-476f-987b-6e0ac95c750f"
+      (reference "#PWR0237") (unit 1) (value "+3V3") (footprint "")
     )
-    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/301aaa20-dc5c-4d37-a69c-d85d2dfc7a26"
-      (reference "#PWR0238") (unit 1) (value "+3.3V") (footprint "")
+    (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/3d493f84-2b9d-40f4-ba27-eacd4c5c6c40"
+      (reference "#PWR0238") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/6d98db2c-24de-4eeb-98a9-cd90e5c5e5a6/43b35c41-fbb3-4bae-a331-a802c729fb0f"
       (reference "#PWR0239") (unit 1) (value "GND") (footprint "")
