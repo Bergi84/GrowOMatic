@@ -2845,6 +2845,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 2e6c3a06-c96a-416e-939c-4a0979c25d6c)
   )
+  (label "24V_Vsens" (at 105.41 133.35 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 32137759-f04d-4b59-af14-61e3e6e8a501)
+  )
   (label "QSPI_CLK" (at 54.61 95.25 180)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 382d484a-18b9-4886-8c44-ed30c7de05b6)
@@ -2928,6 +2932,10 @@
   (label "UART0" (at 105.41 67.31 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid c16b02e5-4b2f-4601-88f4-9cff05bb3c1c)
+  )
+  (label "24V_Isens" (at 105.41 130.81 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid c1ce201a-40a2-41cc-834b-98c4c6acdd66)
   )
   (label "UART0" (at 139.7 52.07 180)
     (effects (font (size 1.27 1.27)) (justify right bottom))
@@ -4471,7 +4479,7 @@
   (symbol (lib_id "Power_Protection:TVS2700DRV") (at 165.1 142.24 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 6b4f1e21-947d-4609-aa33-1952ea0696fa)
-    (property "Reference" "U?" (id 0) (at 168.91 140.9699 0)
+    (property "Reference" "U9" (id 0) (at 168.91 140.9699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "TVS2700DRV" (id 1) (at 168.91 143.5099 0)
@@ -6113,7 +6121,7 @@
   (symbol (lib_id "power:+24V") (at 165.1 134.62 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid f66f760f-2235-4072-968d-73a2680ff3c3)
-    (property "Reference" "#PWR?" (id 0) (at 165.1 138.43 0)
+    (property "Reference" "#PWR0115" (id 0) (at 165.1 138.43 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+24V" (id 1) (at 165.1 129.54 0))
@@ -6147,7 +6155,7 @@
   (symbol (lib_id "power:GND") (at 165.1 149.86 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid faae0301-837f-4de9-8a80-7300286205c1)
-    (property "Reference" "#PWR?" (id 0) (at 165.1 156.21 0)
+    (property "Reference" "#PWR0114" (id 0) (at 165.1 156.21 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 165.1 154.94 0))
@@ -6591,11 +6599,11 @@
     (path "/b87a2a2a-efcf-4dad-81aa-5bd392bbc62d/e1211767-5476-4259-89bb-281a38859060"
       (reference "#PWR0113") (unit 1) (value "GND") (footprint "")
     )
-    (path "/f66f760f-2235-4072-968d-73a2680ff3c3"
-      (reference "#PWR?") (unit 1) (value "+24V") (footprint "")
-    )
     (path "/faae0301-837f-4de9-8a80-7300286205c1"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0114") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/f66f760f-2235-4072-968d-73a2680ff3c3"
+      (reference "#PWR0115") (unit 1) (value "+24V") (footprint "")
     )
     (path "/00951d70-84c9-440a-8a3d-19c365aab257"
       (reference "BT1") (unit 1) (value "Battery_Cell") (footprint "Battery:BatteryHolder_Keystone_1060_1x2032")
@@ -6943,7 +6951,7 @@
       (reference "U8") (unit 1) (value "CP2102N-Axx-xQFN24") (footprint "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm")
     )
     (path "/6b4f1e21-947d-4609-aa33-1952ea0696fa"
-      (reference "U?") (unit 1) (value "TVS2700DRV") (footprint "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm")
+      (reference "U9") (unit 1) (value "TVS2700DRV") (footprint "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm")
     )
     (path "/f4c66923-385a-4c20-9d97-ec9c56ffcb8f"
       (reference "Y1") (unit 1) (value "12Mhz") (footprint "Crystal:Crystal_SMD_2520-4Pin_2.5x2.0mm")
