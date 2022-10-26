@@ -45,7 +45,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.254
+          "min_clearance": 0.127
         }
       },
       "diff_pair_dimensions": [
@@ -123,10 +123,7 @@
         0.127,
         0.2,
         0.3,
-        0.5,
-        1.0,
-        2.0,
-        3.0
+        0.5
       ],
       "via_dimensions": [
         {
@@ -353,7 +350,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "DualValveCon.kicad_pro",
+    "filename": "PressureSensor.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -387,7 +384,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "DualValveCon.step",
+      "step": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -432,12 +429,8 @@
   },
   "sheets": [
     [
-      "2425cd60-289f-466e-9ddc-016521a4a9c5",
+      "94fdf9af-931c-40f9-813b-c1dd1080aa2f",
       ""
-    ],
-    [
-      "93abfec1-3455-4c16-b8da-3ca7eba68160",
-      "motorDriver"
     ]
   ],
   "text_variables": {}

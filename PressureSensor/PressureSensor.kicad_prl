@@ -2,7 +2,7 @@
   "board": {
     "active_layer": 0,
     "active_layer_preset": "",
-    "auto_track_width": false,
+    "auto_track_width": true,
     "hidden_nets": [],
     "high_contrast_mode": 0,
     "net_color_mode": 1,
@@ -59,11 +59,11 @@
       35,
       36
     ],
-    "visible_layers": "fff3fff_ffffffff",
+    "visible_layers": "fff3fcc_ffffffff",
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "DualValveCon.kicad_prl",
+    "filename": "PressureSensor.kicad_prl",
     "version": 3
   },
   "project": {
