@@ -1444,7 +1444,7 @@
     (uuid fd3fc8d4-abf0-49c7-90bb-9c1221e427d3)
   )
 
-  (text "Adr: 0x4C" (at 231.14 54.61 0)
+  (text "Adr: 0x49" (at 231.14 54.61 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 2b4b63b1-0491-46fd-831d-5d94e6fb1ee2)
   )
@@ -2244,6 +2244,9 @@
       (effects (font (size 1.27 1.27) italic) hide)
     )
     (property "Datasheet" "http://www.ti.com.cn/cn/lit/ds/symlink/tmp411.pdf" (id 3) (at 229.87 41.91 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "HTN" "TMP451HQDQFRQ1" (id 4) (at 227.33 41.91 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid fdb372b5-b93f-4651-b122-5e83d0cdbbbd))
