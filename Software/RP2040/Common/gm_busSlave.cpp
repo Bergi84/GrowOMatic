@@ -1,0 +1,4 @@
+class GM_busSlave
+{
+
+};
