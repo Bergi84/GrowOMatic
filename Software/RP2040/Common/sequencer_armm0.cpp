@@ -144,8 +144,23 @@ void TSequencer::waitForEvent(bool* aEvt)
     return;
 
   stackRec_t* stack = &stacks[aktivStackInd];
-  stack->event = aEvt;
+  // bool can a 8Bit value so we must avoid 
+  // unaligend access
+  stack->event = (uint32_t*)(((uint32_t)aEvt) & 0xFFFFFFFC);          // alligned address
+  stack->msk = 0x000000FF << ((((uint32_t)aEvt) & 0x00000003)*8);     // mask
 
+  switchTask(&stack->sp, true);
+}
+
+void TSequencer::waitForEvent(uint32_t* aEvt, uint32_t msk)
+{
+  if(aEvt == 0)
+    return;
+
+  stackRec_t* stack = &stacks[aktivStackInd];
+  stack->event = aEvt;
+  stack->msk = msk;     // mask
+  
   switchTask(&stack->sp, true);
 }
 
@@ -341,7 +356,7 @@ void TSequencer::scheduler()
 
       if(stacks[tmpId].sp != 0)
       {
-        if(stacks[tmpId].event != 0 && *stacks[tmpId].event)
+        if(stacks[tmpId].event != 0 && (*stacks[tmpId].event & stacks[tmpId].msk))
         {
           // todo: check stack integrity
           stacks[tmpId].event = 0;

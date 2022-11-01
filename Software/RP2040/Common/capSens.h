@@ -1,5 +1,5 @@
-#ifndef CAPSENS_H_
-#define CAPSENS_H_
+#ifndef TCAPSENS_H_
+#define TCAPSENS_H_
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -9,7 +9,7 @@
 
 
 template<uint sensPinCount>
-class capSens {
+class TCapSens {
     PIO pio;
     uint excPinBase;
     uint sensPinBase;
@@ -89,18 +89,21 @@ public:
         sampleCnt = 1 << cnt;
     }
 
+    // this function installs the irq handler and only accepts "C" functions
+    // or static memeber function. So we must provide an IRQ Handler wrapper function
+    // for our capSens->irqHandler memeber function
     void setIrqHandler(void (*aIrqHandler)(void))
     {
         pio_set_irq0_source_enabled(pio, pis_interrupt0 , true);
         if(pio == pio0)
         {       
             irq_set_exclusive_handler(PIO0_IRQ_0, aIrqHandler);
-            irq_set_enabled (PIO0_IRQ_0, true);
+            irq_set_enabled(PIO0_IRQ_0, true);
         }
         else
         {
             irq_set_exclusive_handler(PIO1_IRQ_0, aIrqHandler);
-            irq_set_enabled (PIO1_IRQ_0, true);
+            irq_set_enabled(PIO1_IRQ_0, true);
         }
     }
 
@@ -160,4 +163,4 @@ public:
     }
 };
 
-#endif /* CAPSENS_H_ */
+#endif /* TCAPSENS_H_ */

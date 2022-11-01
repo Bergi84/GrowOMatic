@@ -5,14 +5,20 @@ set(PICO_BOARD board_dualLevelSens)
 
 target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dualLevelSens.cpp
-    )	
+    ${CMAKE_CURRENT_LIST_DIR}/../common/sequencer_armm0.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/uart.cpp
+)	
 		
 target_include_directories(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../common
-    )	
+)	
 		
-target_link_libraries(dualLevelSens pico_stdlib hardware_pio hardware_irq)
+target_link_libraries(dualLevelSens pico_stdlib hardware_pio hardware_irq pico_multicore)
+
+target_compile_definitions(dualLevelSens PUBLIC
+    PICO_STACK_SIZE=0x1000
+)
 
 pico_generate_pio_header(dualLevelSens ${CMAKE_CURRENT_LIST_DIR}/../common/capSens.pio)
 

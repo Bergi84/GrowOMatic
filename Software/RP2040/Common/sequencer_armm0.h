@@ -10,7 +10,6 @@
 #ifndef SEQUENCER_ARMM0_H_
 #define SEQUENCER_ARMM0_H_
 
-
 #ifndef SEQ_MAXTASKS
   #define SEQ_MAXTASKS 32
 #endif
@@ -26,7 +25,8 @@ private:
   typedef struct
   {
     void* sp;
-    bool* event;
+    uint32_t* event;
+    uint32_t msk;
     uint8_t id;
   }
   stackRec_t;
@@ -66,6 +66,7 @@ public:
 
   // puase calling Task until given bool becomes true
   void waitForEvent(bool* aEvt);
+  void waitForEvent(uint32_t* aEvt, uint32_t msk = 0xFFFFFFFF);
 
   bool setIdleFunc(void (*aPFunc)(void*), void* aPArg);
 

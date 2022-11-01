@@ -53,13 +53,12 @@ void testTaskWait(void* arg)
 }
 
 extern uint32_t __StackTop;
-extern uint32_t __StackBottom;
 
 int main()
 {
     stdio_init_all();
 
-    gSequencer.init(&__StackTop, 4096);
+    gSequencer.init(&__StackTop, PICO_STACK_SIZE);
 
     gTaskInfo[0].taskNo = 0;
     gSequencer.addTask(gTaskInfo[0].taskId, testTaskQeued, (void*) &gTaskInfo[0]);
