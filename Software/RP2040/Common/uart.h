@@ -4,7 +4,6 @@
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
-#include "sequencer_armm0.h"
 
 class TUart
 {

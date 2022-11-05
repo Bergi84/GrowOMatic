@@ -7,11 +7,14 @@
 #include "sequencer_armm0.h"
 #include "uart.h"
 #include "gm_busSlave.h"
+#include "paraTable.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
 THwUart gUart0;
 THwUart gUart1;
+GM_busSlave gSlave;
+TParaTable gParaTable;
 
 void capSensIrqHandler()
 {
@@ -55,14 +58,14 @@ int main()
     gSeq.setIdleFunc(idle, NULL);
 
     gUart0.init(uart0, gpio_uart0_tx, gpio_uart0_rx);
-    gUart0.config(9600, UART_PARITY_NONE);
-    gUart0.disableFifo(true);
     gUart0.setIrqHandler(uart0IrqHandler);
 
     gUart1.init(uart1, gpio_uart1_tx, gpio_uart1_rx);
-    gUart1.config(9600, UART_PARITY_NONE);
-    gUart0.disableFifo(true);
     gUart1.setIrqHandler(uart1IrqHandler);
+
+    gParaTable.init();
+
+    gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 
     multicore_launch_core1(main_c1);
 

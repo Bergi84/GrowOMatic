@@ -3,6 +3,8 @@
 #define GM_BUSSLAVE_H_
 
 #include "uart.h"
+#include "paraTable.h"
+#include "sequencer_armm0.h"
 
 class GM_busSlave
 {
@@ -16,15 +18,6 @@ private:
 
     static constexpr uint32_t mCrcPoly = 0xEDB88320;
 
-    uint32_t mErrCnt0;
-    uint32_t mErrCnt1;
-    bool mDir0to1;
-    bool mDir1to0;
-    uint32_t mByteCnt0;
-    uint32_t mByteCnt1;
-    TUart* mUart0;
-    TUart* mUart1;
-
     typedef struct com_s { 
         TUart* uart;
         struct com_s* otherCom;
@@ -36,7 +29,8 @@ private:
 
     static void rx0CbWrapper(void* aPObj);
     static void rx1CbWrapper(void* aPObj);
-    static void nextByteTimeOutCb(void* aPObj);
+    static int64_t timeOutCb(alarm_id_t id, void* aPObj);
+    static int64_t regTimeOutCb(alarm_id_t id, void* aPObj);
 
     void rxCb(com_t* aCom);
 
@@ -72,21 +66,33 @@ private:
     state_e mState;
 
     void (*mParaWCb)(void* aArg, uint16_t aRegAdr, uint32_t aData);
-    bool (*mParaRCb)(void* aArg, uint16_t aRegAdr, uint32_t &aData);
+    bool (*mParaRCb)(void* aArg, uint16_t aRegAdr, uint32_t *aData);
     void* mParaCbArg;
 
-    uint32_t byteTimeUs;
-    uint32_t turnAroundTimeout;
+    uint32_t mByteTimeUs;
+    uint32_t mByteTimeoutUs;
+    uint32_t mTurnAroundTimeout;
 
-    uint32_t crcTab[256];
+    uint32_t mCrcTab[256];
     uint32_t crcCalc(uint32_t aCrc, uint8_t aByte);
     void crcInitTab();
 
+    alarm_id_t mTimeoutId;
+    alarm_id_t mRegTimeoutId;
+
+    TParaTable* mParaTable;
+    TSequencer* mSeq;
+
+    uint8_t mParaRWTaskId;
+    bool mRegTimeOutFlag;
+
+    static void paraRW(void* aArg);
+
 public:
     GM_busSlave();
-    void init(TUart *aUart0, TUart *aUart1);
+    void init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq);
+    void deinit();
 
-    void setParaCb(void (*aParaWCb)(void*, uint16_t, uint32_t), bool (*aParaRCb)(void* , uint16_t , uint32_t &), void* aParaCbArg);
     void setCrcInit(uint32_t aCrcInit) {mCrcInitVal = aCrcInit; };
 };
 

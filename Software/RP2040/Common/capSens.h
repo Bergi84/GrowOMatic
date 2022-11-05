@@ -1,5 +1,5 @@
-#ifndef TCAPSENS_H_
-#define TCAPSENS_H_
+#ifndef CAPSENS_H_
+#define CAPSENS_H_
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -163,4 +163,4 @@ public:
     }
 };
 
-#endif /* TCAPSENS_H_ */
+#endif /* CAPSENS_H_ */
