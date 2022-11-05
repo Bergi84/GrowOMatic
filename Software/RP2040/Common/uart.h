@@ -20,10 +20,10 @@ public:
     virtual void config(uint32_t aBaudRate, uart_parity_t aParity){};
 
     // read all aviable bytes from fifo
-    virtual uint32_t rxBlock(char* aBuf, uint32_t aMaxLen){return 0;};
+    virtual uint32_t rxBlock(uint8_t* aBuf, uint32_t aMaxLen){return 0;};
 
     // read one byte, blocks until one bate is aviable
-    virtual void rxChar(char &aC){};
+    virtual void rxChar(uint8_t *aC){};
     virtual bool rxPending(){return false;};
 
     // returns address of flag register and mask for waiting
@@ -34,11 +34,11 @@ public:
     // RX interrupt
     virtual void installRxCb(void (*pFunc)(void*), void* aArg){};
 
-    // writes a char and blocks until char has been sent
-    virtual void txChar(char aC){};
+    // writes a uint8_t and blocks until uint8_t has been sent
+    virtual void txChar(uint8_t aC){};
 
     // writes data of aBuf to uart, returns written bytes
-    virtual uint32_t txBlock(char* aBuf, uint32_t aLen){return 0;};
+    virtual uint32_t txBlock(uint8_t* aBuf, uint32_t aLen){return 0;};
 
     virtual bool txFree(){return false;};
 
@@ -61,24 +61,28 @@ private:
     uart_inst_t *mUart;
     uint32_t mTxGpio;
     uint32_t mRxGpio;
+    bool mTxCbEn;
+
+    inline void enIrqCb(bool aEna)
+    {
+        mTxCbEn = aEna;
+        uart_get_hw(mUart)->imsc = (bool_to_bit(aEna && mTxCb != 0) << UART_UARTIMSC_TXIM_LSB) |
+                                    (bool_to_bit(mRxCb != 0) << UART_UARTIMSC_RXIM_LSB) |
+                                    (bool_to_bit(mRxCb != 0) << UART_UARTIMSC_RTIM_LSB);
+    }
 
 public:
     void init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio);
     virtual void config(uint32_t aBaudRate, uart_parity_t aParity);
-    virtual uint32_t rxBlock(char* aBuf, uint32_t aMaxLen);
-    virtual void rxChar(char &aC)
+    virtual uint32_t rxBlock(uint8_t* aBuf, uint32_t aMaxLen);
+    virtual void rxChar(uint8_t *aC)
     {
-        aC = uart_getc(mUart);
+        *aC = uart_getc(mUart);
     }
 
     virtual bool rxPending()
     {
         return uart_is_readable(mUart);
-    }
-
-    virtual void rxWaitForByte(char &aC)
-    {
-
     }
 
     virtual void rxGetWait(void* &aAdr, uint32_t &aMsk)
@@ -87,12 +91,14 @@ public:
         aMsk = UART_UARTFR_RXFE_BITS;
     }
 
-    virtual void txChar(char aC)
+    virtual void txChar(uint8_t aC)
     {
         uart_putc (mUart, aC);
+
+        enIrqCb(true);
     }
 
-    virtual uint32_t txBlock(char* aBuf, uint32_t aLen);
+    virtual uint32_t txBlock(uint8_t* aBuf, uint32_t aLen);
     virtual bool txFree()
     {
         return uart_is_writable(mUart);
@@ -116,8 +122,14 @@ public:
         if( uart_get_hw(mUart)->imsc & UART_UARTIMSC_TXIM_BITS && 
             uart_get_hw(mUart)->ris & UART_UARTRIS_TXRIS_BITS)
         {
-            uart_get_hw(mUart)->icr |= UART_UARTICR_TXIC_BITS;
-            mTxCb(mTxCbArg);
+            // debug trap, this should never occure:
+            if(!mTxCbEn)
+                while(1);
+
+            if(!mTxCb(mTxCbArg))
+            {
+                enIrqCb(false);
+            }
         }
 
         if( (uart_get_hw(mUart)->imsc & UART_UARTIMSC_RXIM_BITS  && 
@@ -125,7 +137,6 @@ public:
             (uart_get_hw(mUart)->imsc & UART_UARTIMSC_RTIM_BITS  && 
             uart_get_hw(mUart)->ris & UART_UARTRIS_RTRIS_BITS))
         {
-            uart_get_hw(mUart)->icr |= UART_UARTICR_RXIC_BITS | UART_UARTICR_RTIC_BITS;
             mRxCb(mRxCbArg);
         }
     }

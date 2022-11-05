@@ -6,6 +6,7 @@
 #include "capSens.h"
 #include "sequencer_armm0.h"
 #include "uart.h"
+#include "gm_busSlave.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;

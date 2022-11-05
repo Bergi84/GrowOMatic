@@ -7,6 +7,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dualLevelSens.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/sequencer_armm0.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/uart.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busSlave.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC
