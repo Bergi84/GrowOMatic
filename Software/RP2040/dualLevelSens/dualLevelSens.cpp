@@ -8,6 +8,7 @@
 #include "uart.h"
 #include "gm_busSlave.h"
 #include "paraTable.h"
+#include "pico/unique_id.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
@@ -63,7 +64,10 @@ int main()
     gUart1.init(uart1, gpio_uart1_tx, gpio_uart1_rx);
     gUart1.setIrqHandler(uart1IrqHandler);
 
-    gParaTable.init();
+    pico_unique_board_id_t uId;
+    pico_get_unique_board_id(&uId);
+
+    gParaTable.init(*((uint32_t*) uId.id), GM_DEVICEID);
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 

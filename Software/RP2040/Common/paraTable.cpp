@@ -1,31 +1,80 @@
 #include "paraTable.h"
 
-void TParaTable::init()
+
+
+TParaTable::TParaTable() : 
+mSysPara( (paraRec_t[mSysParaLen]) {
+    /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    /*   1 deviceId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    /*   2 fwVersion        */ {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    /*   3                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    /*   4                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R}
+    }),
+
+mEpListEndpoint( (endpoint_t) {
+    { { 
+        .startIndex = mEpListBaseIndex,
+        .type = EPT_EPLIST    
+    } }, 
+    .length = 1, 
+    .para = mEpListPara,
+    .next = 0
+}),
+mSysEndpoint( (endpoint_t) { 
+    { { 
+        .startIndex = 0,
+        .type = EPT_SYSTEM    
+    } }, 
+    .length = sizeof(mSysPara)/sizeof(paraRec_t), 
+    .para = mSysPara,
+    .next = &mEpListEndpoint
+})
 {
-    mTableRoot = 0;
+    mEpListPara[0] = {.pPara = &mEpListEndpoint.length, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R | PARA_FLAG_P};
+    for(int i = 1; i < PT_MAXENDPOINTS; i++)
+    {
+        mEpListPara[i] = {.pPara = 0, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R | PARA_FLAG_P};
+    }
 }
 
-void TParaTable::addSubTable(subTable_t* aSubTable)
+void TParaTable::init(uint32_t aUniqueId, uint32_t aDeviceId)
 {
-    if(mTableRoot == 0 || mTableRoot->startIndex > aSubTable->startIndex)
+    mSysPara[0].para = aUniqueId;
+    mSysPara[1].para = aDeviceId;
+}
+
+void TParaTable::addEndpoint(endpoint_t* aEndpoint)
+{
+    // avoid insertion of endpoint before endpoint list
+    // and if endpointlist is full
+    if( aEndpoint->startIndex < mEpListBaseIndex + PT_MAXENDPOINTS + 1 ||
+        mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
     {
-        aSubTable->next = mTableRoot;
-        mTableRoot = aSubTable;
+        return;
     }
-    else
+
+    mEpListEndpoint.length++;
+
+    // insertion is only after mEpListEndpoint possible
+    endpoint_t* tmp = &mEpListEndpoint;
+    uint32_t epListInd = 1;
+    bool insertPend = true;
+
+    while(tmp)
     {
-        subTable_t* tmp = mTableRoot;
-        while(tmp)
+        if(insertPend && (tmp->next == 0 || tmp->next->startIndex > aEndpoint->startIndex))
         {
-            if(tmp->next == 0 || tmp->next->startIndex > aSubTable->startIndex)
-            {
-                aSubTable->next = tmp->next;
-                tmp->next = aSubTable;
-                break;
-            }
-            tmp = tmp->next;
+            insertPend = false;
+            aEndpoint->next = tmp->next;
+            tmp->next = aEndpoint;
         }
+
+        // update endpoint list
+        mEpListPara[epListInd].pPara = &tmp->epId; 
+        epListInd++;
+        tmp = tmp->next;
     }
+    
 }
 
 void TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
@@ -34,8 +83,12 @@ void TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
 
     if(tmp && tmp->flags & PARA_FLAG_W)
     {
-        *tmp->pPara = aData;
-        if(tmp->pFAccessCb)
+        if(tmp->flags & PARA_FLAG_P)
+            *tmp->pPara = aData;
+        else
+            tmp->para = aData;
+
+        if(tmp->flags & PARA_FLAG_FW && tmp->pFAccessCb)
         {
             tmp->pFAccessCb(tmp->cbArg, tmp, true);
         }
@@ -49,11 +102,14 @@ bool TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
 
     if(tmp && tmp->flags & PARA_FLAG_R)
     {
-        *aData = *tmp->pPara;
-        if(tmp->pFAccessCb)
+        if(tmp->flags & PARA_FLAG_FR && tmp->pFAccessCb)
         {
-            tmp->pFAccessCb(tmp->cbArg, tmp, true);
+            tmp->pFAccessCb(tmp->cbArg, tmp, false);
         }
+        if(tmp->flags & PARA_FLAG_P)
+            *aData = *tmp->pPara;
+        else
+            *aData = tmp->para;
         return true;
     }
     else
@@ -79,13 +135,14 @@ bool TParaTable::getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec)
 
 TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
 {
-    subTable_t* tmp = mTableRoot;
+    endpoint_t* tmp = &mSysEndpoint;
     while(tmp)
     {
         if(tmp->startIndex <= index && (tmp->startIndex + tmp->length) > index)
         {
             return &tmp->para[index - tmp->startIndex];
         }
+        tmp = tmp->next;
     }
     return 0;
 }

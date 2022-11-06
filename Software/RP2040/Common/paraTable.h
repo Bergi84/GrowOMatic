@@ -2,44 +2,73 @@
 #define PARATABLE_H_
 
 #include "pico/stdlib.h"
+#include "version.h"
+
+#ifndef PT_MAXENDPOINTS
+#define PT_MAXENDPOINTS 16
+#endif
 
 class TParaTable
 {
-
-
 public:
-    static constexpr uint32_t PARA_FLAG_W = 0x00000001;
-    static constexpr uint32_t PARA_FLAG_R = 0x00000002;
-    static constexpr uint32_t PARA_FLAG_RW = 0x00000003;
-    static constexpr uint32_t PARA_FLAG_NV = 0x00000004;
-    static constexpr uint32_t PARA_FLAG_S = 0x00000008;
+    TParaTable();
+
+    static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
+    static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
+    static constexpr uint32_t PARA_FLAG_RW = 0x00000003;    // is write and readable
+    static constexpr uint32_t PARA_FLAG_NV = 0x00000004;    // is non volatile stored
+    static constexpr uint32_t PARA_FLAG_S =  0x00000008;     // is scopable
+    static constexpr uint32_t PARA_FLAG_FR = 0x00000010;   // call update callback before read 
+    static constexpr uint32_t PARA_FLAG_FW = 0x00000020;   // call update callback after write
+    static constexpr uint32_t PARA_FLAG_P =  0x00000040;    // parameter is a pointer
+
+    static constexpr uint16_t EPT_SYSTEM = 1;
+    static constexpr uint16_t EPT_EPLIST = 2;
 
     typedef struct paraRec_s
     {
-        uint32_t* pPara;
+        union{
+            uint32_t para;
+            uint32_t* pPara;
+        };
         void (*pFAccessCb)(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite);
         void *cbArg;
         uint32_t flags;
     } paraRec_t;
 
-    typedef struct subTable_s
+    typedef struct endpoint_s
     {
-        uint16_t startIndex;
-        uint16_t length;
+        union {
+            struct {
+                uint16_t startIndex;
+                uint16_t type;
+            };
+            uint32_t epId;
+        };
+        uint32_t length;
         paraRec_t* para;
-        struct subTable_s* next;
-    } subTable_t;
+        struct endpoint_s* next;
+    } endpoint_t;
 
-    void init();
-    void addSubTable(subTable_t* aSubTable);
+    void init(uint32_t aUniqueId, uint32_t aDeviceId);
+    void addEndpoint(endpoint_t* aEndpoint_t);
+    void configDeviceEndpoint(uint32_t aUniqueId, uint32_t aDeviceTypeId);
     void setPara(uint16_t aRegAdr, uint32_t aData);
     bool getPara(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
 
 private:
-    subTable_t* mTableRoot;
     paraRec_t* findPara(uint16_t index);
 
+    static constexpr uint32_t mSysParaLen = 5; 
+
+    paraRec_t mSysPara[mSysParaLen];
+    endpoint_t mSysEndpoint;
+
+    static constexpr uint32_t mEpListBaseIndex = 0x0010;
+
+    paraRec_t mEpListPara[PT_MAXENDPOINTS + 1];
+    endpoint_t mEpListEndpoint;
 };
 
 #endif /* PARATABLE_H_ */

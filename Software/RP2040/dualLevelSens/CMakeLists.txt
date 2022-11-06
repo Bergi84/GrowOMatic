@@ -16,7 +16,7 @@ target_include_directories(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common
 )	
 		
-target_link_libraries(dualLevelSens pico_stdlib hardware_pio hardware_irq pico_multicore)
+target_link_libraries(dualLevelSens pico_stdlib hardware_pio hardware_irq pico_multicore pico_unique_id)
 
 target_compile_definitions(dualLevelSens PUBLIC
     PICO_STACK_SIZE=0x1000

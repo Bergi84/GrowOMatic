@@ -183,7 +183,7 @@ inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
   uint32_t clobber;
 
   // switch to new stack
-  // add a guard for stack overflow detection ad the bottom of each stack
+  // todo: add a guard for stack overflow detection ad the bottom of each stack
   __asm volatile
   (
     // load new stack pointer

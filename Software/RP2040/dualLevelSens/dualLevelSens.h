@@ -9,3 +9,5 @@
 #define gpio_uart0_tx           28
 #define gpio_uart1_rx           25
 #define gpio_uart1_tx           24
+
+#define GM_DEVICEID             16
