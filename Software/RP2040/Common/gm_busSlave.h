@@ -5,19 +5,11 @@
 #include "uart.h"
 #include "paraTable.h"
 #include "sequencer_armm0.h"
+#include "gm_bus.h"
 
-class GM_busSlave
+class GM_busSlave : public GM_Bus
 {
 private:
-    static constexpr uint8_t mSdW = 0x68;
-    static constexpr uint8_t mSdR = 0xA2;
-
-    static constexpr uint32_t mBaudRate = 115200;
-
-    static constexpr uint8_t mInvalidAdr = -1;
-
-    static constexpr uint32_t mCrcPoly = 0xEDB88320;
-
     typedef struct com_s { 
         TUart* uart;
         struct com_s* otherCom;
@@ -72,10 +64,6 @@ private:
     uint32_t mByteTimeUs;
     uint32_t mByteTimeoutUs;
     uint32_t mTurnAroundTimeout;
-
-    uint32_t mCrcTab[256];
-    uint32_t crcCalc(uint32_t aCrc, uint8_t aByte);
-    void crcInitTab();
 
     alarm_id_t mTimeoutId;
     alarm_id_t mRegTimeoutId;

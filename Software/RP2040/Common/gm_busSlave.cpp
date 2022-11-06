@@ -1,6 +1,6 @@
 #include "gm_busSlave.h"
 
-GM_busSlave::GM_busSlave()
+GM_busSlave::GM_busSlave() : GM_Bus()
 {
     mState = S_IDLE;
 }
@@ -106,7 +106,7 @@ void GM_busSlave::rxCb(com_t* aCom)
 
                     mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
 
-                    // calculate turnaround timout = transfaretime + 150% * bytetime
+                    // calculate turnaround timout = transfaretime + 50% * bytetime
                     mTurnAroundTimeout = mByteTimeoutUs * 2 * (byte - 1) + (mByteTimeUs * 3 >> 2);
                 }
             }
@@ -369,27 +369,6 @@ int64_t GM_busSlave::regTimeOutCb(alarm_id_t id, void* aPObj)
     pObj->mRegTimeoutId = 0;
 
     return 0;
-}
-
-uint32_t GM_busSlave::crcCalc(uint32_t aCrc, uint8_t aByte)
-{
-    return (aCrc >> 8) ^ mCrcTab[((uint8_t)aCrc) ^ aByte];
-}
-
-void GM_busSlave::crcInitTab()
-{
-	for (uint32_t i = 0; i < 256; i++) {
-
-		uint32_t crc = i;
-
-		for (uint32_t j = 0; j < 8; j++) {
-
-			if ( crc & 0x00000001 ) crc = ( crc >> 1 ) ^ mCrcPoly;
-			else                     crc =   crc >> 1;
-		}
-
-		mCrcTab[i] = crc;
-	}
 }
 
 void GM_busSlave::paraRW(void* aArg)
