@@ -67,7 +67,7 @@ int main()
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
 
-    gParaTable.init(*((uint32_t*) uId.id), GM_DEVICEID);
+    gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR);
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 

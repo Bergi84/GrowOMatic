@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 #include "version.h"
+#include "gm_bus.h"
 
 #ifndef PT_MAXENDPOINTS
 #define PT_MAXENDPOINTS 16
@@ -21,9 +22,6 @@ public:
     static constexpr uint32_t PARA_FLAG_FR = 0x00000010;   // call update callback before read 
     static constexpr uint32_t PARA_FLAG_FW = 0x00000020;   // call update callback after write
     static constexpr uint32_t PARA_FLAG_P =  0x00000040;    // parameter is a pointer
-
-    static constexpr uint16_t EPT_SYSTEM = 1;
-    static constexpr uint16_t EPT_EPLIST = 2;
 
     typedef struct paraRec_s
     {
@@ -50,7 +48,7 @@ public:
         struct endpoint_s* next;
     } endpoint_t;
 
-    void init(uint32_t aUniqueId, uint32_t aDeviceId);
+    void init(uint32_t aUniqueId, devType_t aDevType);
     void addEndpoint(endpoint_t* aEndpoint_t);
     void configDeviceEndpoint(uint32_t aUniqueId, uint32_t aDeviceTypeId);
     void setPara(uint16_t aRegAdr, uint32_t aData);
@@ -64,8 +62,6 @@ private:
 
     paraRec_t mSysPara[mSysParaLen];
     endpoint_t mSysEndpoint;
-
-    static constexpr uint32_t mEpListBaseIndex = 0x0010;
 
     paraRec_t mEpListPara[PT_MAXENDPOINTS + 1];
     endpoint_t mEpListEndpoint;

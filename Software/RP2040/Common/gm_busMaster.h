@@ -75,15 +75,14 @@ private:
     bool mScanAktiv;
     bool mDeviceListUpdated;
 
-    void (*mDeviceListChangedCb)(void* aArg, TBusCoordinator* pBC);
-    void* mDeviceListChangedCbArg;
+    void (*mDevListUpCb)(void* aArg, uint32_t* aUidList, uint32_t listLen);
+    void* mDevListUpCbArg;
 
     uint8_t mScanIndex;
     static void scanCb(void* aArg, uint32_t* UId);
     void scan();
 
     void queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*), void* aArg);
-    uint8_t getAdr(uint32_t aUid);
 
     void sendReq();
     static void rxCb(void* aArg);
@@ -122,16 +121,29 @@ private:
 
 public:
     void init(TUart* aUart, TSequencer* aSeq);
+    uint8_t getAdr(uint32_t aUid);
     void queueReadReq(uint32_t aUId, uint16_t mParaAdr, void (*reqCb) (void*, uint32_t*), void* aArg);
     void queueWriteReq(uint32_t aUId, uint16_t mParaAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*), void* aArg);
-    void installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, TBusCoordinator* pBC), void* mDeviceListChangedCbArg);
+    void installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg);
 };
 
 class GM_busMaster
 {
 private:
-    TBusCoordinator mBus[GM_MAXUARTS];
+    TBusCoordinator mBusCoor[GM_MAXUARTS];
     TSequencer* mSeq;
+
+
+
+    typedef struct {
+        GM_busMaster* pObj;
+        uint32_t busIndex;
+    } cbData_t;
+    cbData_t mCbData[GM_MAXUARTS];
+
+    static void mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen);
+
+
 
 public:
     void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq);

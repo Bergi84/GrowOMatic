@@ -1,11 +1,9 @@
 #include "paraTable.h"
 
-
-
 TParaTable::TParaTable() : 
 mSysPara( (paraRec_t[mSysParaLen]) {
     /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   1 deviceId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    /*   1 deviceType       */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   2 fwVersion        */ {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   3                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   4                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R}
@@ -13,8 +11,8 @@ mSysPara( (paraRec_t[mSysParaLen]) {
 
 mEpListEndpoint( (endpoint_t) {
     { { 
-        .startIndex = mEpListBaseIndex,
-        .type = EPT_EPLIST    
+        .startIndex = mEpListBaseRegAdr,
+        .type = (uint16_t)EPT_EPLIST    
     } }, 
     .length = 1, 
     .para = mEpListPara,
@@ -23,7 +21,7 @@ mEpListEndpoint( (endpoint_t) {
 mSysEndpoint( (endpoint_t) { 
     { { 
         .startIndex = 0,
-        .type = EPT_SYSTEM    
+        .type = (uint16_t)EPT_SYSTEM    
     } }, 
     .length = sizeof(mSysPara)/sizeof(paraRec_t), 
     .para = mSysPara,
@@ -37,17 +35,17 @@ mSysEndpoint( (endpoint_t) {
     }
 }
 
-void TParaTable::init(uint32_t aUniqueId, uint32_t aDeviceId)
+void TParaTable::init(uint32_t aUniqueId, devType_t aDevType)
 {
     mSysPara[0].para = aUniqueId;
-    mSysPara[1].para = aDeviceId;
+    mSysPara[1].para = (uint32_t) aDevType;
 }
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
     // avoid insertion of endpoint before endpoint list
     // and if endpointlist is full
-    if( aEndpoint->startIndex < mEpListBaseIndex + PT_MAXENDPOINTS + 1 ||
+    if( aEndpoint->startIndex < mEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
         mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
     {
         return;

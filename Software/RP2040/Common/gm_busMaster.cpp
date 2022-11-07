@@ -29,12 +29,12 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
     mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
     mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
 
-    mDeviceListChangedCb = 0;
+    mDevListUpCb = 0;
 
     mState = S_IDLE;
     mScanAktiv = false;
 
-    mScanIntervallUs = 5000000;
+    mScanIntervallUs = 1000000;
 
     mSeq->addTask(mCoorTaskId, coorTask, this);
     add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
@@ -106,8 +106,8 @@ void TBusCoordinator::scanCb(void* aArg, uint32_t* UId)
         {
             // found the end of bus
             pObj->mScanAktiv = false;
-            if(pObj->mDeviceListUpdated && pObj->mDeviceListChangedCb)
-                pObj->mDeviceListChangedCb(pObj->mDeviceListChangedCbArg, pObj);
+            if(pObj->mDeviceListUpdated && pObj->mDevListUpCb)
+                pObj->mDevListUpCb(pObj->mDevListUpCbArg, pObj->mDeviceList, pObj->mDevListLength);
         }
     }
 }
@@ -547,11 +547,20 @@ bool TBusCoordinator::scanAlert(repeating_timer_t *rt)
     return true;
 }
 
+void TBusCoordinator::installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg)
+{
+    mDevListUpCb = mDeviceListChangedCb;
+    mDevListUpCbArg = mDeviceListChangedCbArg;
+}
+
 void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq)
 {
     mSeq = aSeq;
     for(int i = 0; i < aListLen; i++)
     {
-        mBus[i].init(aUartList[i], aSeq);
+        mCbData[i].pObj = this;
+        mCbData[i].busIndex = i;
+        mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
+        mBusCoor[i].init(aUartList[i], aSeq);
     }
 }
