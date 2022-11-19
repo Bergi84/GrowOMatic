@@ -1,4 +1,5 @@
 #include "paraTable.h"
+#include "gm_epLib.h"
 
 TParaTable::TParaTable() : 
 mSysPara( (paraRec_t[mSysParaLen]) {
@@ -11,7 +12,7 @@ mSysPara( (paraRec_t[mSysParaLen]) {
 
 mEpListEndpoint( (endpoint_t) {
     { { 
-        .startIndex = mEpListBaseRegAdr,
+        .startIndex = CEpListBaseRegAdr,
         .type = (uint16_t)EPT_EPLIST    
     } }, 
     .length = 1, 
@@ -28,10 +29,9 @@ mSysEndpoint( (endpoint_t) {
     .next = &mEpListEndpoint
 })
 {
-    mEpListPara[0] = {.pPara = &mEpListEndpoint.length, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R | PARA_FLAG_P};
-    for(int i = 1; i < PT_MAXENDPOINTS; i++)
+    for(int i = 0; i < PT_MAXENDPOINTS; i++)
     {
-        mEpListPara[i] = {.pPara = 0, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R | PARA_FLAG_P};
+        mEpListPara[i] = {.para = EPT_INVALID, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R};
     }
 }
 
@@ -43,9 +43,9 @@ void TParaTable::init(uint32_t aUniqueId, devType_t aDevType)
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
-    // avoid insertion of endpoint before endpoint list
+    // avoid insertion of endpoint before end
     // and if endpointlist is full
-    if( aEndpoint->startIndex < mEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
+    if( aEndpoint->startIndex < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
         mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
     {
         return;
@@ -68,7 +68,8 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
         }
 
         // update endpoint list
-        mEpListPara[epListInd].pPara = &tmp->epId; 
+        mEpListPara[epListInd].pPara = &tmp->epId;
+        mEpListPara[epListInd].flags = PARA_FLAG_R | PARA_FLAG_P;
         epListInd++;
         tmp = tmp->next;
     }

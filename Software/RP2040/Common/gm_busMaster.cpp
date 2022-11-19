@@ -1,5 +1,6 @@
 #include "gm_busMaster.h"
 #include "hardware/sync.h"
+#include "gm_device.h"
 
 
 TBusCoordinator::TBusCoordinator() : GM_Bus()
@@ -14,6 +15,7 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
         crcInitTab();
 
     mUart = aUart;
+    mParaTable = 0;
     mSeq = aSeq;
 
     mUart->config(mBaudRate, UART_PARITY_NONE);
@@ -21,7 +23,7 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
     mUart->disableTx(false);
     mUart->installRxCb(rxCb, (void*)this);
 
-    mDevListLength = 0;
+    mDevListLength = 0;    
 
     mReqQueue.rInd = 0;
     mReqQueue.wInd = 0;
@@ -38,6 +40,26 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
 
     mSeq->addTask(mCoorTaskId, coorTask, this);
     add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
+}
+
+
+void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
+{
+    mUart = 0;
+    mParaTable = aParaTable;
+
+    mDevListLength = 1;
+    mParaTable->getPara(0, &mDeviceList[0]);
+
+    mReqQueue.rInd = 0;
+    mReqQueue.wInd = 0;
+
+    mDevListUpCb(mDevListUpCbArg, mDeviceList, mDevListLength);
+
+    mState = S_IDLE;
+    mScanAktiv = false;
+
+    mSeq->addTask(mCoorTaskId, coorTask, this);
 }
 
 void TBusCoordinator::scan()
@@ -58,10 +80,10 @@ void TBusCoordinator::scan()
     }
 }
 
-void TBusCoordinator::scanCb(void* aArg, uint32_t* UId)
+void TBusCoordinator::scanCb(void* aArg, uint32_t* UId, errCode_T aStatus)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) aArg;
-    if(UId)
+    if(aStatus == EC_SUCCESS)
     {
         if(((int32_t)pObj->mScanIndex) <= ((int32_t) pObj->mDevListLength) - 1)
         {
@@ -119,10 +141,10 @@ uint8_t TBusCoordinator::getAdr(uint32_t aUid)
         if(mDeviceList[i] == aUid)
             return i;
     }
-    return mInvalidAdr;
+    return CInvalidAdr;
 }
 
-void TBusCoordinator::queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*), void* aArg)
+void TBusCoordinator::queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*, errCode_T), void* aArg)
 {
     uint32_t status = save_and_disable_interrupts();
 
@@ -149,59 +171,79 @@ void TBusCoordinator::queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*)
     mSeq->queueTask(mCoorTaskId);
 }
 
-void TBusCoordinator::queueReadReq(uint32_t aUId, uint16_t mParaAdr, void (*reqCb) (void*, uint32_t*), void* aArg)
+errCode_T TBusCoordinator::queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
 {
     uint32_t status = save_and_disable_interrupts();
+
+    // check uid
+    if( aReqAdr->devAdr < mDevListLength;  // does the requested device adress exist?
+        aReqAdr->uid /= mDeviceList[aReqAdr->devAdr])  // is the uid correct?
+    {
+        return EC_INVALID_DEVADR;
+    }
+    
 
     uint8_t newWInd = mReqQueue.wInd == GM_QUEUELEN - 1 ? 0 : mReqQueue.wInd + 1;
     if(newWInd == mReqQueue.rInd)
     {
+        // queue is full
         restore_interrupts(status);
-        // todo: log error
-        return;
+        return EC_QUEUE_FULL;
     }
 
     reqRec_t* tmp =  &mReqQueue.buffer[mReqQueue.wInd];
-    tmp->reqMode = RM_byUid;
-    tmp->uniqueId = aUId;
+    tmp->reqMode = RM_byAdr;
+    tmp->uniqueId = aReqAdr->uid;
+    tmp->adr = aReqAdr->devAdr;
     tmp->reqCb = reqCb;
     tmp->arg = aArg;
     tmp->write = false;
-    tmp->paraAdr = mParaAdr;
+    tmp->paraAdr = aReqAdr->regAdr;
 
     mReqQueue.wInd = newWInd;
 
     restore_interrupts(status);
 
     mSeq->queueTask(mCoorTaskId);
+
+    return EC_SUCCESS;
 }
 
-void TBusCoordinator::queueWriteReq(uint32_t aUId, uint16_t mParaAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*), void* aArg)
+errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
 {
+    // check uid
+    if( aReqAdr->devAdr < mDevListLength;  // does the requested device adress exist?
+        aReqAdr->uid /= mDeviceList[aReqAdr->devAdr])  // is the uid correct?
+    {
+        return EC_INVALID_DEVADR;
+    }
+
     uint32_t status = save_and_disable_interrupts();
 
     uint8_t newWInd = mReqQueue.wInd == GM_QUEUELEN - 1 ? 0 : mReqQueue.wInd + 1;
     if(newWInd == mReqQueue.rInd)
     {
         restore_interrupts(status);
-        // todo: log error
-        return;
+        return EC_QUEUE_FULL;
     }
 
     reqRec_t* tmp =  &mReqQueue.buffer[mReqQueue.wInd];
-    tmp->reqMode = RM_byUid;
-    tmp->uniqueId = aUId;
+    tmp->reqMode = RM_byAdr;
+    tmp->uniqueId = aReqAdr->uid;
+    tmp->adr = aReqAdr->devAdr;
     tmp->reqCb = reqCb;
     tmp->arg = aArg;
     tmp->write = true;
     tmp->data = aVal;
-    tmp->paraAdr = mParaAdr;
+    tmp->paraAdr = aReqAdr->regAdr;
 
     mReqQueue.wInd = newWInd;
 
     restore_interrupts(status);
 
     mSeq->queueTask(mCoorTaskId);
+
+    return EC_SUCCESS;
 }
 
 void TBusCoordinator::coorTask(void* aArg)
@@ -216,7 +258,7 @@ void TBusCoordinator::coorTask(void* aArg)
             // write request finsihed
             if(tmp->reqCb)
             {
-                tmp->reqCb(tmp->arg, &tmp->data);
+                tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
             }
             pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
             pObj->mState = S_IDLE;
@@ -230,7 +272,7 @@ void TBusCoordinator::coorTask(void* aArg)
             {
                 if(tmp->reqCb)
                 {
-                    tmp->reqCb(tmp->arg, &tmp->data);                
+                    tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
                 }
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                 pObj->mState = S_IDLE;
@@ -256,7 +298,7 @@ void TBusCoordinator::coorTask(void* aArg)
                         // uid recieved without errors
                         if(tmp->reqCb)
                         {
-                            tmp->reqCb(tmp->arg, &tmp->data);                
+                            tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
                         }
                         pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                         pObj->mState = S_IDLE;
@@ -276,7 +318,7 @@ void TBusCoordinator::coorTask(void* aArg)
                         // not existing parameter
                         if(tmp->reqCb)
                         {
-                            tmp->reqCb(tmp->arg, 0);                
+                            tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);                
                         }
                         pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                         pObj->mState = S_IDLE;
@@ -291,7 +333,7 @@ void TBusCoordinator::coorTask(void* aArg)
                         } else {
                             if(tmp->reqCb)
                             {
-                                tmp->reqCb(tmp->arg, 0);                
+                                tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);                
                             }
                             pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                             pObj->mState = S_IDLE;
@@ -314,7 +356,7 @@ void TBusCoordinator::coorTask(void* aArg)
             // because the scan alart will is retry ist in fewe seconds again
             if(tmp->reqCb)
             {
-                tmp->reqCb(tmp->arg, 0);                
+                tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
             }
             pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
             pObj->mState = S_IDLE;
@@ -330,7 +372,7 @@ void TBusCoordinator::coorTask(void* aArg)
             } else {
                 if(tmp->reqCb)
                 {
-                    tmp->reqCb(tmp->arg, 0);                
+                    tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
                 }
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                 pObj->mState = S_IDLE;
@@ -342,40 +384,126 @@ void TBusCoordinator::coorTask(void* aArg)
 
     if(pObj->mState == S_IDLE)
     {  
-        pObj->mRetryCnt = 0;
-        // idle look for new element in queue
-        if(pObj->mReqQueue.rInd != pObj->mReqQueue.wInd)
+        if(pObj->mUart)
         {
-            // element found get address if needed
-            reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
-
-            if(tmp->reqMode == RM_byUid)
+            pObj->mRetryCnt = 0;
+            // idle look for new element in queue
+            if(pObj->mReqQueue.rInd != pObj->mReqQueue.wInd)
             {
-                tmp->adr = pObj->getAdr(tmp->uniqueId);
-                if(tmp->adr == TBusCoordinator::mInvalidAdr)
+                // element found get address if needed
+                reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
+
+                if(tmp->reqMode == RM_byUid)
                 {
-                    // invalid unique id, call callback function without value pointer
-                    // to signal an error
-                    if(tmp->reqCb)
+                    tmp->adr = pObj->getAdr(tmp->uniqueId);
+                    if(tmp->adr == CInvalidAdr)
                     {
-                        tmp->reqCb(tmp->arg, 0);
-                        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                        // invalid unique id, call callback function without value pointer
+                        // to signal an error
+                        if(tmp->reqCb)
+                        {
+                            tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);
+                            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                        }
+                    }
+                    else
+                    {
+                        pObj->sendReq();
                     }
                 }
                 else
                 {
-                    pObj->sendReq();
+                    // RM_byAdr or RM_getUId
+                    if(tmp->reqMode == RM_byAdr && tmp->uniqueId != pObj->mDeviceList[tmp->adr])
+                    {
+                        // invalid adress
+                        tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
+                        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                    }
+                    else
+                    {
+                        pObj->sendReq();
+                    }
                 }
             }
-            else
+        }
+        else
+        {
+            // mUart == 0 means: this is virtual bus with the lokale device as slave
+
+            // look for new element in queue
+            if(pObj->mReqQueue.rInd != pObj->mReqQueue.wInd)
             {
-                pObj->sendReq();
+                // element found
+                reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
+
+                switch(tmp->reqMode)
+                {
+                    case RM_getUid:
+                    {
+                        uint32_t locUid;
+                        pObj->mParaTable->getPara(0, &locUid);
+                        tmp->reqCb(tmp->arg, &locUid, EC_SUCCESS);
+                    }
+                    break;
+
+                    case RM_byUid:
+                        if(pObj->mDeviceList[0] == tmp->uniqueId)
+                        {
+                            if(tmp->write)
+                            {
+                                pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
+                                tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
+                            }
+                            else
+                            {
+                                uint32_t data;
+                                if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                                {
+                                    tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
+                                }
+                                else
+                                {
+                                    tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);
+                        }
+                    break;
+                
+
+                case RM_byAdr:     
+                    if(tmp->adr == 0 && pObj->mDeviceList[0] == tmp->uniqueId)
+                    {
+                        if(tmp->write)
+                        {
+                            pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
+                            tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
+                        }
+                        else
+                        {
+                            uint32_t data;
+                            if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                            {
+                                tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
+                            }
+                            else
+                            {
+                                tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
+                    }
+                }
+                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
             }
         }
-    }
-    else
-    {
-        pObj->sendReq();
     }
 }
 
@@ -553,14 +681,61 @@ void TBusCoordinator::installDeviceListUpdateCb(void (*mDeviceListChangedCb)(voi
     mDevListUpCbArg = mDeviceListChangedCbArg;
 }
 
-void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq)
+void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
 {
     mSeq = aSeq;
-    for(int i = 0; i < aListLen; i++)
+
+    mRootDev = 0;
+
+    // bus 0 is a virtual bus with lokal device as slave
+    mCbData[0].pObj = this;
+    mCbData[0].busIndex = 0;
+    mBusCoor[0].installDeviceListUpdateCb(mDevListUpCb, &mCbData[0]);
+    mBusCoor[0].init(aParaTable, aSeq);
+
+    for(int i = 1; i < aListLen + 1; i++)
     {
         mCbData[i].pObj = this;
         mCbData[i].busIndex = i;
         mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
-        mBusCoor[i].init(aUartList[i], aSeq);
+        mBusCoor[i].init(aUartList[i - 1], aSeq);
+    }
+}
+
+void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen)
+{
+    GM_busMaster* pObj = ((cbData_t*) aArg)->pObj;
+    uint32_t bus = ((cbData_t*) aArg)->busIndex;
+
+    for(int i = 0; i < listLen; i++)
+    {
+        uint32_t uid = aUidList[i];
+
+        // search if device already exist
+        class GM_device* dev = pObj->mRootDev;
+        class GM_device* devBefore = 0;
+        while(dev != 0)
+        {
+            if(dev->getUid() == uid)
+            {
+
+                break;
+            }
+            devBefore = dev;
+            dev = dev->mNext;
+        }
+
+        GM_device* newDev = new GM_device(uid, pObj);
+        newDev->updateAdr(bus, i);
+
+        // device not found, add an new one
+        if(pObj->mRootDev)
+        {
+            pObj->mRootDev = newDev;
+        }
+        else
+        {
+            devBefore->mNext = newDev;
+        }
     }
 }

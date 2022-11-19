@@ -2,7 +2,22 @@
 #define GM_BUS_H_
 
 #include <stdint.h>
-#include "gm_epLib.h"
+
+typedef enum
+{
+    EC_SUCCESS,
+    EC_INVALID_DEVADR,
+    EC_INVALID_REGADR,
+    EC_QUEUE_FULL,
+    EC_TIMEOUT,
+    EC_INVALID_UID
+} errCode_T;
+
+static constexpr uint8_t CInvalidAdr = -1;
+static constexpr uint8_t CInvalidBus = -1;
+
+static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
+static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
 
 class GM_Bus
 {
@@ -10,7 +25,6 @@ protected:
     static constexpr uint8_t mSdW = 0x68;
     static constexpr uint8_t mSdR = 0xA2;
     static constexpr uint32_t mBaudRate = 115200;
-    static constexpr uint8_t mInvalidAdr = -1;
     static constexpr uint32_t mCrcPoly = 0xEDB88320;
 
     static bool mCrcTabInit;
@@ -21,40 +35,18 @@ protected:
     GM_Bus();
 };
 
-static constexpr uint32_t mSystemBaseRegAdr = 0x0000;
-static constexpr uint32_t mEpListBaseRegAdr = 0x0010;
-
 typedef enum {
     DT_INVALID,
     DT_DUAL_LEVEL_SENSOR = 1,
     DT_DUAL_VALVE_CON = 2,
 } devType_t;
 
-class GM_busMaster;
-
-class TDevRec {
-private:
-    TDevRec();
-    static const char* mDevNameList[];
-    GM_busMaster* mBusMaster;
-    uint32_t mUid;
-    uint32_t mBusIndex;
-    devType_t mType;
-
-    uint32_t mEpScanInd;
-    class TEpBase* epList;
-    
-    static void reqEpListLenCb (void* aArg, uint32_t* aVal);
-    static void reqEp(void* aArg, uint32_t* aVal);
-
-    bool mCon;
-public: 
-    TDevRec(uint32_t aUid, GM_busMaster* aBusMaster);
-
-    const char* getDevName() {return mDevNameList[mType];}
-
-    class TDevRec* next;
-} ;
+typedef enum
+{
+    DS_NEW,
+    DS_AVAILABLE,
+    DS_LOST
+} devStat_t;
 
 
 #endif /* GM_BUS_H_*/

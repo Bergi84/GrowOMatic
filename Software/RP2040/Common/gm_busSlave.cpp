@@ -83,19 +83,19 @@ void GM_busSlave::rxCb(com_t* aCom)
                 // request belongs to this device so we must decode the hole massage
                 // we send a the invalid Addr to the next device to signal abort
                 mState = S_REGADR;
-                aCom->otherCom->uart->txChar(mInvalidAdr);
+                aCom->otherCom->uart->txChar(CInvalidAdr);
 
                 mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
             }
             else
             {
                 // the message belongs to a other device
-                if(byte == mInvalidAdr)
+                if(byte == CInvalidAdr)
                 {
                     // we got the invalid Adr which means the message belongs to a device before this
                     // and we can abort the relaying
                     mState = S_IDLE;
-                    aCom->otherCom->uart->txChar(mInvalidAdr);
+                    aCom->otherCom->uart->txChar(CInvalidAdr);
                     aCom->byteCnt = 0;
                 }
                 else
@@ -268,7 +268,7 @@ void GM_busSlave::rxCb(com_t* aCom)
     else
     {
         // this uart is currently the scondary uart
-        if(aCom->byteCnt == 2 && byte == mInvalidAdr)
+        if(aCom->byteCnt == 2 && byte == CInvalidAdr)
         {
             // massage abort detected, this means the recieved massage was for an device before this
             aCom->uart->disableTx(true);

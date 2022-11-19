@@ -2,6 +2,7 @@
 #define GM_BUSMASTER_H_
 
 #include "uart.h"
+#include "paraTable.h"
 #include "sequencer_armm0.h"
 #include "gm_bus.h"
 
@@ -28,6 +29,7 @@ private:
     TBusCoordinator();
 
     TUart* mUart;
+    TParaTable* mParaTable;
     TSequencer* mSeq;
 
     uint32_t mDeviceList[GM_MAXSLAVES];
@@ -63,7 +65,7 @@ private:
         reqMode_t reqMode;
         uint8_t adr;
         void* arg;
-        void (*reqCb) (void* aArg, uint32_t* aVal);
+        void (*reqCb) (void* aArg, uint32_t* aVal, errCode_T aStatus);
     } reqRec_t;
 
     struct {
@@ -79,10 +81,10 @@ private:
     void* mDevListUpCbArg;
 
     uint8_t mScanIndex;
-    static void scanCb(void* aArg, uint32_t* UId);
+    static void scanCb(void* aArg, uint32_t* UId, errCode_T aStatus);
     void scan();
 
-    void queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*), void* aArg);
+    void queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*, errCode_T), void* aArg);
 
     void sendReq();
     static void rxCb(void* aArg);
@@ -120,33 +122,48 @@ private:
     uint8_t mCoorTaskId;
 
 public:
+    typedef struct
+    {
+        uint32_t uid;
+        uint16_t regAdr;
+        uint8_t devAdr;
+        uint8_t aBus;
+    }   
+    reqAdr_t;
+
     void init(TUart* aUart, TSequencer* aSeq);
+
+    // init of an virtual bus which holdes the loakel device as slave
+    void init(TParaTable* aParaTable, TSequencer* aSeq);
+
     uint8_t getAdr(uint32_t aUid);
-    void queueReadReq(uint32_t aUId, uint16_t mParaAdr, void (*reqCb) (void*, uint32_t*), void* aArg);
-    void queueWriteReq(uint32_t aUId, uint16_t mParaAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*), void* aArg);
+
+    errCode_T queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
+    errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
     void installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg);
 };
 
 class GM_busMaster
 {
 private:
-    TBusCoordinator mBusCoor[GM_MAXUARTS];
+    TBusCoordinator mBusCoor[GM_MAXUARTS + 1];  // bus 0 is the lokal device
     TSequencer* mSeq;
-
-
 
     typedef struct {
         GM_busMaster* pObj;
         uint32_t busIndex;
     } cbData_t;
-    cbData_t mCbData[GM_MAXUARTS];
+    cbData_t mCbData[GM_MAXUARTS + 1];   // bus 0 is the lokal device
 
     static void mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen);
 
-
+    class GM_device* mRootDev;
 
 public:
-    void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq);
+    void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable);
+
+    errCode_T queueReadReq(TBusCoordinator::reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
+    errCode_T queueWriteReq(TBusCoordinator::reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
 };
 
 #endif /*GM_BUSMASTER_H_*/

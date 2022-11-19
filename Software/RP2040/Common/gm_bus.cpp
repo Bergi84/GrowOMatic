@@ -31,20 +31,3 @@ GM_Bus::GM_Bus()
         crcInitTab();
     }
 }
-
-const char* TDevRec::mDevNameList[] =
-{
-    [DT_INVALID] = "invalid",
-    [DT_DUAL_LEVEL_SENSOR] = "dualLevelSensor",
-    [DT_DUAL_VALVE_CON] = "dualValveCon"
-};
-
-TDevRec::TDevRec(uint32_t aUid, GM_busMaster* aBusMaster)
-{
-    mUid = aUid;
-    GM_busMaster* mBusMaster = aBusMaster;
-    devType_t mType = DT_INVALID;
-    class TEpBase* epList = 0;
-    mCon = true;
-    mEpScanInd = 0;
-}

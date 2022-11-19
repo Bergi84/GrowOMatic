@@ -50,7 +50,6 @@ public:
 
     void init(uint32_t aUniqueId, devType_t aDevType);
     void addEndpoint(endpoint_t* aEndpoint_t);
-    void configDeviceEndpoint(uint32_t aUniqueId, uint32_t aDeviceTypeId);
     void setPara(uint16_t aRegAdr, uint32_t aData);
     bool getPara(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
@@ -63,7 +62,7 @@ private:
     paraRec_t mSysPara[mSysParaLen];
     endpoint_t mSysEndpoint;
 
-    paraRec_t mEpListPara[PT_MAXENDPOINTS + 1];
+    paraRec_t mEpListPara[PT_MAXENDPOINTS];
     endpoint_t mEpListEndpoint;
 };
 

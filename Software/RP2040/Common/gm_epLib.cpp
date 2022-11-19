@@ -1,4 +1,5 @@
 #include "gm_epLib.h"
+#include "gm_busMaster.h"
 
 const paraDef_t TEpSystem::cParaList[] =
 {
@@ -17,6 +18,18 @@ TEpSystem::TEpSystem()
     mParaList = cParaList;
     mParaListLen = cParaListLength;
     mEpName = cName;
+    mNext = 0;
+}
+
+void TEpSystem::getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T), void* aArg )
+{
+    TBusCoordinator::reqAdr_t adr;
+    adr.aBus = mPDev->mBus;
+    adr.devAdr = mPDev->mAdr;
+    adr.uid = mPDev->mUid;
+    adr.regAdr = 0x0000 + PARA_TYPE;
+
+    mPDev->mBusMaster->queueReadReq(&adr, reqEpListLenCb, aArg);
 }
 
 TEpBase* TEpBase::newEp(epType_t aEpType)
