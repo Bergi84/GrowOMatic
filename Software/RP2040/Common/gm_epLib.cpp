@@ -1,5 +1,6 @@
 #include "gm_epLib.h"
 #include "gm_busMaster.h"
+#include "gm_device.h"
 
 const paraDef_t TEpSystem::cParaList[] =
 {
@@ -42,4 +43,14 @@ TEpBase* TEpBase::newEp(epType_t aEpType)
         default:
             return 0;
     }
+}
+
+void TEpBase::regUsage(GM_devUsedRec* mDevUsedRec)
+{
+    mPDev->regUsage(mDevUsedRec);
+}
+
+void TEpBase::unregUsage(GM_devUsedRec* mDevUsedRec)
+{
+    mPDev->unregUsage(mDevUsedRec);
 }

@@ -48,5 +48,14 @@ typedef enum
     DS_LOST
 } devStat_t;
 
+typedef struct
+{
+    uint32_t uid;
+    uint16_t regAdr;
+    uint8_t devAdr;
+    uint8_t aBus;
+}   
+reqAdr_t;
+
 
 #endif /* GM_BUS_H_*/

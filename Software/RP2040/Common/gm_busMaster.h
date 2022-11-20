@@ -122,15 +122,6 @@ private:
     uint8_t mCoorTaskId;
 
 public:
-    typedef struct
-    {
-        uint32_t uid;
-        uint16_t regAdr;
-        uint8_t devAdr;
-        uint8_t aBus;
-    }   
-    reqAdr_t;
-
     void init(TUart* aUart, TSequencer* aSeq);
 
     // init of an virtual bus which holdes the loakel device as slave
@@ -143,9 +134,13 @@ public:
     void installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg);
 };
 
+class GM_device;
+
 class GM_busMaster
 {
 private:
+    friend class GM_device;
+
     TBusCoordinator mBusCoor[GM_MAXUARTS + 1];  // bus 0 is the lokal device
     TSequencer* mSeq;
 
@@ -157,13 +152,18 @@ private:
 
     static void mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen);
 
+    void delDev(GM_device* aDev);
+
     class GM_device* mRootDev;
 
 public:
     void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable);
 
-    errCode_T queueReadReq(TBusCoordinator::reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
-    errCode_T queueWriteReq(TBusCoordinator::reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
+    inline errCode_T queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+    {   return mBusCoor[aReqAdr->aBus].queueReadReq(aReqAdr, reqCb, aArg);  }
+
+    inline errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+    {   return mBusCoor[aReqAdr->aBus].queueWriteReq(aReqAdr, aVal, reqCb, aArg);   }
 };
 
 #endif /*GM_BUSMASTER_H_*/

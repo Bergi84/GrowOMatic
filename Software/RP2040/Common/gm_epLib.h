@@ -20,6 +20,7 @@ typedef enum {
 } epType_t; 
 
 class GM_device;
+class GM_devUsedRec;
 
 class TEpBase {
 private:
@@ -35,6 +36,8 @@ protected:
 
 public:
     static TEpBase* newEp(epType_t aEpType);
+    void regUsage(GM_devUsedRec* mDevUsedRec);
+    void unregUsage(GM_devUsedRec* mDevUsedRec);
     TEpBase* mNext;
 };
 

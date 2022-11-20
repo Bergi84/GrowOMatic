@@ -11,6 +11,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/paraTable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busMaster.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_bus.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_device.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC

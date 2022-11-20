@@ -1,5 +1,29 @@
-#include  "gm_device.h"
+#include "gm_device.h"
+#include "gm_epLib.h"
+#include "gm_busMaster.h"
 
+GM_devUsedRec::GM_devUsedRec()
+{
+    mNext = 0;
+    mDev = 0;
+    mUpCb = 0;
+}
+
+void GM_devUsedRec::regUsage(GM_device* aDev)
+{
+    aDev->regUsage(this);
+}
+
+void GM_devUsedRec::unregUsage()
+{
+    mDev->unregUsage(this);
+}
+
+void GM_devUsedRec::instStatusUpCb(void (*aUpCb) (void*, devStat_t), void* aCbArg)
+{
+    mUpCb = aUpCb;
+    mCbArg = aCbArg;
+}
 
 const char* GM_device::mDevNameList[] =
 {
@@ -26,7 +50,21 @@ void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
     mBus = aBus;
     mAdr = aAdr;
 
-    if(mStat == DS_LOST)
+    if(aBus == CInvalidBus && mStat != DS_LOST)
+    {
+        mStat = DS_LOST;
+        if(mDevUsedList == 0)
+        {
+            mBusMaster->delDev(this);
+            return;
+        }
+        else
+        {
+            callStatUpCb();
+        }
+    }
+
+    if(aBus != CInvalidBus && mStat == DS_LOST)
     {
         if(mEpScanInd == CEpScanIndDone)
         {
@@ -37,8 +75,7 @@ void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
             mStat = DS_NEW;
             startEpScan();
         }
-
-        // todo: call status changed callbacks
+        callStatUpCb();
     }
 }
 
@@ -51,7 +88,7 @@ void GM_device::startEpScan()
     }
     else
     {
-        TBusCoordinator::reqAdr_t adr;
+        reqAdr_t adr;
         adr.aBus = mBus;
         adr.devAdr = mAdr;
         adr.uid = mUid;
@@ -71,7 +108,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             // recieved scan value
             if(pObj->mType == DT_INVALID)
             {
-                pObj->mType = epType_t (*aVal);
+                pObj->mType = devType_t (*aVal);
                 pObj->startEpScan();
             }
             else
@@ -80,8 +117,8 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                 {
                     // scan done
                     pObj->mEpScanInd = CEpScanIndDone;
-                    mStat = DS_AVAILABLE;
-                    // todo: call status changed callbacks
+                    pObj->mStat = DS_AVAILABLE;
+                    pObj->callStatUpCb();
                 }
                 else
                 {
@@ -103,8 +140,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
         
             // lost device during scan
             pObj->mStat = DS_LOST;
-
-            // todo: call status changed callbacks            
+            pObj->callStatUpCb();   
             break;
 
         case EC_QUEUE_FULL:
@@ -116,9 +152,67 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
         default:
             // scan done
             pObj->mEpScanInd = CEpScanIndDone;
-            mStat = DS_AVAILABLE;
-            // todo: call status changed callbacks
+            pObj->mStat = DS_AVAILABLE;
+            pObj->callStatUpCb();
             break;
     
+    }
+}
+
+void GM_device::callStatUpCb()
+{
+    GM_devUsedRec* akt = mDevUsedList;
+
+    while(akt)
+    {
+        if(akt->mUpCb)
+        {
+            akt->mUpCb(akt->mCbArg, mStat);
+        }
+        akt = akt->mNext;
+    }
+}
+
+void GM_device::regUsage(GM_devUsedRec* mDevUsedRec)
+{
+    if(mDevUsedRec->mDev != 0)
+    {
+        // unregister old device before register new one
+        mDevUsedRec->mDev->unregUsage(mDevUsedRec);
+    }
+    mDevUsedRec->mDev = this;
+
+    // insert at front of list becouse its faster
+    mDevUsedRec->mNext = mDevUsedList;
+    mDevUsedList = mDevUsedRec;
+}
+
+void GM_device::unregUsage(GM_devUsedRec* mDevUsedRec)
+{
+    if(mDevUsedList == mDevUsedRec)
+    {
+        mDevUsedList = mDevUsedRec->mNext;
+        mDevUsedRec->mDev = 0;
+
+        if(mDevUsedList == 0 && mStat == DS_LOST)
+        {
+            mBusMaster->delDev(this);
+            return;
+        }
+    } 
+    else
+    {
+        GM_devUsedRec* akt = mDevUsedList;
+
+        while(akt->mNext)
+        {
+            if(akt->mNext == mDevUsedRec)
+            {
+                akt->mNext = akt->mNext->mNext;
+                mDevUsedRec->mNext = 0;
+                return;
+            }
+            akt = akt->mNext;
+        }
     }
 }

@@ -353,7 +353,7 @@ void TBusCoordinator::coorTask(void* aArg)
         if(tmp->reqMode == RM_getUid)
         {
             // if the request was an get UID request we don't try it again
-            // because the scan alart will is retry ist in fewe seconds again
+            // because the scan alart will it retry in fewe seconds again
             if(tmp->reqCb)
             {
                 tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
@@ -384,6 +384,8 @@ void TBusCoordinator::coorTask(void* aArg)
 
     if(pObj->mState == S_IDLE)
     {  
+        // mUart == 0 means: this is virtual bus with the lokale device as slave
+        // virtual bus uses only state S_IDLE
         if(pObj->mUart)
         {
             pObj->mRetryCnt = 0;
@@ -429,8 +431,6 @@ void TBusCoordinator::coorTask(void* aArg)
         }
         else
         {
-            // mUart == 0 means: this is virtual bus with the lokale device as slave
-
             // look for new element in queue
             if(pObj->mReqQueue.rInd != pObj->mReqQueue.wInd)
             {
@@ -502,6 +502,7 @@ void TBusCoordinator::coorTask(void* aArg)
                     }
                 }
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                pObj->mSeq->queueTask(pObj->mCoorTaskId);
             }
         }
     }
@@ -707,35 +708,77 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
     GM_busMaster* pObj = ((cbData_t*) aArg)->pObj;
     uint32_t bus = ((cbData_t*) aArg)->busIndex;
 
-    for(int i = 0; i < listLen; i++)
+    uint32_t devFound[8] = {0};
+
+    // search if device already exist
+    GM_device* dev = pObj->mRootDev;
+    GM_device* devBefore = 0;
+    while(dev != 0)
     {
-        uint32_t uid = aUidList[i];
-
-        // search if device already exist
-        class GM_device* dev = pObj->mRootDev;
-        class GM_device* devBefore = 0;
-        while(dev != 0)
+        bool found = false;
+        for(int i = 0; i < listLen; i++)
         {
-            if(dev->getUid() == uid)
+            if(dev->mUid == aUidList[i])
             {
-
+                // device found
+                devFound[i >> 5] |= 1 << (i & 0x1F);
+                dev->updateAdr(bus, i);
+                found = true;
                 break;
             }
-            devBefore = dev;
+        }
+
+        if(!found && dev->mBus == bus)
+        {
+            // device not found
+            dev->updateAdr(CInvalidBus, CInvalidAdr);
+        }
+        
+        devBefore = dev;
+        dev = dev->mNext;
+    }
+
+    // add new devices to device list
+    for(int i = 0; i < listLen; i++)
+    {
+        if(~devFound[i >> 5] & (1 << (i & 0x1F)))
+        {
+            // todo: avoid new and delete with a pool of defined size
+            GM_device* newDev = new GM_device(aUidList[i], pObj);
+            newDev->updateAdr(bus, i);
+
+            // device not found, add an new one
+            if(pObj->mRootDev)
+            {
+                pObj->mRootDev = newDev;
+            }
+            else
+            {
+                devBefore->mNext = newDev;
+            }
+            devBefore = newDev;
+        }
+    }
+}
+
+void GM_busMaster::delDev(GM_device* aDev)
+{
+    if(aDev == mRootDev)
+    {
+        mRootDev = mRootDev->mNext;
+        delete aDev;
+    }
+    else
+    {
+        GM_device* dev = mRootDev;
+        while(dev->mNext != 0)
+        {
+            if(aDev == dev->mNext)
+            {
+                dev->mNext = dev->mNext->mNext;
+                delete aDev;
+            }
             dev = dev->mNext;
-        }
-
-        GM_device* newDev = new GM_device(uid, pObj);
-        newDev->updateAdr(bus, i);
-
-        // device not found, add an new one
-        if(pObj->mRootDev)
-        {
-            pObj->mRootDev = newDev;
-        }
-        else
-        {
-            devBefore->mNext = newDev;
         }
     }
 }
