@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "gm_bus.h"
+#include "gm_device.h"
 
 typedef struct paraDef_s {
     static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
@@ -19,25 +20,24 @@ typedef enum {
     EPT_EPLIST = 2,
 } epType_t; 
 
-class GM_device;
 class GM_devUsedRec;
 
 class TEpBase {
-private:
+protected:
     TEpBase();
 
-protected:
     class GM_device* mPDev;
     epType_t mType;
     uint16_t mBaseAdr;
     const paraDef_t* mParaList;
-    const uint32_t mParaListLen;
+    uint32_t mParaListLen;
     const char* mEpName;
 
 public:
     static TEpBase* newEp(epType_t aEpType);
     void regUsage(GM_devUsedRec* mDevUsedRec);
     void unregUsage(GM_devUsedRec* mDevUsedRec);
+    inline epType_t getType() { return mType; };
     TEpBase* mNext;
 };
 
@@ -59,7 +59,8 @@ private:
 
 public:
     TEpSystem();
-    void getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg );
+    inline void getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg )
+    {   mPDev->queueReadReq(0x0000 + PARA_TYPE, reqEpListLenCb, aArg);  };
 };
 
 #endif /*GM_LIB_H*/

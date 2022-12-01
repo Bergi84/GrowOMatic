@@ -5,6 +5,7 @@
 #include "paraTable.h"
 #include "sequencer_armm0.h"
 #include "gm_bus.h"
+#include "gm_epLib.h"
 
 #ifndef GM_MAXSLAVES
 #define GM_MAXSLAVES    64
@@ -164,6 +165,10 @@ public:
 
     inline errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
     {   return mBusCoor[aReqAdr->aBus].queueWriteReq(aReqAdr, aVal, reqCb, aArg);   }
+
+    // returns written length, also when aList is null or aLen is 0
+    // aLen ist the maximum length of aList
+    uint32_t getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLen);
 };
 
 #endif /*GM_BUSMASTER_H_*/

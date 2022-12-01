@@ -2,29 +2,6 @@
 #include "gm_epLib.h"
 #include "gm_busMaster.h"
 
-GM_devUsedRec::GM_devUsedRec()
-{
-    mNext = 0;
-    mDev = 0;
-    mUpCb = 0;
-}
-
-void GM_devUsedRec::regUsage(GM_device* aDev)
-{
-    aDev->regUsage(this);
-}
-
-void GM_devUsedRec::unregUsage()
-{
-    mDev->unregUsage(this);
-}
-
-void GM_devUsedRec::instStatusUpCb(void (*aUpCb) (void*, devStat_t), void* aCbArg)
-{
-    mUpCb = aUpCb;
-    mCbArg = aCbArg;
-}
-
 const char* GM_device::mDevNameList[] =
 {
     [DT_INVALID] = "invalid",
@@ -215,4 +192,27 @@ void GM_device::unregUsage(GM_devUsedRec* mDevUsedRec)
             akt = akt->mNext;
         }
     }
+}
+
+errCode_T GM_device::queueReadReq(uint16_t aRegAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+{   
+    reqAdr_t adr;
+    getDevAdr(&adr); 
+    adr.regAdr = aRegAdr;
+    return mBusMaster->queueReadReq(&adr, reqCb, aArg);  
+}
+
+errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+{   
+    reqAdr_t adr;
+    getDevAdr(&adr); 
+    adr.regAdr = aRegAdr;
+    return mBusMaster->queueWriteReq(&adr, aVal, reqCb, aArg);   
+}
+
+GM_devUsedRec::GM_devUsedRec()
+{
+    mNext = 0;
+    mDev = 0;
+    mUpCb = 0;
 }

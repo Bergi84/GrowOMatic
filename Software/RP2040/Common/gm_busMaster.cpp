@@ -782,3 +782,8 @@ void GM_busMaster::delDev(GM_device* aDev)
         }
     }
 }
+
+uint32_t GM_busMaster::getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLen)
+{
+    // todo: find all endpoints with correct type and return list
+}
