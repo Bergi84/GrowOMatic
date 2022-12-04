@@ -14,6 +14,7 @@ TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
 THwUart gUart0;
 THwUart gUart1;
+TUsbUart gUartTerm;
 GM_busSlave gSlave;
 TParaTable gParaTable;
 
@@ -30,6 +31,11 @@ void uart0IrqHandler()
 void uart1IrqHandler()
 {
     gUart1.irqHandler();
+}
+
+void uartTermIrqHandler()
+{
+    gUartTerm.irqHandler();
 }
 
 void idle(void* aArg)
@@ -63,6 +69,9 @@ int main()
 
     gUart1.init(uart1, gpio_uart1_tx, gpio_uart1_rx);
     gUart1.setIrqHandler(uart1IrqHandler);
+
+    gUartTerm.init(&gSeq);
+    gUartTerm.setIrqHandler(uartTermIrqHandler);
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);

@@ -13,6 +13,8 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_bus.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_device.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_epLib.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/tusb_discriptors.c
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_terminal.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC
@@ -20,7 +22,15 @@ target_include_directories(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common
 )	
 		
-target_link_libraries(dualLevelSens pico_stdlib hardware_pio hardware_irq pico_multicore pico_unique_id)
+target_link_libraries(dualLevelSens PUBLIC
+    pico_stdlib 
+    hardware_pio 
+    hardware_irq 
+    pico_multicore 
+    pico_unique_id 
+    tinyusb_device 
+    tinyusb_board
+    )
 
 target_compile_definitions(dualLevelSens PUBLIC
     PICO_STACK_SIZE=0x1000

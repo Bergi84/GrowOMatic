@@ -1,5 +1,20 @@
 #include "uart.h"
 
+TUart::TUart()
+{
+
+};
+
+THwUart::THwUart()
+{
+
+}
+
+THwUart::~THwUart()
+{
+
+}
+
 void THwUart::init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio)
 {
     mUart = aUart;
@@ -99,4 +114,158 @@ void THwUart::setIrqHandler(void(*aIrqHandler)())
 void THwUart::disableFifo(bool aDis)
 {
     uart_set_fifo_enabled(mUart, !aDis);
+}
+
+
+void THwUart::rxChar(uint8_t *aC)
+{
+    *aC = uart_getc(mUart);
+}
+
+bool THwUart::rxPending()
+{
+    return uart_is_readable(mUart);
+}
+
+void THwUart::rxGetWait(void* &aAdr, uint32_t &aMsk)
+{
+    aAdr = (void*) &uart_get_hw(mUart)->fr;
+    aMsk = UART_UARTFR_RXFF_BITS;   // rx fifo full
+}
+
+void THwUart::txChar(uint8_t aC)
+{
+    uart_putc (mUart, aC);
+
+    enIrqCb(true);
+}
+
+bool THwUart::txFree()
+{
+    return uart_is_writable(mUart);
+}
+
+void THwUart::txGetWaitFree(void* &aAdr, uint32_t &aMsk)
+{
+    aAdr = (void*) &uart_get_hw(mUart)->fr; 
+    aMsk = UART_UARTFR_TXFE_BITS;   // TX fifo empty
+}
+
+void THwUart::txGetWaitIdle(void* &aAdr, uint32_t &aMsk)
+{
+    aAdr = (void*) &uart_get_hw(mUart)->fr; 
+    aMsk = UART_UARTFR_BUSY_BITS;   // tx transmitting data
+}
+
+TUsbUart::TUsbUart()
+{
+
+}
+
+TUsbUart::~TUsbUart()
+{
+
+}
+
+void TUsbUart::tusbWorker(void* aArg)
+{
+    TUsbUart *pObj = (TUsbUart*) aArg;
+
+    tud_task();
+    tud_cdc_write_flush();
+    if(tud_cdc_connected())
+    {
+        if(tud_cdc_write_available() && pObj->mTxCb != 0)
+            pObj->mTxCb(pObj->mTxCbArg);
+        if(tud_cdc_available() && pObj->mRxCb != 0)
+            pObj->mRxCb(pObj->mRxCbArg);
+    }
+}
+
+void TUsbUart::init(TSequencer *aSeq)
+{
+    tusb_init();
+    mSeq = aSeq;
+
+    mSeq->addTask(mTaskIdWorker, tusbWorker, this);
+}
+
+void TUsbUart::rxChar(uint8_t *aC)
+{
+    // wait until conected and one char is available
+    while(!tud_cdc_connected() || tud_cdc_available() == 0)
+    {
+        if(tud_cdc_connected())
+        {
+            // avoiding dead lock
+            tud_task();
+        }
+    }
+
+    tud_cdc_read(aC, (uint32_t) 1);
+}
+
+bool TUsbUart::rxPending()
+{
+    return tud_cdc_connected() && tud_cdc_available();
+}
+
+void TUsbUart::txChar(uint8_t aC)
+{
+    // wait until byte can be written
+    while(!tud_cdc_connected() || tud_cdc_write_available() == 0)
+    {
+        if(tud_cdc_connected())
+        {   
+            // avoiding dead lock
+            tud_task();
+            tud_cdc_write_flush();
+        }
+    }
+
+    uint8_t lC = aC;
+    tud_cdc_write(&lC, 1);
+    mSeq->queueTask(mTaskIdWorker);
+}
+
+uint32_t TUsbUart::txBlock(uint8_t* aBuf, uint32_t aLen)
+{
+    if(!tud_cdc_connected())
+        return 0;
+
+    uint32_t n = tud_cdc_write_available();
+    if(n > aLen)
+        n = aLen;
+
+    tud_cdc_write(aBuf, n);
+    mSeq->queueTask(mTaskIdWorker);
+}
+
+uint32_t TUsbUart::rxBlock(uint8_t* aBuf, uint32_t aMaxLen)
+{
+    if(!tud_cdc_connected())
+        return 0;
+
+    uint32_t n = tud_cdc_available();
+    if(n > aMaxLen)
+        n = aMaxLen;
+
+    return tud_cdc_read(aBuf, n);
+}
+
+bool TUsbUart::txFree()
+{
+    return tud_cdc_connected() && tud_cdc_write_available();
+}
+
+void TUsbUart::installRxCb(void (*pFunc)(void*), void* aArg)
+{
+    mRxCb = pFunc;
+    mRxCbArg = aArg;
+}
+
+void TUsbUart::installTxCb(bool (*pFunc)(void*), void* aArg)
+{
+    mTxCb = pFunc;
+    mTxCbArg = aArg;
 }

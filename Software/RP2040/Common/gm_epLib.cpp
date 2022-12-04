@@ -30,8 +30,19 @@ TEpBase* TEpBase::newEp(epType_t aEpType)
             return new TEpSystem();
 
         default:
-            return 0;
+            return new TEpBase();
     }
+}
+
+const char TEpBase::cInvalidName[] = "unkowen";
+
+TEpBase::TEpBase()
+{
+    mType = EPT_INVALID;
+    mParaList = 0;
+    mParaListLen = 0;
+    mEpName = cInvalidName;
+    mNext = 0;
 }
 
 void TEpBase::regUsage(GM_devUsedRec* mDevUsedRec)

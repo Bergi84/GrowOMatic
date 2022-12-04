@@ -32,6 +32,7 @@ protected:
     const paraDef_t* mParaList;
     uint32_t mParaListLen;
     const char* mEpName;
+    static const char cInvalidName[];
 
 public:
     static TEpBase* newEp(epType_t aEpType);
