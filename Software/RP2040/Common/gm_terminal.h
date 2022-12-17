@@ -20,7 +20,8 @@ enum ctrlSym_e {
     CTRLSYM_UP,
     CTRLSYM_DOWN,
     CTRLSYM_LEFT,
-    CTRLSYM_RIGHT
+    CTRLSYM_RIGHT,
+    CTRLSYM_EL
 };
 
 #define TERMINAL_LINE_LENGTH        81
@@ -60,7 +61,8 @@ private:
     } escDecode_t;
 
     escDecode_t mEscdState;
-    uint8_t mTaskId;
+    uint8_t mRxTaskId;
+    uint8_t mTxTaskId;
 
     uint8_t mTxBuf[TERMINAL_TX_BUF_LEN];
     uint32_t mTxBufWInd;
@@ -70,13 +72,18 @@ private:
     static void txCb(void* aArg);
 
     void recordChar(uint8_t aChar);
-    static void terminalTask(void* aArg);
+    static void termTxTask(void* aArg);
+    static void termRxTask(void* aArg);
 
     uint8_t decodeEsc(uint8_t aChar);
 
     void parseLine();
     void clrLine();
     void putChar(uint8_t aChar);
+    void putString(const char *aStr, uint32_t len);
+
+    // aDist max = 99
+    void moveCursor(ctrlSym_e aDir, uint32_t aDist);
     void newLine();
     void exitApp();
 };

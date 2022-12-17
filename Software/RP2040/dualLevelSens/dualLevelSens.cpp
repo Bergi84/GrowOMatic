@@ -9,6 +9,7 @@
 #include "gm_busSlave.h"
 #include "paraTable.h"
 #include "pico/unique_id.h"
+#include "gm_terminal.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
@@ -17,6 +18,7 @@ THwUart gUart1;
 TUsbUart gUartTerm;
 GM_busSlave gSlave;
 TParaTable gParaTable;
+gm_terminal gTerm;
 
 void capSensIrqHandler()
 {
@@ -72,6 +74,7 @@ int main()
 
     gUartTerm.init(&gSeq);
     gUartTerm.setIrqHandler(uartTermIrqHandler);
+    gTerm.init(&gUartTerm, &gSeq);
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
@@ -80,7 +83,7 @@ int main()
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 
-    multicore_launch_core1(main_c1);
+//    multicore_launch_core1(main_c1);
 
     gSeq.startIdle();
 }

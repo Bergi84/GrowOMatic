@@ -138,6 +138,8 @@ private:
     uint8_t mTaskIdWorker;
     TSequencer* mSeq;
 
+    irq_handler_t mTusbIrq;
+
 public:
     TUsbUart();
     virtual ~TUsbUart();
@@ -165,16 +167,21 @@ public:
     // must called inside the the usb irq Handler
     inline void irqHandler()
     {
+        mTusbIrq();
         mSeq->queueTask(mTaskIdWorker);
     }
 
-        // this function installs the irq handler and only accepts "C" functions
+    // this function installs the irq handler and only accepts "C" functions
     // or static memeber function. So we must provide an IRQ Handler wrapper function
     // for our uart->irqHandler member function
     void setIrqHandler(void (*pFunc)())
     {
-        while(!irq_has_shared_handler(USBCTRL_IRQ));
-        irq_add_shared_handler(USBCTRL_IRQ, pFunc, PICO_SHARED_IRQ_HANDLER_LOWEST_ORDER_PRIORITY);
+        // tinyUSB has already installed an USB handler so we override this handler with ower own
+        // and call the tiny USB handler insider ower handler
+        mTusbIrq = irq_get_exclusive_handler(USBCTRL_IRQ);
+        irq_remove_handler(USBCTRL_IRQ, mTusbIrq);
+        irq_set_exclusive_handler(USBCTRL_IRQ, pFunc);
+        irq_set_enabled (USBCTRL_IRQ, true);
     }
 };
 

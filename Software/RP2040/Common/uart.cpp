@@ -184,10 +184,10 @@ void TUsbUart::tusbWorker(void* aArg)
 
 void TUsbUart::init(TSequencer *aSeq)
 {
-    tusb_init();
     mSeq = aSeq;
-
     mSeq->addTask(mTaskIdWorker, tusbWorker, this);
+
+    tusb_init();
 }
 
 void TUsbUart::rxChar(uint8_t *aC)
@@ -237,8 +237,9 @@ uint32_t TUsbUart::txBlock(uint8_t* aBuf, uint32_t aLen)
     if(n > aLen)
         n = aLen;
 
-    tud_cdc_write(aBuf, n);
+    uint32_t written = tud_cdc_write(aBuf, n);
     mSeq->queueTask(mTaskIdWorker);
+    return written;
 }
 
 uint32_t TUsbUart::rxBlock(uint8_t* aBuf, uint32_t aMaxLen)
