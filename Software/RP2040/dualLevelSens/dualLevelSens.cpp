@@ -42,10 +42,12 @@ void uartTermIrqHandler()
 
 void idle(void* aArg)
 {
-    __wfi();
+//    __wfi();
 }
 
 extern uint32_t __StackOneTop;
+
+#define STATUP_FLAG 0x0000cafe
 
 void main_c1() 
 {
@@ -63,6 +65,8 @@ extern uint32_t __StackTop;
 
 int main() 
 {
+    multicore_launch_core1(main_c1);
+
     gSeq.init(&__StackTop, PICO_STACK_SIZE);
     gSeq.setIdleFunc(idle, NULL);
 
@@ -82,8 +86,6 @@ int main()
     gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR);
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
-
-//    multicore_launch_core1(main_c1);
 
     gSeq.startIdle();
 }
