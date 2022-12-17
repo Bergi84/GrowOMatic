@@ -385,7 +385,7 @@ void gm_terminal::moveCursor(ctrlSym_e aDir, uint32_t aDist)
             buf[0] = '\033';
             buf[1] = '[';
 
-            if(aDist > 10)
+            if(aDist > 9)
             {
                 buf[2] = '0' + aDist/10;
                 buf[3] = '0' + aDist%10;
