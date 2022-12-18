@@ -9,7 +9,7 @@
 #include "gm_busSlave.h"
 #include "paraTable.h"
 #include "pico/unique_id.h"
-#include "gm_terminal.h"
+#include "terminal.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
@@ -18,7 +18,7 @@ THwUart gUart1;
 TUsbUart gUartTerm;
 GM_busSlave gSlave;
 TParaTable gParaTable;
-gm_terminal gTerm;
+TTerminal gTerm;
 
 void capSensIrqHandler()
 {

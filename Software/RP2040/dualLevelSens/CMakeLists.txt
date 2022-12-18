@@ -14,7 +14,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_device.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_epLib.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/tusb_discriptors.c
-    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_terminal.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/terminal.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC

@@ -1,6 +1,6 @@
-#include "gm_terminal.h"
+#include "terminal.h"
 
-void gm_terminal::init(TUart* aUart, TSequencer *aSeq)
+void TTerminal::init(TUart* aUart, TSequencer *aSeq)
 {
     mUart = aUart;
     mSeq = aSeq;
@@ -24,23 +24,23 @@ void gm_terminal::init(TUart* aUart, TSequencer *aSeq)
     mTxBufRInd = 0;
 }
 
-void gm_terminal::rxCb(void* aArg)
+void TTerminal::rxCb(void* aArg)
 {
-    gm_terminal *pObj = (gm_terminal*) aArg; 
+    TTerminal *pObj = (TTerminal*) aArg; 
 
     pObj->mSeq->queueTask(pObj->mRxTaskId);
 }
 
-void gm_terminal::txCb(void* aArg)
+void TTerminal::txCb(void* aArg)
 {
-    gm_terminal *pObj = (gm_terminal*) aArg; 
+    TTerminal *pObj = (TTerminal*) aArg; 
 
     pObj->mSeq->queueTask(pObj->mTxTaskId);
 }
 
-void gm_terminal::termTxTask(void* aArg)
+void TTerminal::termTxTask(void* aArg)
 {
-    gm_terminal *pObj = (gm_terminal*) aArg; 
+    TTerminal *pObj = (TTerminal*) aArg; 
 
     uint32_t locWInd = pObj->mTxBufWInd;
     uint32_t locRInd = pObj->mTxBufRInd;
@@ -77,9 +77,9 @@ void gm_terminal::termTxTask(void* aArg)
     }
 }
 
-void gm_terminal::termRxTask(void* aArg)
+void TTerminal::termRxTask(void* aArg)
 {
-    gm_terminal *pObj = (gm_terminal*) aArg; 
+    TTerminal *pObj = (TTerminal*) aArg; 
 
     uint8_t buf[16];
     uint32_t readLen = pObj->mUart->rxBlock(buf, 16);
@@ -126,7 +126,7 @@ void gm_terminal::termRxTask(void* aArg)
     }
 }
 
-uint8_t gm_terminal::decodeEsc(uint8_t aChar)
+uint8_t TTerminal::decodeEsc(uint8_t aChar)
 {
     mEscBuf[mEscPos] = aChar;
     mEscPos++;
@@ -181,7 +181,7 @@ uint8_t gm_terminal::decodeEsc(uint8_t aChar)
     return 0;
 }
 
-void gm_terminal::recordChar(uint8_t aChar)
+void TTerminal::recordChar(uint8_t aChar)
 {
     if(aChar > 0x1f && aChar < 0x7f)
     {
@@ -366,7 +366,7 @@ void gm_terminal::recordChar(uint8_t aChar)
     }
 }
 
-void gm_terminal::moveCursor(ctrlSym_e aDir, uint32_t aDist)
+void TTerminal::moveCursor(ctrlSym_e aDir, uint32_t aDist)
 {
     if(aDist > 99)
         return;
@@ -421,19 +421,19 @@ void gm_terminal::moveCursor(ctrlSym_e aDir, uint32_t aDist)
     putString((const char*)buf, len);
 }
 
-void gm_terminal::parseLine()
+void TTerminal::parseLine()
 {
     // todo: implement
 
     newLine();
 }
 
-void gm_terminal::clrLine()
+void TTerminal::clrLine()
 {
     putString("\033[K",3);
 }
 
-void gm_terminal::putString(const char *aStr, uint32_t len)
+void TTerminal::putString(const char *aStr, uint32_t len)
 {
     uint32_t freeByte;
     if(mTxBufWInd > mTxBufRInd)
@@ -452,7 +452,7 @@ void gm_terminal::putString(const char *aStr, uint32_t len)
     }
 }
 
-void gm_terminal::putChar(uint8_t aChar)
+void TTerminal::putChar(uint8_t aChar)
 {
     if(aChar < CTRLSYM_UNKNOWEN)
     {
@@ -497,7 +497,7 @@ void gm_terminal::putChar(uint8_t aChar)
     mSeq->queueTask(mTxTaskId);
 }
 
-void gm_terminal::newLine()
+void TTerminal::newLine()
 {
     // todo: implement
 }
