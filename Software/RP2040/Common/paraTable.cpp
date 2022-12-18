@@ -6,8 +6,9 @@ mSysPara( (paraRec_t[mSysParaLen]) {
     /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   1 deviceType       */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   2 fwVersion        */ {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   3                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   4                  */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R}
+    /*   3 busMaster        */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW},
+    /*   4 savePara         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+    /*   5 start            */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_W | PARA_FLAG_FW},
     }),
 
 mEpListEndpoint( (endpoint_t) {
@@ -21,7 +22,7 @@ mEpListEndpoint( (endpoint_t) {
 }),
 mSysEndpoint( (endpoint_t) { 
     { { 
-        .startIndex = 0,
+        .startIndex = CSystemBaseRegAdr,
         .type = (uint16_t)EPT_SYSTEM    
     } }, 
     .length = sizeof(mSysPara)/sizeof(paraRec_t), 

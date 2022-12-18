@@ -1,11 +1,14 @@
 #include "terminal.h"
+#include "termApp.h"
+#include "termPathMng.h"
 
-void TTerminal::init(TUart* aUart, TSequencer *aSeq)
+void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
 {
     mUart = aUart;
     mSeq = aSeq;
+    mPathMng = aPathMng;
 
-    mUart->config(112500, UART_PARITY_NONE);
+    mUart->config(112500, UP_NONE);
     mUart->installRxCb(rxCb, this);
 
     mSeq->addTask(mRxTaskId, termRxTask, this);

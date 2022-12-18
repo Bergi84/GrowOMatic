@@ -5,7 +5,7 @@
 
 TBusCoordinator::TBusCoordinator() : GM_Bus()
 {
-
+    mInit = false;
 }
 
 void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
@@ -18,7 +18,7 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
     mParaTable = 0;
     mSeq = aSeq;
 
-    mUart->config(mBaudRate, UART_PARITY_NONE);
+    mUart->config(mBaudRate, UP_NONE);
     mUart->disableFifo(false);
     mUart->disableTx(false);
     mUart->installRxCb(rxCb, (void*)this);
@@ -40,8 +40,9 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
 
     mSeq->addTask(mCoorTaskId, coorTask, this);
     add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
-}
 
+    mInit = true;
+}
 
 void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
 {
@@ -682,6 +683,11 @@ void TBusCoordinator::installDeviceListUpdateCb(void (*mDeviceListChangedCb)(voi
     mDevListUpCbArg = mDeviceListChangedCbArg;
 }
 
+GM_busMaster::GM_busMaster()
+{
+    mInit = false;
+}
+
 void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
 {
     mSeq = aSeq;
@@ -701,6 +707,8 @@ void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, 
         mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
         mBusCoor[i].init(aUartList[i - 1], aSeq);
     }
+
+    mInit = true;
 }
 
 void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen)
@@ -743,11 +751,14 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
     {
         if(~devFound[i >> 5] & (1 << (i & 0x1F)))
         {
+            // device not found, add a new one
+
             // todo: avoid new and delete with a pool of defined size
+            // todo: set device name
             GM_device* newDev = new GM_device(aUidList[i], pObj);
             newDev->updateAdr(bus, i);
 
-            // device not found, add an new one
+            // add new device to list
             if(pObj->mRootDev)
             {
                 pObj->mRootDev = newDev;
@@ -793,7 +804,7 @@ uint32_t GM_busMaster::getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLe
         TEpBase*  ep = dev->mEpList;
         while(ep)
         {
-            if(ep->getType() == aEpType)
+            if(ep->getType() == aEpType || aEpType == EPT_INVALID)
             {
                 if(aList && epCnt < aLen)
                 {

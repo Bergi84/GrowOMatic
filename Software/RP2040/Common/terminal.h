@@ -5,6 +5,7 @@
 #include "sequencer_armm0.h"
 
 class TTermApp;
+class TTermPathMng;
 
 enum ctrlSym_e {
     // ascii c0 control symbols
@@ -29,18 +30,17 @@ enum ctrlSym_e {
 #define TERMINAL_MAX_ESC_LEN        16
 #define TERMINAL_TX_BUF_LEN         512
 
-#define PATH_MAX_LEN                64
-
 class TTerminal 
 {
 public:
-    void init(TUart* aUart, TSequencer *aSeq);
+    void init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng);
 
 private:
     friend class TTermApp;
 
     TUart *mUart;
     TSequencer *mSeq;
+     TTermPathMng *msPathMng;
 
     uint8_t mLineBuf[TERMINAL_LINE_CNT][TERMINAL_LINE_LENGTH];
     uint32_t mAktLine;
@@ -92,44 +92,5 @@ private:
     void exitApp();
 };
 
-
-class TTermApp
-{
-public:
-
-protected:
-    TTermApp();
-
-private:
-    friend class TTerminal;
-
-    TTerminal* mTerm;
-    TTermApp* mNext;
-    const char* mKeyPhrase;
-
-    virtual void start(uint8_t* aStartArg);
-    virtual void parse(uint8_t aChar);
-    inline void done()
-    {
-        mTerm->exitApp();
-    }
-    inline void putChar(uint8_t aChar)
-    {
-        mTerm->putChar(aChar);
-    }
-};
-
-class TTermPathMng
-{
-public:
-    virtual uint32_t getSubPathListLen() = 0;
-    virtual uint8_t* getSubPath(uint32_t aInd) = 0;
-
-    virtual uint32_t setAktPath(uint8_t* aPath, uint32_t aLen);
-    virtual uint8_t* getAktPath();
-
-protected:
-    TTermPathMng();
-};
 
 #endif /*  GM_TERMINAL_H_ */

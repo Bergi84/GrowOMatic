@@ -57,7 +57,7 @@ public:
 private:
     paraRec_t* findPara(uint16_t index);
 
-    static constexpr uint32_t mSysParaLen = 5; 
+    static constexpr uint32_t mSysParaLen = 6; 
 
     paraRec_t mSysPara[mSysParaLen];
     endpoint_t mSysEndpoint;

@@ -10,6 +10,7 @@ typedef struct paraDef_s {
     static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
     static constexpr uint32_t PARA_FLAG_RW = 0x00000003;    // is write and readable
 
+
     const uint32_t flags;
     const char* paraName;
 } paraDef_t;
@@ -31,7 +32,8 @@ protected:
     uint16_t mBaseAdr;
     const paraDef_t* mParaList;
     uint32_t mParaListLen;
-    const char* mEpName;
+    const char* mTypeName;
+    char mName[EP_NAME_LEN + 1];
     static const char cInvalidName[];
 
 public:
@@ -39,6 +41,11 @@ public:
     void regUsage(GM_devUsedRec* mDevUsedRec);
     void unregUsage(GM_devUsedRec* mDevUsedRec);
     inline epType_t getType() { return mType; };
+    const char* getTypeName() {   return mTypeName;   };
+    char* getEpName() {return mName;};
+    void setEpName(char* aName);
+    void generateName();
+
     TEpBase* mNext;
 };
 
@@ -50,12 +57,15 @@ private:
     {
         PARA_UID = 0,
         PARA_TYPE = 1,
-        PARA_FWVERSION = 2
+        PARA_FWVERSION = 2,
+        PARA_BUSMASTER = 3,
+        PARA_SAVE = 4,
+        PARA_START = 5
     } paraInd_t; 
 
     static const paraDef_t cParaList[];
     static const uint32_t cParaListLength; 
-    static const char cName[];
+    static const char cTypeName[];
     static constexpr epType_t cType = EPT_SYSTEM;
 
 public:

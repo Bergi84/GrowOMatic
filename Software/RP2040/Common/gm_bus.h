@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#define DEVICE_NAME_LEN     15
+#define EP_NAME_LEN         15
+
 typedef enum
 {
     EC_SUCCESS,

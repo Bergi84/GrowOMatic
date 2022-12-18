@@ -5,11 +5,12 @@
 #include "dualLevelSens.h"
 #include "capSens.h"
 #include "sequencer_armm0.h"
-#include "uart.h"
+#include "rp_uart.h"
 #include "gm_busSlave.h"
 #include "paraTable.h"
 #include "pico/unique_id.h"
 #include "terminal.h"
+#include "gm_termPathMng.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
@@ -17,8 +18,10 @@ THwUart gUart0;
 THwUart gUart1;
 TUsbUart gUartTerm;
 GM_busSlave gSlave;
+GM_busMaster gMaster;
 TParaTable gParaTable;
 TTerminal gTerm;
+GM_termPathMng gPathMng;
 
 void capSensIrqHandler()
 {
@@ -78,7 +81,6 @@ int main()
 
     gUartTerm.init(&gSeq);
     gUartTerm.setIrqHandler(uartTermIrqHandler);
-    gTerm.init(&gUartTerm, &gSeq);
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
@@ -86,6 +88,10 @@ int main()
     gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR);
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
+
+    gPathMng.init(&gMaster);
+    
+    gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 
     gSeq.startIdle();
 }

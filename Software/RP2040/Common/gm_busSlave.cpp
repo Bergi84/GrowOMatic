@@ -22,8 +22,8 @@ void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSe
     mCom[0].uart = aUart0;
     mCom[1].uart = aUart1;
 
-    mCom[0].uart->config(mBaudRate, UART_PARITY_NONE);
-    mCom[1].uart->config(mBaudRate, UART_PARITY_NONE);
+    mCom[0].uart->config(mBaudRate, UP_NONE);
+    mCom[1].uart->config(mBaudRate, UP_NONE);
     mCom[0].uart->disableFifo(true);
     mCom[1].uart->disableFifo(true);
     mCom[0].uart->disableTx(true);

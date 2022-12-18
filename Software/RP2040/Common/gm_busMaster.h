@@ -27,11 +27,15 @@
 class TBusCoordinator : public GM_Bus
 {
 private:
+    friend class GM_busMaster;
+
     TBusCoordinator();
 
     TUart* mUart;
     TParaTable* mParaTable;
     TSequencer* mSeq;
+
+    bool mInit;
 
     uint32_t mDeviceList[GM_MAXSLAVES];
     uint8_t mDevListLength;
@@ -124,6 +128,8 @@ private:
 
 public:
     void init(TUart* aUart, TSequencer* aSeq);
+    void deinit();
+    bool isInit() { return mInit;   };
 
     // init of an virtual bus which holdes the loakel device as slave
     void init(TParaTable* aParaTable, TSequencer* aSeq);
@@ -155,10 +161,16 @@ private:
 
     void delDev(GM_device* aDev);
 
-    class GM_device* mRootDev;
+    GM_device* mRootDev;
+
+    bool mInit;
 
 public:
+    GM_busMaster();
+
     void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable);
+    void deinit();
+    bool isInit() { return mInit;};
 
     inline errCode_T queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
     {   return mBusCoor[aReqAdr->aBus].queueReadReq(aReqAdr, reqCb, aArg);  }
@@ -167,8 +179,10 @@ public:
     {   return mBusCoor[aReqAdr->aBus].queueWriteReq(aReqAdr, aVal, reqCb, aArg);   }
 
     // returns written length, also when aList is null or aLen is 0
-    // aLen ist the maximum length of aList
+    // aLen ist the maximum length of aList, if aEpType == EPT_INVALID
+    // function return all endpoints
     uint32_t getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLen);
+    GM_device* getDeviceLL() {  return mRootDev;}; 
 };
 
 #endif /*GM_BUSMASTER_H_*/

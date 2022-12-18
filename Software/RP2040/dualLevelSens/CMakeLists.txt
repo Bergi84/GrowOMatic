@@ -7,6 +7,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dualLevelSens.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/sequencer_armm0.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/uart.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_uart.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busSlave.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/paraTable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busMaster.cpp
@@ -15,6 +16,9 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_epLib.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/tusb_discriptors.c
     ${CMAKE_CURRENT_LIST_DIR}/../common/terminal.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/termApp.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/termPathMng.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termPathMng.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC

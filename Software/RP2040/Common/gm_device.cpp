@@ -2,7 +2,7 @@
 #include "gm_epLib.h"
 #include "gm_busMaster.h"
 
-const char* GM_device::mDevNameList[] =
+const char* GM_device::mDevTypeNameList[] =
 {
     [DT_INVALID] = "invalid",
     [DT_DUAL_LEVEL_SENSOR] = "dualLevelSensor",
@@ -15,6 +15,8 @@ GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
     GM_busMaster* mBusMaster = aBusMaster;
     devType_t mType = DT_INVALID;
     class TEpBase* epList = TEpBase::newEp(EPT_SYSTEM);
+    epList->setEpName((char*)epList->getTypeName());
+    mLastEp = epList;
     mEpScanInd = 1;
     mBus = CInvalidBus;
     mAdr = CInvalidAdr;
@@ -87,6 +89,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             {
                 pObj->mType = devType_t (*aVal);
                 pObj->startEpScan();
+                pObj->generateName();
             }
             else
             {
@@ -99,12 +102,16 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                 }
                 else
                 {
+                    // new Endpoint, we always can insert the new Enpoints at the End
+                    // because there is minimum the system endpoint in the list
                     pObj->mLastEp->mNext = TEpBase::newEp(epType_t (*aVal) );
+
+                    pObj->mEpScanInd++;
                     // ignore unkowen endpoints
                     if(pObj->mLastEp->mNext)
                     {
-                        pObj->mEpScanInd++;
                         pObj->mLastEp = pObj->mLastEp->mNext;
+                        pObj->mLastEp->generateName();
                     }
                     pObj->startEpScan();
                 }
@@ -209,6 +216,79 @@ errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb
     adr.regAdr = aRegAdr;
     return mBusMaster->queueWriteReq(&adr, aVal, reqCb, aArg);   
 }
+
+void GM_device::setDevName(char* aName) 
+{
+    uint32_t i = 0;
+    while(aName[i] != 0 && i < DEVICE_NAME_LEN) 
+    {
+        mDevName[i] = aName[i];
+        i++;
+    }
+    mDevName[i] = 0;
+}
+
+void GM_device::generateName()
+{
+    // find unused name
+    const char* newName = getDevTypeName();
+    uint32_t nameNo = 0;
+    
+    if(mBusMaster->mRootDev)
+    {
+        GM_device* tmp = mBusMaster->mRootDev;
+        GM_device* stop = 0;   // should hold the last
+
+        while(tmp != stop)
+        { 
+
+            char* tmpName = getDevName();
+            uint32_t k = 0;
+
+            // compare names
+            while(tmpName[k] == newName[k] && tmpName[k] != 0 && newName[k] != 0)
+            {
+                k++;
+            }
+            if(newName[k] == 0)
+            {
+                // device name is until end of newName the same
+                if(nameNo/10 + '0' == tmpName[k] && nameNo%10 + '0' == tmpName[k+1])
+                {
+                    // device name is the same
+                    nameNo++;
+                    stop = tmp;
+                }
+
+            }
+
+            // iterate to next item
+            if(tmp->mNext)
+                tmp = tmp->mNext;
+            else
+                tmp = mBusMaster->mRootDev;
+
+            // init stop after first loop
+            if(stop == 0)
+                stop = mBusMaster->mRootDev;   // should hold the last
+        }
+    }
+
+    // set name 
+    uint32_t i = 0;
+    while(i < DEVICE_NAME_LEN - 2 && newName[i] != 0)
+    {
+        mDevName[i] = newName[i];
+        i++;
+    }
+    mDevName[i] = nameNo/10 + '0';
+    i++;
+    mDevName[i] = nameNo%10 + '0';
+    i++;
+    mDevName[i] = 0;
+}
+
+
 
 GM_devUsedRec::GM_devUsedRec()
 {

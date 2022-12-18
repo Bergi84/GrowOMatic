@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "gm_bus.h"
 
+
+
 class GM_busMaster;
 class GM_devUsedRec;
 
@@ -11,12 +13,16 @@ class TEpBase;
 
 class GM_device {
 private:
+    GM_device();
+
+private:
     friend class GM_busMaster;
+    friend class TEpBase;
 
     static constexpr uint32_t CEpScanIndDone = -1;
 
-    GM_device();
-    static const char* mDevNameList[];
+    static const char* mDevTypeNameList[];
+    char mDevName[DEVICE_NAME_LEN + 1];
     GM_busMaster* mBusMaster;
     uint32_t mUid;
     uint8_t mAdr;
@@ -32,16 +38,19 @@ private:
     
     static void epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     void callStatUpCb();
-
     void startEpScan();
+    void generateName();
+public:
+    GM_device(uint32_t aUid, GM_busMaster* aBusMaster);
 
     inline void getDevAdr(reqAdr_t* aAdr) {aAdr->aBus = mBus; aAdr->devAdr = mAdr; aAdr->uid = mUid;};
-public: 
-    GM_device(uint32_t aUid, GM_busMaster* aBusMaster);
 
     void updateAdr(uint8_t aBus, uint8_t aAdr);
 
-    const char* getDevName() {return mDevNameList[mType];}
+    devType_t getDevType() {return mType; };
+    const char* getDevTypeName() {return mDevTypeNameList[mType];}
+    char* getDevName() {return mDevName;};
+    void setDevName(char* aName);
     inline uint32_t getUid() {return mUid;}
 
     void regUsage(GM_devUsedRec* mDevUsedRec);
