@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include "gm_bus.h"
 
-
-
 class GM_busMaster;
 class GM_devUsedRec;
 

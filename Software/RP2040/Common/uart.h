@@ -60,6 +60,4 @@ public:
     virtual void disableFifo(bool aDis) = 0;
 };
 
-
-
 #endif // UART_H_

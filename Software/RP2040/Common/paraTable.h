@@ -1,9 +1,10 @@
 #ifndef PARATABLE_H_
 #define PARATABLE_H_
 
-#include "pico/stdlib.h"
+#include "stdint.h"
 #include "version.h"
 #include "gm_bus.h"
+#include "storage.h"
 
 #ifndef PT_MAXENDPOINTS
 #define PT_MAXENDPOINTS 16
@@ -48,7 +49,7 @@ public:
         struct endpoint_s* next;
     } endpoint_t;
 
-    void init(uint32_t aUniqueId, devType_t aDevType);
+    void init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage);
     void addEndpoint(endpoint_t* aEndpoint_t);
     void setPara(uint16_t aRegAdr, uint32_t aData);
     bool getPara(uint16_t aRegAdr, uint32_t *aData);

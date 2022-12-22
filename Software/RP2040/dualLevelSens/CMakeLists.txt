@@ -19,6 +19,8 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/termApp.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/termPathMng.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termPathMng.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/storage.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_flash.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC
@@ -29,7 +31,8 @@ target_include_directories(dualLevelSens PUBLIC
 target_link_libraries(dualLevelSens PUBLIC
     pico_stdlib 
     hardware_pio 
-    hardware_irq 
+    hardware_irq
+    hardware_flash 
     pico_multicore 
     pico_unique_id 
     tinyusb_device 

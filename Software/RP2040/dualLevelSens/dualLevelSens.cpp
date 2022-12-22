@@ -11,6 +11,7 @@
 #include "pico/unique_id.h"
 #include "terminal.h"
 #include "gm_termPathMng.h"
+#include "rp_flash.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
@@ -22,6 +23,7 @@ GM_busMaster gMaster;
 TParaTable gParaTable;
 TTerminal gTerm;
 GM_termPathMng gPathMng;
+TFlash gTableStorage;
 
 void capSensIrqHandler()
 {
@@ -54,6 +56,13 @@ extern uint32_t __StackOneTop;
 
 void main_c1() 
 {
+    // core1 lockout important in case of flash write or erase operations
+    // if the second core runs only from ram the lockout is not needed
+#if (PICO_COPY_TO_RAM == 0)
+    multicore_lockout_victim_init();  
+    irq_set_priority(SIO_IRQ_PROC1, PICO_HIGHEST_IRQ_PRIORITY);  
+#endif
+
     gSeq_c1.init(&__StackOneTop, PICO_STACK_SIZE);
     gSeq_c1.setIdleFunc(idle, NULL);
 
@@ -84,8 +93,13 @@ int main()
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
+#if (PICO_COPY_TO_RAM == 0)
+    gTableStorage.init(PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE, true);
+#else
+    gTableStorage.init(PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE, false);
+#endif
 
-    gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR);
+    gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR, &gTableStorage);
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 

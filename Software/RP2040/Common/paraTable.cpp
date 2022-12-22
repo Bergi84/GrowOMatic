@@ -2,6 +2,7 @@
 #include "gm_epLib.h"
 
 TParaTable::TParaTable() : 
+// init system parameter list
 mSysPara( (paraRec_t[mSysParaLen]) {
     /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   1 deviceType       */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
@@ -11,6 +12,7 @@ mSysPara( (paraRec_t[mSysParaLen]) {
     /*   5 start            */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_W | PARA_FLAG_FW},
     }),
 
+// init Endpoint List Enpoint 
 mEpListEndpoint( (endpoint_t) {
     { { 
         .startIndex = CEpListBaseRegAdr,
@@ -20,6 +22,7 @@ mEpListEndpoint( (endpoint_t) {
     .para = mEpListPara,
     .next = 0
 }),
+// init system endpoint
 mSysEndpoint( (endpoint_t) { 
     { { 
         .startIndex = CSystemBaseRegAdr,
@@ -36,10 +39,12 @@ mSysEndpoint( (endpoint_t) {
     }
 }
 
-void TParaTable::init(uint32_t aUniqueId, devType_t aDevType)
+void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage)
 {
     mSysPara[0].para = aUniqueId;
     mSysPara[1].para = (uint32_t) aDevType;
+
+    // todo: load stored values of nonvolatile parameters
 }
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
