@@ -7,8 +7,6 @@ GM_busSlave::GM_busSlave() : GM_Bus()
 
 void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq)
 {
-    crcInitTab();
-
     mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
     mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
     mCom[0].errCnt = 0;

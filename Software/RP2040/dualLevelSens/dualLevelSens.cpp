@@ -93,6 +93,7 @@ int main()
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
+    
 #if (PICO_COPY_TO_RAM == 0)
     gTableStorage.init(PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE, true);
 #else

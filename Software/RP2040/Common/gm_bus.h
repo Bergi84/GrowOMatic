@@ -2,6 +2,7 @@
 #define GM_BUS_H_
 
 #include <stdint.h>
+#include "crc32.h"
 
 #define DEVICE_NAME_LEN     15
 #define EP_NAME_LEN         15
@@ -22,19 +23,13 @@ static constexpr uint8_t CInvalidBus = -1;
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
 
-class GM_Bus
+class GM_Bus : public TCrc32
 {
 protected:
     static constexpr uint8_t mSdW = 0x68;
     static constexpr uint8_t mSdR = 0xA2;
     static constexpr uint32_t mBaudRate = 115200;
-    static constexpr uint32_t mCrcPoly = 0xEDB88320;
 
-    static bool mCrcTabInit;
-    static uint32_t mCrcTab[256];
-
-    uint32_t crcCalc(uint32_t aCrc, uint8_t aByte);
-    void crcInitTab();
     GM_Bus();
 };
 

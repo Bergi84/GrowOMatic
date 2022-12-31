@@ -24,6 +24,8 @@ public:
     static constexpr uint32_t PARA_FLAG_FW = 0x00000020;   // call update callback after write
     static constexpr uint32_t PARA_FLAG_P =  0x00000040;    // parameter is a pointer
 
+    static constexpr uint16_t CInvalidRegAdr = -1;
+
     typedef struct paraRec_s
     {
         union{
@@ -49,13 +51,20 @@ public:
         struct endpoint_s* next;
     } endpoint_t;
 
-    void init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage);
+    void init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage = 0);
     void addEndpoint(endpoint_t* aEndpoint_t);
     void setPara(uint16_t aRegAdr, uint32_t aData);
     bool getPara(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
 
+    void loadPara();
+    void storePara();
+
+    void loadDefault(uint16_t aRegAdr = CInvalidRegAdr);
+
 private:
+    TStorage* mStorage;
+
     paraRec_t* findPara(uint16_t index);
 
     static constexpr uint32_t mSysParaLen = 6; 
@@ -65,6 +74,16 @@ private:
 
     paraRec_t mEpListPara[PT_MAXENDPOINTS];
     endpoint_t mEpListEndpoint;
+
+    endpoint_t* mStoreLoadEp;
+    uint32_t mStoreLoadInd;
+    uint32_t mNVCheckSum;
+    uint32_t mNVLen;
+
+    void calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt);
+    static bool storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
+    static bool loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
+    void loadDefault(paraRec_t* aPara);
 };
 
 #endif /* PARATABLE_H_ */

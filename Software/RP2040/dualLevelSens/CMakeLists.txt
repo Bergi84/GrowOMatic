@@ -21,6 +21,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termPathMng.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/storage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_flash.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/crc32.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC

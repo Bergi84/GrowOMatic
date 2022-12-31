@@ -11,9 +11,6 @@ TBusCoordinator::TBusCoordinator() : GM_Bus()
 void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
 {
 
-    if(!mCrcTabInit)
-        crcInitTab();
-
     mUart = aUart;
     mParaTable = 0;
     mSeq = aSeq;
@@ -286,9 +283,9 @@ void TBusCoordinator::coorTask(void* aArg)
                     // we must recalculate the crc with the recieved 
                     // unique id to detect if there was a transmission error
                     uint32_t locCrc = pObj->crcCalc(tmp->data, mSdR);   // SD
-                    locCrc = pObj->crcCalc(locCrc, 0);                  // devAdr, always 0
-                    locCrc = pObj->crcCalc(locCrc, 0);                  // regAdr[0]
-                    locCrc = pObj->crcCalc(locCrc, 0);                  // regAdr[1]
+                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // devAdr, always 0
+                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[0]
+                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[1]
                     locCrc = pObj->crcCalc(locCrc, tmp->dataB[0]);      // data[0]
                     locCrc = pObj->crcCalc(locCrc, tmp->dataB[1]);      // data[0]
                     locCrc = pObj->crcCalc(locCrc, tmp->dataB[2]);      // data[0]
@@ -592,7 +589,7 @@ void TBusCoordinator::sendReq()
             case S_DEVADR:
                 
                 mUart->txChar(tmp->adr);
-                mCrcCalc = crcCalc(mCrcCalc, 0);
+                mCrcCalc = crcCalc(mCrcCalc, (uint8_t) 0);
 
                 mState = S_REGADR;  
                 mByteCntW++;             

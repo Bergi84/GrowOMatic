@@ -43,14 +43,13 @@ void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage
 {
     mSysPara[0].para = aUniqueId;
     mSysPara[1].para = (uint32_t) aDevType;
-
-    // todo: load stored values of nonvolatile parameters
+    mStorage = aStorage;
 }
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
     // avoid insertion of endpoint before end
-    // and if endpointlist is full
+    // and if endpoint list is full
     if( aEndpoint->startIndex < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
         mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
     {
@@ -150,4 +149,154 @@ TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
         tmp = tmp->next;
     }
     return 0;
+}
+
+void TParaTable::loadPara()
+{
+    mStoreLoadEp = &mSysEndpoint;
+    mStoreLoadInd = 0;
+    calcNVCheckSum(&mNVCheckSum, &mNVLen);
+    mStorage->load(loadParaCb, this);
+    if(mStoreLoadEp == &mSysEndpoint)
+        loadDefault();
+};
+
+void TParaTable::storePara()
+{
+    mStoreLoadEp = &mSysEndpoint;
+    mStoreLoadInd = 0;
+    calcNVCheckSum(&mNVCheckSum, &mNVLen);
+    mStorage->store(mNVLen+1, storeParaCb, this);
+};
+
+void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
+{
+    uint32_t crc = 0;
+    uint32_t len = 0;
+
+    endpoint_t* tmpEp = &mSysEndpoint;
+    while(tmpEp)
+    {
+        paraRec_t* tmpPar = tmpEp->para;
+        uint32_t len = tmpEp->length;
+        for(uint16_t i = 0; i < len; i++)
+        {
+            if(tmpPar[i].flags & PARA_FLAG_NV)
+            {
+                crc = GM_Bus::crcCalc(crc, (uint8_t) (tmpEp->startIndex + i));
+                crc = GM_Bus::crcCalc(crc, (uint8_t) ((tmpEp->startIndex + i) >> 8));
+                len++;
+            }
+        }
+        tmpEp = tmpEp->next;
+    }
+    *aCheckSum = crc;
+    *aNVParaCnt = len;
+}
+
+bool TParaTable::storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
+{
+    TParaTable* pObj = (TParaTable*) aArg;
+
+    for(uint32_t inc = 0; inc < aLen; inc++)
+    {
+        if(pObj->mStoreLoadEp == &pObj->mSysEndpoint)
+        {
+            aData[0] = pObj->mNVCheckSum;
+        }
+        else
+        {
+            // find next NV para
+            bool found = false;
+            endpoint_t* tmpEp = pObj->mStoreLoadEp;
+            while(tmpEp && !found)
+            {
+                paraRec_t* tmpPar = tmpEp->para;
+                uint32_t len = tmpEp->length;
+                for(uint16_t i = 0; i < len && !found; i++)
+                {
+                    if(tmpPar[i].flags & PARA_FLAG_NV)
+                    {
+                        found == true;
+                        if(tmpPar[i].flags & PARA_FLAG_P)
+                        {
+                            aData[inc] = *tmpPar[i].pPara;
+                        }
+                        else
+                        {
+                            aData[inc] = tmpPar[i].para;
+                        }
+                    }
+                }
+                tmpEp = tmpEp->next;
+            }
+
+            pObj->mStoreLoadEp = tmpEp;
+            
+            if(!found)
+            {
+                // no further NV data found, store of all NV Data done
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
+{
+    TParaTable* pObj = (TParaTable*) aArg;
+
+    for(uint32_t inc = 0; inc < aLen; inc++)
+    {
+        if(pObj->mStoreLoadEp == &pObj->mSysEndpoint)
+        {
+            // check NV Data Checksum
+            if(pObj->mNVCheckSum != aData[0])
+                return false;
+        }
+        else
+        {
+            // find next NV para
+            bool found = false;
+            endpoint_t* tmpEp = pObj->mStoreLoadEp;
+            while(tmpEp && !found)
+            {
+                paraRec_t* tmpPar = tmpEp->para;
+                uint32_t len = tmpEp->length;
+                for(uint16_t i = 0; i < len && !found; i++)
+                {
+                    if(tmpPar[i].flags & PARA_FLAG_NV)
+                    {
+                        found == true;
+                        if(tmpPar[i].flags & PARA_FLAG_P)
+                        {
+                            *tmpPar[i].pPara = aData[inc];
+                        }
+                        else
+                        {
+                            tmpPar[i].para = aData[inc];
+                        }
+
+                        if(tmpPar[i].flags & PARA_FLAG_FW)
+                        {
+                            tmpPar[i].pFAccessCb(tmpPar[i].cbArg, &tmpPar[i], true);
+                        }
+                    }
+                }
+                tmpEp = tmpEp->next;
+            }
+
+            pObj->mStoreLoadEp = tmpEp;
+            
+            if(!found)
+            {
+                // no further NV data found, store of all NV Data done
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
