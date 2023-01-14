@@ -5,9 +5,9 @@
 #include "uart.h"
 #include "paraTable.h"
 #include "sequencer_armm0.h"
-#include "gm_bus.h"
+#include "gm_busDefs.h"
 
-class GM_busSlave : public GM_Bus
+class GM_busSlave : public GM_BusDefs
 {
 private:
     typedef struct com_s { 

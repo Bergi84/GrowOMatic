@@ -1,5 +1,5 @@
-#ifndef GM_BUS_H_
-#define GM_BUS_H_
+#ifndef GM_BUSDEFS_H_
+#define GM_BUSDEFS_H_
 
 #include <stdint.h>
 #include "crc32.h"
@@ -23,14 +23,14 @@ static constexpr uint8_t CInvalidBus = -1;
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
 
-class GM_Bus : public TCrc32
+class GM_BusDefs : public TCrc32
 {
 protected:
     static constexpr uint8_t mSdW = 0x68;
     static constexpr uint8_t mSdR = 0xA2;
     static constexpr uint32_t mBaudRate = 115200;
 
-    GM_Bus();
+    GM_BusDefs();
 };
 
 typedef enum {
@@ -56,4 +56,4 @@ typedef struct
 reqAdr_t;
 
 
-#endif /* GM_BUS_H_*/
+#endif /* GM_BUSDEFS_H_*/

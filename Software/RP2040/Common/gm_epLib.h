@@ -2,7 +2,7 @@
 #define GM_LIB_H_
 
 #include <stdint.h>
-#include "gm_bus.h"
+#include "gm_busDefs.h"
 #include "gm_device.h"
 
 typedef struct paraDef_s {

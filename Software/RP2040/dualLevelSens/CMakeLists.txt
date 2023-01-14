@@ -11,7 +11,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busSlave.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/paraTable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busMaster.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_bus.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busDefs.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_device.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_epLib.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/tusb_discriptors.c
@@ -34,6 +34,7 @@ target_link_libraries(dualLevelSens PUBLIC
     hardware_pio 
     hardware_irq
     hardware_flash 
+    hardware_watchdog
     pico_multicore 
     pico_unique_id 
     tinyusb_device 

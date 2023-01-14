@@ -1,5 +1,7 @@
 #include "paraTable.h"
 #include "gm_epLib.h"
+#include "pico/bootrom.h"
+#include "hardware/watchdog.h"
 
 TParaTable::TParaTable() : 
 // init system parameter list
@@ -7,9 +9,8 @@ mSysPara( (paraRec_t[mSysParaLen]) {
     /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   1 deviceType       */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
     /*   2 fwVersion        */ {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   3 busMaster        */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW},
-    /*   4 savePara         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_W | PARA_FLAG_FW},
-    /*   5 start            */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+    /*   4 savePara         */ {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+    /*   5 start            */ {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
     }),
 
 // init Endpoint List Enpoint 
@@ -183,8 +184,8 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
         {
             if(tmpPar[i].flags & PARA_FLAG_NV)
             {
-                crc = GM_Bus::crcCalc(crc, (uint8_t) (tmpEp->startIndex + i));
-                crc = GM_Bus::crcCalc(crc, (uint8_t) ((tmpEp->startIndex + i) >> 8));
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->startIndex + i));
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->startIndex + i) >> 8));
                 len++;
             }
         }
@@ -299,4 +300,49 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
     }
 
     return true;
+}
+
+void TParaTable::paraSaveCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite)
+{
+    TParaTable* pObj = (TParaTable*) aCbArg;
+
+    switch(aPParaRec->para)
+    {
+        case 1:
+            pObj->storePara();
+            break;
+        
+        case 2:
+            pObj->loadPara();
+            break;
+
+        defualt:
+            break;
+    }
+}
+
+void TParaTable::paraStartCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite)
+{
+
+    TParaTable* pObj = (TParaTable*) aCbArg;
+
+    switch(aPParaRec->para)
+    {
+        case 1:
+            watchdog_enable(1, 1);
+            while(1);
+            break;
+        
+        case 2:
+            reset_usb_boot(0, 0);
+            break;
+
+        defualt:
+            break;
+    }
+}
+
+void TParaTable::loadDefault(uint16_t aRegAdr)
+{
+    // todo: restore default values
 }

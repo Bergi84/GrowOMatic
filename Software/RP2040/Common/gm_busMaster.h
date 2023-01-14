@@ -4,7 +4,7 @@
 #include "uart.h"
 #include "paraTable.h"
 #include "sequencer_armm0.h"
-#include "gm_bus.h"
+#include "gm_busDefs.h"
 #include "gm_epLib.h"
 
 #ifndef GM_MAXSLAVES
@@ -24,7 +24,7 @@
 #endif
 
 
-class TBusCoordinator : public GM_Bus
+class TBusCoordinator : public GM_BusDefs
 {
 private:
     friend class GM_busMaster;

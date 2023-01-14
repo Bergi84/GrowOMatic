@@ -1,6 +1,6 @@
 #include "gm_busSlave.h"
 
-GM_busSlave::GM_busSlave() : GM_Bus()
+GM_busSlave::GM_busSlave() : GM_BusDefs()
 {
     mState = S_IDLE;
 }

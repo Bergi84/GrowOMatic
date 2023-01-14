@@ -2,7 +2,7 @@
 #define GM_DEVICE_H_
 
 #include <stdint.h>
-#include "gm_bus.h"
+#include "gm_busDefs.h"
 
 class GM_busMaster;
 class GM_devUsedRec;

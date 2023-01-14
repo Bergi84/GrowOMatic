@@ -3,7 +3,7 @@
 
 #include "stdint.h"
 #include "version.h"
-#include "gm_bus.h"
+#include "gm_busDefs.h"
 #include "storage.h"
 
 #ifndef PT_MAXENDPOINTS
@@ -83,6 +83,8 @@ private:
     void calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt);
     static bool storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
     static bool loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
+    static void paraSaveCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite);
+    static void paraStartCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite);
     void loadDefault(paraRec_t* aPara);
 };
 

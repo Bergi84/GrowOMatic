@@ -3,7 +3,7 @@
 #include "gm_device.h"
 
 
-TBusCoordinator::TBusCoordinator() : GM_Bus()
+TBusCoordinator::TBusCoordinator() : GM_BusDefs()
 {
     mInit = false;
 }
