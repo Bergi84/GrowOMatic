@@ -76,9 +76,12 @@ private:
 
     static void paraRW(void* aArg);
 
+    bool mInit;
+
 public:
     GM_busSlave();
     void init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq);
+    bool isInit(){ return mInit; };
     void deinit();
 
     void setCrcInit(uint32_t aCrcInit) {mCrcInitVal = aCrcInit; };

@@ -3,43 +3,64 @@
 GM_busSlave::GM_busSlave() : GM_BusDefs()
 {
     mState = S_IDLE;
+    mInit = false;
 }
 
 void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq)
 {
-    mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
-    mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
-    mCom[0].errCnt = 0;
-    mCom[1].errCnt = 0;
-    mCom[0].byteCnt = 0;
-    mCom[1].byteCnt = 0;
-    mCom[0].sec = false;
-    mCom[1].sec = false;
-    mCom[0].otherCom = &mCom[1];
-    mCom[1].otherCom = &mCom[0];
-    mCom[0].uart = aUart0;
-    mCom[1].uart = aUart1;
+    if(!mInit)
+    {
+        mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
+        mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
+        mCom[0].errCnt = 0;
+        mCom[1].errCnt = 0;
+        mCom[0].byteCnt = 0;
+        mCom[1].byteCnt = 0;
+        mCom[0].sec = false;
+        mCom[1].sec = false;
+        mCom[0].otherCom = &mCom[1];
+        mCom[1].otherCom = &mCom[0];
+        mCom[0].uart = aUart0;
+        mCom[1].uart = aUart1;
 
-    mCom[0].uart->config(mBaudRate, UP_NONE);
-    mCom[1].uart->config(mBaudRate, UP_NONE);
-    mCom[0].uart->disableFifo(true);
-    mCom[1].uart->disableFifo(true);
-    mCom[0].uart->disableTx(true);
-    mCom[1].uart->disableTx(true);
-    mCom[0].uart->installRxCb(rx0CbWrapper, (void*)this);
-    mCom[1].uart->installRxCb(rx1CbWrapper, (void*)this);
+        mCom[0].uart->config(mBaudRate, UP_NONE);
+        mCom[1].uart->config(mBaudRate, UP_NONE);
 
-    mParaTable = aParaTable;
-    aParaTable->getPara(0, &mCrcInitVal);
+        uint8_t tmp;
+        while(mCom[0].uart->rxPending())
+            mCom[0].uart->rxChar(&tmp);
+        while(mCom[1].uart->rxPending())
+            mCom[1].uart->rxChar(&tmp);
 
-    mSeq = aSeq;
-    aSeq->addTask(mParaRWTaskId, paraRW, (void*)this);
+        mCom[0].uart->disableFifo(true);
+        mCom[1].uart->disableFifo(true);
+        mCom[0].uart->disableTx(true);
+        mCom[1].uart->disableTx(true);
+        mCom[0].uart->installRxCb(rx0CbWrapper, (void*)this);
+        mCom[1].uart->installRxCb(rx1CbWrapper, (void*)this);
+
+        mParaTable = aParaTable;
+        aParaTable->getPara(0, &mCrcInitVal);
+
+        mSeq = aSeq;
+        aSeq->addTask(mParaRWTaskId, paraRW, (void*)this);
+
+        mInit = true;
+    }
 };
 
 void GM_busSlave::deinit()
 {
-    mCom[0].uart->installRxCb(0, 0);
-    mCom[1].uart->installRxCb(0, 0);    
+    if(mInit)
+    {
+        // todo: wait until S_IDLE before disable bus
+        mCom[0].uart->installRxCb(0, 0);
+        mCom[1].uart->installRxCb(0, 0);    
+
+        mSeq->delTask(mParaRWTaskId);
+
+        mInit = false;
+    }
 }   
 
 void GM_busSlave::rxCb(com_t* aCom)

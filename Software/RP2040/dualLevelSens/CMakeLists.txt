@@ -12,6 +12,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/paraTable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busMaster.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_busDefs.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_bus.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_device.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_epLib.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/tusb_discriptors.c

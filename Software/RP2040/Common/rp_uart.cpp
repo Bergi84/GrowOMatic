@@ -26,11 +26,13 @@ void THwUart::init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio)
     gpio_set_pulls (aRxGpio, true, false);
     gpio_set_input_hysteresis_enabled (aRxGpio, true);
 
-    uart_set_baudrate(aUart, 115200);
+    uart_init(aUart, 115200);
     uart_set_format(aUart, 8, 1, UART_PARITY_NONE);
 
     uart_set_fifo_enabled(aUart, true);
 } 
+
+
 
 void THwUart::config(uint32_t aBaudRate, uartPar_t aParity)
 {

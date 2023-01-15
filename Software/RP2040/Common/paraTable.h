@@ -10,7 +10,7 @@
 #define PT_MAXENDPOINTS 16
 #endif
 
-class TParaTable
+class TParaTable : private TEpSysDefs
 {
 public:
     TParaTable();

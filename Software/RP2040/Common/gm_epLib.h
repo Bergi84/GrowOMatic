@@ -10,16 +10,9 @@ typedef struct paraDef_s {
     static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
     static constexpr uint32_t PARA_FLAG_RW = 0x00000003;    // is write and readable
 
-
     const uint32_t flags;
     const char* paraName;
 } paraDef_t;
-
-typedef enum {
-    EPT_INVALID = 0,
-    EPT_SYSTEM = 1,
-    EPT_EPLIST = 2,
-} epType_t; 
 
 class GM_devUsedRec;
 
@@ -50,28 +43,31 @@ public:
 };
 
 
-class TEpSystem : public TEpBase
+class TEpSystem : public TEpBase, private TEpSysDefs
 {
 private:
-    typedef enum
-    {
-        PARA_UID = 0,
-        PARA_TYPE = 1,
-        PARA_FWVERSION = 2,
-        PARA_BUSMASTER = 3,
-        PARA_SAVE = 4,
-        PARA_START = 5
-    } paraInd_t; 
-
     static const paraDef_t cParaList[];
     static const uint32_t cParaListLength; 
     static const char cTypeName[];
-    static constexpr epType_t cType = EPT_SYSTEM;
 
 public:
     TEpSystem();
+
+    // EP helper functions
     inline void getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg )
     {   mPDev->queueReadReq(0x0000 + PARA_TYPE, reqEpListLenCb, aArg);  };
+};
+
+class TEpBus : public TEpBase, private TEpBusDefs
+{
+private:
+    static const paraDef_t cParaList[];
+    static const uint32_t cParaListLength; 
+    static const char cTypeName[];
+
+public:
+    TEpBus();
+    // EP helper functions
 };
 
 #endif /*GM_LIB_H*/

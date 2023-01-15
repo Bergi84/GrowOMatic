@@ -6,58 +6,90 @@
 TBusCoordinator::TBusCoordinator() : GM_BusDefs()
 {
     mInit = false;
+    mDevListUpCb = 0;
 }
 
 void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
 {
+    if(!mInit && mDevListUpCb)
+    {
+        mUart = aUart;
+        mParaTable = 0;
+        mSeq = aSeq;
 
-    mUart = aUart;
-    mParaTable = 0;
-    mSeq = aSeq;
+        mUart->config(mBaudRate, UP_NONE);
 
-    mUart->config(mBaudRate, UP_NONE);
-    mUart->disableFifo(false);
-    mUart->disableTx(false);
-    mUart->installRxCb(rxCb, (void*)this);
+        // clear RX buffer
+        uint8_t tmp;
+        while(mUart->rxPending())
+            mUart->rxChar(&tmp);
 
-    mDevListLength = 0;    
+        mUart->disableFifo(false);
+        mUart->disableTx(false);
+        mUart->installRxCb(rxCb, (void*)this);
 
-    mReqQueue.rInd = 0;
-    mReqQueue.wInd = 0;
+        mDevListLength = 0;    
 
-    mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
-    mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
+        mReqQueue.rInd = 0;
+        mReqQueue.wInd = 0;
 
-    mDevListUpCb = 0;
+        mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
+        mByteTimeoutUs = (mByteTimeUs*18) >> 4;     // 112,5% of byte time
 
-    mState = S_IDLE;
-    mScanAktiv = false;
+        mState = S_IDLE;
+        mScanAktiv = false;
 
-    mScanIntervallUs = 1000000;
+        mScanIntervallUs = 1000000;
 
-    mSeq->addTask(mCoorTaskId, coorTask, this);
-    add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
+        mSeq->addTask(mCoorTaskId, coorTask, this);
+        add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
 
-    mInit = true;
+        mInit = true;
+    }
 }
 
 void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
 {
-    mUart = 0;
-    mParaTable = aParaTable;
+    if(!mInit && mDevListUpCb)
+    {
+        mUart = 0;
+        mParaTable = aParaTable;
 
-    mDevListLength = 1;
-    mParaTable->getPara(0, &mDeviceList[0]);
+        mDevListLength = 1;
+        mParaTable->getPara(0, &mDeviceList[0]);
 
-    mReqQueue.rInd = 0;
-    mReqQueue.wInd = 0;
+        mReqQueue.rInd = 0;
+        mReqQueue.wInd = 0;
 
-    mDevListUpCb(mDevListUpCbArg, mDeviceList, mDevListLength);
+        mState = S_IDLE;
+        mScanAktiv = false;
 
-    mState = S_IDLE;
-    mScanAktiv = false;
+        mSeq->addTask(mCoorTaskId, coorTask, this);
 
-    mSeq->addTask(mCoorTaskId, coorTask, this);
+        mDevListUpCb(mDevListUpCbArg, mDeviceList, mDevListLength);
+
+        mInit = true;
+    }
+}
+
+void TBusCoordinator::deinit()
+{
+    if(mInit)
+    {
+        if(mUart)
+        {
+            // todo: wait until S_IDLE before disable bus
+            cancel_repeating_timer(&mScanAlertId);
+            mUart->installRxCb(0, 0);
+        }
+
+        mUart = 0;
+        mParaTable = 0;
+        
+        mSeq->delTask(mCoorTaskId);
+
+        mInit = false;
+    }
 }
 
 void TBusCoordinator::scan()
@@ -134,6 +166,9 @@ void TBusCoordinator::scanCb(void* aArg, uint32_t* UId, errCode_T aStatus)
 
 uint8_t TBusCoordinator::getAdr(uint32_t aUid)
 {
+    if(!mInit)
+        return CInvalidAdr;
+
     for(int i = 0; i < mDevListLength; i++)
     {
         if(mDeviceList[i] == aUid)
@@ -144,6 +179,9 @@ uint8_t TBusCoordinator::getAdr(uint32_t aUid)
 
 void TBusCoordinator::queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*, errCode_T), void* aArg)
 {
+    if(!mInit)
+        return;
+
     uint32_t status = save_and_disable_interrupts();
 
     uint8_t newWInd = mReqQueue.wInd == GM_QUEUELEN - 1 ? 0 : mReqQueue.wInd + 1;
@@ -171,6 +209,9 @@ void TBusCoordinator::queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*,
 
 errCode_T TBusCoordinator::queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
 {
+    if(!mInit)
+        return EC_NOT_INIT;
+
     uint32_t status = save_and_disable_interrupts();
 
     // check uid
@@ -209,6 +250,9 @@ errCode_T TBusCoordinator::queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*,
 
 errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
 {
+    if(!mInit)
+        return EC_NOT_INIT;
+
     // check uid
     if( aReqAdr->devAdr < mDevListLength;  // does the requested device adress exist?
         aReqAdr->uid /= mDeviceList[aReqAdr->devAdr])  // is the uid correct?
@@ -687,25 +731,48 @@ GM_busMaster::GM_busMaster()
 
 void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
 {
-    mSeq = aSeq;
-
-    mRootDev = 0;
-
-    // bus 0 is a virtual bus with lokal device as slave
-    mCbData[0].pObj = this;
-    mCbData[0].busIndex = 0;
-    mBusCoor[0].installDeviceListUpdateCb(mDevListUpCb, &mCbData[0]);
-    mBusCoor[0].init(aParaTable, aSeq);
-
-    for(int i = 1; i < aListLen + 1; i++)
+    if(!mInit)
     {
-        mCbData[i].pObj = this;
-        mCbData[i].busIndex = i;
-        mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
-        mBusCoor[i].init(aUartList[i - 1], aSeq);
-    }
+        mSeq = aSeq;
 
-    mInit = true;
+        mRootDev = 0;
+
+        // bus 0 is a virtual bus with lokal device as slave
+        mCbData[0].pObj = this;
+        mCbData[0].busIndex = 0;
+        mBusCoor[0].installDeviceListUpdateCb(mDevListUpCb, &mCbData[0]);
+        mBusCoor[0].init(aParaTable, aSeq);
+
+        for(int i = 1; i < aListLen + 1; i++)
+        {
+            mCbData[i].pObj = this;
+            mCbData[i].busIndex = i;
+            mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
+            mBusCoor[i].init(aUartList[i - 1], aSeq);
+        }
+
+        for(int i = aListLen + 1; i < GM_MAXUARTS + 1; i++)
+        {
+            mCbData[i].pObj = 0;
+            mCbData[i].busIndex = CInvalidBus;
+        }
+
+        mInit = true;
+    }
+}
+
+void GM_busMaster::deinit()
+{
+    if(mInit)
+    {
+        for(int i = 0; i < GM_MAXUARTS + 1; i++)
+        {
+            if(mCbData[i].pObj)
+                mBusCoor[i].deinit();
+        }
+
+        mInit = false;
+    }
 }
 
 void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen)
@@ -793,6 +860,9 @@ void GM_busMaster::delDev(GM_device* aDev)
 
 uint32_t GM_busMaster::getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLen)
 {
+    if(!mInit)
+        return 0;
+
     uint32_t epCnt = 0;
 
     GM_device* dev = mRootDev;

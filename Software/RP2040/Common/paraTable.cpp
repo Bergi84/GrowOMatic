@@ -6,14 +6,14 @@
 TParaTable::TParaTable() : 
 // init system parameter list
 mSysPara( (paraRec_t[mSysParaLen]) {
-    /*   0 uniqueId         */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   1 deviceType       */ {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   2 fwVersion        */ {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    /*   4 savePara         */ {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
-    /*   5 start            */ {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+    [PARA_UID] =          {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    [PARA_TYPE] =         {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    [PARA_FWVERSION] =    {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
+    [PARA_SAVE] =         {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+    [PARA_START] =        {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
     }),
 
-// init Endpoint List Enpoint 
+// init Endpoint List Endpoint 
 mEpListEndpoint( (endpoint_t) {
     { { 
         .startIndex = CEpListBaseRegAdr,
@@ -42,13 +42,15 @@ mSysEndpoint( (endpoint_t) {
 
 void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage)
 {
-    mSysPara[0].para = aUniqueId;
-    mSysPara[1].para = (uint32_t) aDevType;
+    mSysPara[PARA_UID].para = aUniqueId;
+    mSysPara[PARA_TYPE].para = (uint32_t) aDevType;
     mStorage = aStorage;
 }
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
+    // todo: if aEndpoint->startIndex == CInvalidRegAdr then allocate the next free endpoint index
+
     // avoid insertion of endpoint before end
     // and if endpoint list is full
     if( aEndpoint->startIndex < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
@@ -329,11 +331,13 @@ void TParaTable::paraStartCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWr
     switch(aPParaRec->para)
     {
         case 1:
+            // todo: remove hardware dependend code to
             watchdog_enable(1, 1);
             while(1);
             break;
         
         case 2:
+            // todo: remove hardware dependend code to
             reset_usb_boot(0, 0);
             break;
 

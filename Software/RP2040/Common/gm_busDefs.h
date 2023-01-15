@@ -14,7 +14,8 @@ typedef enum
     EC_INVALID_REGADR,
     EC_QUEUE_FULL,
     EC_TIMEOUT,
-    EC_INVALID_UID
+    EC_INVALID_UID,
+    EC_NOT_INIT
 } errCode_T;
 
 static constexpr uint8_t CInvalidAdr = -1;
@@ -55,5 +56,37 @@ typedef struct
 }   
 reqAdr_t;
 
+typedef enum {
+    EPT_INVALID = 0,
+    EPT_SYSTEM = 1,
+    EPT_EPLIST = 2,
+    EPT_BUS = 3
+} epType_t; 
+
+class TEpSysDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_UID = 0,
+        PARA_TYPE = 1,
+        PARA_FWVERSION = 2,
+        PARA_SAVE = 3,
+        PARA_START = 4
+    } paraInd_t; 
+
+    static constexpr epType_t cType = EPT_SYSTEM;
+};
+
+class TEpBusDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_MASTEREN = 0
+    } paraInd_t; 
+
+    static constexpr epType_t cType = EPT_BUS;
+};
 
 #endif /* GM_BUSDEFS_H_*/
