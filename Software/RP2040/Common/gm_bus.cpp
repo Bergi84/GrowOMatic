@@ -2,17 +2,17 @@
 
 GM_bus::GM_bus() :
 // init bus parameter list
-mBusPara( (TParaTable::paraRec_t[mBusParaLen]) {
-    [PARA_MASTEREN] = {.para = 0,  .pFAccessCb = setBusModeCb, .cbArg = this, .flags = TParaTable::PARA_FLAG_RW | TParaTable::PARA_FLAG_NV | TParaTable::PARA_FLAG_FW},
+mBusPara( (TParaTable::paraRec_t[cParaListLength]) {
+    [PARA_MASTEREN] = {.para = 0,  .pFAccessCb = setBusModeCb, .cbArg = this, .defs = &cParaList[PARA_MASTEREN]},
     }),
 
 // init bus endpoint
 mBusEp( (TParaTable::endpoint_t) { 
     { { 
-        .startIndex = TParaTable::CInvalidRegAdr,
+        .baseInd= CInvalidReg,
         .type = (uint16_t)EPT_BUS    
     } }, 
-    .length = sizeof(mBusPara)/sizeof(TParaTable::paraRec_t), 
+    .length = cParaListLength, 
     .para = mBusPara,
     .next = 0
 })

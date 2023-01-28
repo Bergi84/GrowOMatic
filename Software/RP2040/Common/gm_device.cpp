@@ -93,7 +93,10 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             }
             else
             {
-                if(*aVal == EPT_INVALID)
+                epId_u epId;
+                epId.id = *aVal;
+
+                if(epId.type == EPT_INVALID)
                 {
                     // scan done
                     pObj->mEpScanInd = CEpScanIndDone;
@@ -104,13 +107,14 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                 {
                     // new Endpoint, we always can insert the new Enpoints at the End
                     // because there is minimum the system endpoint in the list
-                    pObj->mLastEp->mNext = TEpBase::newEp(epType_t (*aVal) );
+                    pObj->mLastEp->mNext = TEpBase::newEp((epType_t) epId.type );
 
                     pObj->mEpScanInd++;
                     // ignore unkowen endpoints
                     if(pObj->mLastEp->mNext)
                     {
                         pObj->mLastEp = pObj->mLastEp->mNext;
+                        pObj->mLastEp->mBaseAdr = epId.baseInd;
                         pObj->mLastEp->generateName();
                     }
                     pObj->startEpScan();
@@ -288,7 +292,18 @@ void GM_device::generateName()
     mDevName[i] = 0;
 }
 
+TEpBase* GM_device::findEp(uint16_t baseInd)
+{
+    TEpBase* aktEp = mEpList;
+    while(aktEp)
+    {
+        if(aktEp->mBaseAdr == baseInd)
+            return aktEp;
 
+        aktEp = aktEp->mNext;
+    }
+    return 0;
+}
 
 GM_devUsedRec::GM_devUsedRec()
 {

@@ -2,20 +2,6 @@
 #include "gm_busMaster.h"
 #include "gm_device.h"
 
-const paraDef_t TEpSystem::cParaList[] =
-{
-    [PARA_UID] =        {paraDef_t::PARA_FLAG_R, "uniqueId"},
-    [PARA_TYPE] =       {paraDef_t::PARA_FLAG_R, "deviceType"},
-    [PARA_FWVERSION] =  {paraDef_t::PARA_FLAG_R, "fwVersion"},
-    [PARA_SAVE] =       {paraDef_t::PARA_FLAG_W, "savePara"},
-    [PARA_START] =      {paraDef_t::PARA_FLAG_W, "start"},
-
-};
-
-const uint32_t TEpSystem::cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t);
-
-const char TEpSystem::cTypeName[] = "system";
-
 TEpSystem::TEpSystem()
 {
     mType = cType;
@@ -24,15 +10,6 @@ TEpSystem::TEpSystem()
     mTypeName = cTypeName;
     mNext = 0;
 }
-
-const paraDef_t TEpBus::cParaList[] =
-{
-    [PARA_MASTEREN] =        {paraDef_t::PARA_FLAG_R, "masterEn"},
-};
-
-const uint32_t TEpBus::cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t);
-
-const char TEpBus::cTypeName[] = "bus";
 
 TEpBus::TEpBus()
 {
@@ -66,6 +43,7 @@ TEpBase::TEpBase()
     mParaList = 0;
     mParaListLen = 0;
     mTypeName = cInvalidName;
+    mBaseAdr = 0;
     mNext = 0;
 }
 

@@ -5,43 +5,49 @@
 
 TParaTable::TParaTable() : 
 // init system parameter list
-mSysPara( (paraRec_t[mSysParaLen]) {
-    [PARA_UID] =          {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    [PARA_TYPE] =         {.para = 0,          .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    [PARA_FWVERSION] =    {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R},
-    [PARA_SAVE] =         {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
-    [PARA_START] =        {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this, .flags = PARA_FLAG_W | PARA_FLAG_FW},
+mSysPara( (paraRec_t[cParaListLength]) {
+    [PARA_UID] =          {.para = 0,          .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_UID]},
+    [PARA_TYPE] =         {.para = 0,          .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_TYPE]},
+    [PARA_FWVERSION] =    {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_FWVERSION]},
+    [PARA_SAVE] =         {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this,     .defs = &cParaList[PARA_SAVE]},
+    [PARA_START] =        {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this,    .defs = &cParaList[PARA_START]},
     }),
 
 // init Endpoint List Endpoint 
 mEpListEndpoint( (endpoint_t) {
     { { 
-        .startIndex = CEpListBaseRegAdr,
+        .baseInd = CEpListBaseRegAdr,
         .type = (uint16_t)EPT_EPLIST    
     } }, 
     .length = 1, 
     .para = mEpListPara,
-    .next = 0
+    .next = 0,
+    .name = cTypeName
 }),
 // init system endpoint
 mSysEndpoint( (endpoint_t) { 
     { { 
-        .startIndex = CSystemBaseRegAdr,
+        .baseInd = CSystemBaseRegAdr,
         .type = (uint16_t)EPT_SYSTEM    
     } }, 
-    .length = sizeof(mSysPara)/sizeof(paraRec_t), 
+    .length = cParaListLength, 
     .para = mSysPara,
-    .next = &mEpListEndpoint
+    .next = &mEpListEndpoint,
+    .name = cTypeName
 })
 {
     for(int i = 0; i < PT_MAXENDPOINTS; i++)
     {
-        mEpListPara[i] = {.para = EPT_INVALID, .pFAccessCb = 0, .cbArg = 0, .flags = PARA_FLAG_R};
+        mEpListEndpointDefs[i].flags = PARA_FLAG_R | PARA_FLAG_P;
+        mEpListEndpointDefs[i].paraName = 0;
+        mEpListPara[i] = {.para = EPT_INVALID, .pFAccessCb = 0, .cbArg = 0, .defs = &mEpListEndpointDefs[i]};
     }
 }
 
 void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage)
 {
+    while(CInvalidUid == aUniqueId);
+
     mSysPara[PARA_UID].para = aUniqueId;
     mSysPara[PARA_TYPE].para = (uint32_t) aDevType;
     mStorage = aStorage;
@@ -53,7 +59,7 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 
     // avoid insertion of endpoint before end
     // and if endpoint list is full
-    if( aEndpoint->startIndex < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
+    if( aEndpoint->epId.baseInd < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
         mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
     {
         return;
@@ -68,7 +74,7 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 
     while(tmp)
     {
-        if(insertPend && (tmp->next == 0 || tmp->next->startIndex > aEndpoint->startIndex))
+        if(insertPend && (tmp->next == 0 || tmp->next->epId.baseInd > aEndpoint->epId.baseInd))
         {
             insertPend = false;
             aEndpoint->next = tmp->next;
@@ -76,8 +82,7 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
         }
 
         // update endpoint list
-        mEpListPara[epListInd].pPara = &tmp->epId;
-        mEpListPara[epListInd].flags = PARA_FLAG_R | PARA_FLAG_P;
+        mEpListPara[epListInd].pPara = &tmp->epId.id;
         epListInd++;
         tmp = tmp->next;
     }
@@ -88,14 +93,14 @@ void TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
-    if(tmp && tmp->flags & PARA_FLAG_W)
+    if(tmp && tmp->defs->flags & PARA_FLAG_W)
     {
-        if(tmp->flags & PARA_FLAG_P)
+        if(tmp->defs->flags & PARA_FLAG_P)
             *tmp->pPara = aData;
         else
             tmp->para = aData;
 
-        if(tmp->flags & PARA_FLAG_FW && tmp->pFAccessCb)
+        if(tmp->defs->flags & PARA_FLAG_FW && tmp->pFAccessCb)
         {
             tmp->pFAccessCb(tmp->cbArg, tmp, true);
         }
@@ -107,13 +112,13 @@ bool TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
-    if(tmp && tmp->flags & PARA_FLAG_R)
+    if(tmp && tmp->defs->flags & PARA_FLAG_R)
     {
-        if(tmp->flags & PARA_FLAG_FR && tmp->pFAccessCb)
+        if(tmp->defs->flags & PARA_FLAG_FR && tmp->pFAccessCb)
         {
             tmp->pFAccessCb(tmp->cbArg, tmp, false);
         }
-        if(tmp->flags & PARA_FLAG_P)
+        if(tmp->defs->flags & PARA_FLAG_P)
             *aData = *tmp->pPara;
         else
             *aData = tmp->para;
@@ -129,7 +134,7 @@ bool TParaTable::getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
-    if(tmp && tmp->flags & PARA_FLAG_S)
+    if(tmp && tmp->defs->flags & PARA_FLAG_S)
     {
         *aPraRec = tmp->pPara;
         return true;
@@ -145,9 +150,23 @@ TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
     endpoint_t* tmp = &mSysEndpoint;
     while(tmp)
     {
-        if(tmp->startIndex <= index && (tmp->startIndex + tmp->length) > index)
+        if(tmp->epId.baseInd <= index && (tmp->epId.baseInd + tmp->length) > index)
         {
-            return &tmp->para[index - tmp->startIndex];
+            return &tmp->para[index - tmp->epId.baseInd];
+        }
+        tmp = tmp->next;
+    }
+    return 0;
+}
+
+TParaTable::endpoint_t* TParaTable::findEp(uint16_t baseInd)
+{
+    endpoint_t* tmp = &mSysEndpoint;
+    while(tmp)
+    {
+        if(tmp->epId.baseInd == baseInd)
+        {
+            return tmp;
         }
         tmp = tmp->next;
     }
@@ -184,10 +203,10 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
         uint32_t len = tmpEp->length;
         for(uint16_t i = 0; i < len; i++)
         {
-            if(tmpPar[i].flags & PARA_FLAG_NV)
+            if(tmpPar[i].defs->flags & PARA_FLAG_NV)
             {
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->startIndex + i));
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->startIndex + i) >> 8));
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
                 len++;
             }
         }
@@ -218,10 +237,10 @@ bool TParaTable::storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
                 uint32_t len = tmpEp->length;
                 for(uint16_t i = 0; i < len && !found; i++)
                 {
-                    if(tmpPar[i].flags & PARA_FLAG_NV)
+                    if(tmpPar[i].defs->flags & PARA_FLAG_NV)
                     {
                         found == true;
-                        if(tmpPar[i].flags & PARA_FLAG_P)
+                        if(tmpPar[i].defs->flags & PARA_FLAG_P)
                         {
                             aData[inc] = *tmpPar[i].pPara;
                         }
@@ -270,10 +289,10 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
                 uint32_t len = tmpEp->length;
                 for(uint16_t i = 0; i < len && !found; i++)
                 {
-                    if(tmpPar[i].flags & PARA_FLAG_NV)
+                    if(tmpPar[i].defs->flags & PARA_FLAG_NV)
                     {
                         found == true;
-                        if(tmpPar[i].flags & PARA_FLAG_P)
+                        if(tmpPar[i].defs->flags & PARA_FLAG_P)
                         {
                             *tmpPar[i].pPara = aData[inc];
                         }
@@ -282,7 +301,7 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
                             tmpPar[i].para = aData[inc];
                         }
 
-                        if(tmpPar[i].flags & PARA_FLAG_FW)
+                        if(tmpPar[i].defs->flags & PARA_FLAG_FW)
                         {
                             tmpPar[i].pFAccessCb(tmpPar[i].cbArg, &tmpPar[i], true);
                         }

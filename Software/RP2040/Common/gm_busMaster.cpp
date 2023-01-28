@@ -735,6 +735,8 @@ void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, 
     {
         mSeq = aSeq;
 
+        mBusNo = aListLen + 1;
+
         mRootDev = 0;
 
         // bus 0 is a virtual bus with lokal device as slave
@@ -884,4 +886,34 @@ uint32_t GM_busMaster::getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLe
         dev->mNext;
     }
     return epCnt;
+}
+
+GM_device* GM_busMaster::findDev(uint8_t aBus, uint8_t aAdr)
+{
+    GM_device* dev = mRootDev;
+
+    while(dev != 0)
+    {
+        if(dev->mBus == aBus && dev->mAdr == aAdr)
+            return dev;
+
+        dev = dev->mNext;
+    }
+
+    return 0;
+}
+
+GM_device* GM_busMaster::findDev(uint32_t aUid)
+{
+    GM_device* dev = mRootDev;
+
+    while(dev != 0)
+    {
+        if(dev->mUid == aUid)
+            return dev;
+
+        dev = dev->mNext;
+    }
+
+    return 0;
 }

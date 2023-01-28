@@ -3,32 +3,84 @@
 
 #include "termPathMng.h"
 #include "gm_busMaster.h"
+#include "typeDefs.h"
+#include "paraTable.h"
 
 class GM_termPathMng : public TTermPathMng
 {
 public:
+    typedef enum {
+        POT_NONE,
+        POT_FOLDER,
+        POT_LOCREG,
+        POT_EPREG
+    } pathObjType_t;
+
+    typedef struct {
+        pathObjType_t pot;
+        void* objP;
+        uint32_t ind;
+    } pathObj_t;
+
     GM_termPathMng();
+    virtual ~GM_termPathMng();
 
-    void init(GM_busMaster* aBusMaster);
+    void init(GM_busMaster* aBusMaster, TParaTable* aParaTable);
 
-    virtual uint32_t getSubPathListLen();
-    virtual uint8_t* getSubPath(uint32_t aInd);
+    // terminal path functions
+    virtual uint32_t getSubPathListLen(char* aPath = 0);
+    virtual void getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSubPathLen, char* aPath = 0);
 
-    virtual void setAktPath(uint8_t* aPath, uint32_t aLen);
-    virtual uint8_t* getAktPath();
+    virtual void setAktPath(char* aPath, uint32_t aPathLen = 0);
+    virtual void getAktPath(char* aPath, uint32_t aPathLen);
+
+    // applikation functions
+    pathObj_t getPathObj(uint8_t* aPath);
 
 private:
     GM_busMaster* mBM;
+    TParaTable* mPT;
 
-    struct
+    typedef enum pathType_e {
+        PT_BUS,
+        PT_LOC,
+        PT_UID,
+        PT_DEV,
+        PT_INVALID,
+        PT_ROOT,
+    } pathType_t;
+
+    static constexpr const char* cPathTypeName[]= {
+        [PT_BUS] = "bus",
+        [PT_LOC] = "loc",
+        [PT_UID] = "uid",
+        [PT_DEV] = "dev",
+    };
+    static constexpr const char* cSlaveStr = "slave";
+    static const uint32_t cSlaveStrLen = sizeof(cPathTypeName)/sizeof(char*);
+
+    typedef struct
     {
+        pathType_t type;
         uint8_t bus;
         uint8_t adr;
-        uint16_t ep;
+        uint16_t baseInd;
+        uint16_t offInd;
         uint32_t uid;
-        uint8_t pathStr[PATH_MAX_LEN];
-    } mAktAdr;
+    } pathRes_t;
+    pathRes_t mAktAdr;
     
+    pathRes_t pathParse(char *aPathStr, uint32_t aStrLen = 0);
+    void genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t aBufLen);
+    void parseEpRegName(pathRes_t *aPath, GM_device* aDev, char* aStrBuf, uint32_t aBufLen);
+    void parseLocEpRegName(pathRes_t *aPath, char* aStrBuf, uint32_t aBufLen);
+    TEpBase* parseEpName(GM_device* aDev, char* aPathStr, uint32_t aPathStrLen);
+    TParaTable::endpoint_t* parseLocEpName(char* aPathStr, uint32_t aPathStrLen);
+    uint16_t parseRegName(TEpBase* aEp, char* aPathStr, uint32_t aPathStrLen);
+    uint16_t parseLocRegName(TParaTable::endpoint_t* aEp, char* aPathStr, uint32_t aPathStrLen);
+    GM_device* parseUid(char* aPathStr, uint32_t aPathStrLen);
+    GM_device* parseDevName(char* aPathStr, uint32_t aPathStrLen);
+
 };
 
 #endif /* GM_TERMPATHMNG_H_ */

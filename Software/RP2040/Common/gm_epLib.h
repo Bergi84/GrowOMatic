@@ -5,19 +5,12 @@
 #include "gm_busDefs.h"
 #include "gm_device.h"
 
-typedef struct paraDef_s {
-    static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
-    static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
-    static constexpr uint32_t PARA_FLAG_RW = 0x00000003;    // is write and readable
-
-    const uint32_t flags;
-    const char* paraName;
-} paraDef_t;
-
 class GM_devUsedRec;
 
 class TEpBase {
 protected:
+    friend class GM_device;
+
     TEpBase();
 
     class GM_device* mPDev;
@@ -39,16 +32,18 @@ public:
     void setEpName(char* aName);
     void generateName();
 
+    const char* getParaName(uint16_t aInd) {if(aInd < mParaListLen) return mParaList[aInd].paraName; else return 0;};
+    uint32_t getParaListLen() {return mParaListLen; };
+
+    uint16_t getBaseAdr() {return mBaseAdr;};
+
     TEpBase* mNext;
 };
-
 
 class TEpSystem : public TEpBase, private TEpSysDefs
 {
 private:
-    static const paraDef_t cParaList[];
-    static const uint32_t cParaListLength; 
-    static const char cTypeName[];
+
 
 public:
     TEpSystem();
@@ -61,9 +56,6 @@ public:
 class TEpBus : public TEpBase, private TEpBusDefs
 {
 private:
-    static const paraDef_t cParaList[];
-    static const uint32_t cParaListLength; 
-    static const char cTypeName[];
 
 public:
     TEpBus();

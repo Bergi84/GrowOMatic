@@ -11,8 +11,7 @@ private:
     GM_busSlave mSlave;
     GM_busMaster mMaster;
 
-    static constexpr uint32_t mBusParaLen = 1; 
-    TParaTable::paraRec_t mBusPara[mBusParaLen];
+    TParaTable::paraRec_t mBusPara[cParaListLength];
     TParaTable::endpoint_t mBusEp;
 
     TUart* mUartList[GM_MAXUARTS];

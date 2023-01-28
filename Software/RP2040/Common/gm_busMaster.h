@@ -163,6 +163,8 @@ private:
 
     GM_device* mRootDev;
 
+    uint8_t mBusNo;
+
     bool mInit;
 
 public:
@@ -183,6 +185,11 @@ public:
     // function return all endpoints
     uint32_t getEpList(epType_t aEpType, TEpBase** aList, uint32_t aLen);
     GM_device* getDeviceLL() {  return mRootDev;}; 
+
+    GM_device* findDev(uint8_t aBus, uint8_t aAdr);
+    GM_device* findDev(uint32_t aUid);
+
+    uint8_t getBusNo() { return mBusNo;};
 };
 
 #endif /*GM_BUSMASTER_H_*/

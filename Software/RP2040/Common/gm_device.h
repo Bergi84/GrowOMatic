@@ -57,6 +57,9 @@ public:
     errCode_T queueReadReq(uint16_t aRegAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
     errCode_T queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
 
+    TEpBase* getEpLL() {return mEpList; };
+    TEpBase* findEp(uint16_t baseInd); 
+
     GM_device* mNext;
 } ;
 

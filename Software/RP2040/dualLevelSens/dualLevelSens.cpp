@@ -104,7 +104,7 @@ int main()
 
     gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
 
-    gPathMng.init(&gMaster);
+    gPathMng.init(&gMaster, &gParaTable);
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 

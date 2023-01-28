@@ -4,16 +4,17 @@
 #include "stdint.h"
 
 
-#define PATH_MAX_LEN                64
+#define TPM_PATH_MAX_LEN                64
+#define TPM_FOLDER_MAX_LEN              16
 
 class TTermPathMng
 {
 public:
-    virtual uint32_t getSubPathListLen() = 0;
-    virtual uint8_t* getSubPath(uint32_t aInd) = 0;
+    virtual uint32_t getSubPathListLen(char* aPath = 0) = 0;
+    virtual void getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSubPathLen, char* aPath = 0) = 0;
 
-    virtual void setAktPath(uint8_t* aPath, uint32_t aLen) = 0;
-    virtual uint8_t* getAktPath() = 0;
+    virtual void setAktPath(char* aPath, uint32_t aPathLen = 0) = 0;
+    virtual void getAktPath(char* aPath, uint32_t aPathLen) = 0;
 
     virtual ~TTermPathMng();
 

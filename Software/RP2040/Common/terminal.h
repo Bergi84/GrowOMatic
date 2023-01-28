@@ -40,7 +40,7 @@ private:
 
     TUart *mUart;
     TSequencer *mSeq;
-     TTermPathMng *msPathMng;
+    TTermPathMng *mPathMng;
 
     uint8_t mLineBuf[TERMINAL_LINE_CNT][TERMINAL_LINE_LENGTH];
     uint32_t mAktLine;
@@ -53,8 +53,6 @@ private:
 
     TTermApp* mRootApp;
     TTermApp* mAktApp;
-
-    TTermPathMng* mPathMng;
 
     typedef enum
     {
