@@ -1,12 +1,15 @@
 #include "terminal.h"
 #include "termApp.h"
 #include "termPathMng.h"
+#include <string.h>
 
 void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
 {
     mUart = aUart;
     mSeq = aSeq;
     mPathMng = aPathMng;
+
+    aPathMng->mPathAccessApp->mTerm = this;
 
     mUart->config(112500, UP_NONE);
     mUart->installRxCb(rxCb, this);
@@ -25,6 +28,10 @@ void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
 
     mTxBufWInd = 0;
     mTxBufRInd = 0;
+    
+    mRootApp = 0;
+    mLastApp = 0;
+    mAktApp = 0;
 }
 
 void TTerminal::rxCb(void* aArg)
@@ -284,7 +291,10 @@ void TTerminal::recordChar(uint8_t aChar)
                     mCursorPos = 0;
                     mLineBuf[mAktLine][mCursorPos] = 0;
                 }
-                newLine();
+                else
+                {
+                    newLine();
+                }
                 break;
 
             case CTRLSYM_UP:
@@ -426,9 +436,39 @@ void TTerminal::moveCursor(ctrlSym_e aDir, uint32_t aDist)
 
 void TTerminal::parseLine()
 {
-    // todo: implement
+    // find first char
+    uint32_t pos = findNextC((char*) mLineBuf[mAktLine]);
+    uint8_t* cmpStr = &mLineBuf[mAktLine][pos];
 
-    newLine();
+    if(cmpStr[0] == '.' || cmpStr[0] == '/')
+    {
+        mAktApp = mPathMng->mPathAccessApp;
+        mAktApp->start(cmpStr);
+    }
+    else
+    {
+        // find next white space
+        uint32_t len =  findNextS((char*) cmpStr);
+
+        // find app and launch
+        TTermApp* app = mRootApp;
+        while(app != 0 && strcmp((char*)cmpStr, app->mKeyPhrase) != 0)
+            app = app->mNext;
+
+        if(app != 0)
+        {
+            uint32_t argPos = findNextC((char*) &cmpStr[len]);
+            uint8_t* arg = &cmpStr[len + argPos];
+
+            mAktApp = app;
+            mAktApp->start(arg);
+        }        
+        else
+        {
+            const char* str = "unknowen command\r\n";
+            putString(str, strlen(str));
+        }
+    }
 }
 
 void TTerminal::clrLine()
@@ -500,7 +540,64 @@ void TTerminal::putChar(uint8_t aChar)
     mSeq->queueTask(mTxTaskId);
 }
 
+uint32_t TTerminal::findNextS(const char* str)
+{
+    uint32_t pos;
+    while(  str[pos] != ' ' &&
+            str[pos] != '\n' &&
+            str[pos] != '\r' && 
+            str[pos] != 0)
+        pos++;
+    return pos;
+}
+
+uint32_t TTerminal::findNextC(const char* str)
+{
+    uint32_t pos;
+    while(  (   str[pos] == ' '  ||
+                str[pos] == '\n' ||
+                str[pos] == '\r' ) && 
+                str[pos] != 0)
+        pos++;
+
+    if(str[pos] == 0)
+        return 0;
+    else
+        return pos;
+}
+
+
 void TTerminal::newLine()
 {
-    // todo: implement
+    // we use mLineBuf as workbuffer
+    uint32_t len = mPathMng->getAktPath((char*) mLineBuf[mAktLine], TERMINAL_LINE_LENGTH);
+    mLineBuf[mAktLine][len++] = '>';
+    mLineBuf[mAktLine][len++] = 0;
+
+    putString((char*) mLineBuf[mAktLine], TERMINAL_LINE_LENGTH);
+    mLineBuf[mAktLine][0] = 0;
+}
+
+void TTerminal::exitApp()
+{
+    mAktApp = 0;
+    newLine();
+}
+
+void TTerminal::addApp(TTermApp* aApp)
+{
+    if(mLastApp == 0)
+    {
+        mRootApp = aApp;
+        mLastApp = aApp;
+        aApp->mNext = 0;
+        aApp->mTerm = this;
+    }
+    else
+    {
+        mLastApp->mNext = aApp;
+        mLastApp = aApp;
+        aApp->mNext = 0;
+        aApp->mTerm = this;
+    }
 }

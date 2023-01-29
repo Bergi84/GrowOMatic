@@ -2,13 +2,6 @@
 #include "gm_epLib.h"
 #include "gm_busMaster.h"
 
-const char* GM_device::mDevTypeNameList[] =
-{
-    [DT_INVALID] = "invalid",
-    [DT_DUAL_LEVEL_SENSOR] = "dualLevelSensor",
-    [DT_DUAL_VALVE_CON] = "dualValveCon"
-};
-
 GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
 {
     mUid = aUid;
@@ -89,7 +82,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             {
                 pObj->mType = devType_t (*aVal);
                 pObj->startEpScan();
-                pObj->generateName();
+                pObj->reqDevName();
             }
             else
             {
@@ -115,20 +108,11 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                     {
                         pObj->mLastEp = pObj->mLastEp->mNext;
                         pObj->mLastEp->mBaseAdr = epId.baseInd;
-                        pObj->mLastEp->generateName();
+                        pObj->mLastEp->reqEpName();
                     }
                     pObj->startEpScan();
                 }
             }
-            break;
-
-        case EC_TIMEOUT:
-        case EC_INVALID_UID:
-        case EC_INVALID_DEVADR:
-        
-            // lost device during scan
-            pObj->mStat = DS_LOST;
-            pObj->callStatUpCb();   
             break;
 
         case EC_QUEUE_FULL:
@@ -137,11 +121,20 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             // todo: install timer callback
             break;
 
-        default:
+        case EC_INVALID_REGADR:
             // scan done
             pObj->mEpScanInd = CEpScanIndDone;
             pObj->mStat = DS_AVAILABLE;
             pObj->callStatUpCb();
+            break;
+
+//        case EC_TIMEOUT:
+//        case EC_INVALID_UID:
+//        case EC_INVALID_DEVADR:
+        default:
+            // lost device during scan
+            pObj->mStat = DS_LOST;
+            pObj->callStatUpCb();   
             break;
     
     }
@@ -223,6 +216,8 @@ errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb
 
 void GM_device::setDevName(char* aName) 
 {
+    // todo: send new device name to device
+
     uint32_t i = 0;
     while(aName[i] != 0 && i < DEVICE_NAME_LEN) 
     {
@@ -232,6 +227,7 @@ void GM_device::setDevName(char* aName)
     mDevName[i] = 0;
 }
 
+/*
 void GM_device::generateName()
 {
     // find unused name
@@ -291,6 +287,7 @@ void GM_device::generateName()
     i++;
     mDevName[i] = 0;
 }
+*/
 
 TEpBase* GM_device::findEp(uint16_t baseInd)
 {

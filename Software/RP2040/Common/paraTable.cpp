@@ -6,11 +6,15 @@
 TParaTable::TParaTable() : 
 // init system parameter list
 mSysPara( (paraRec_t[cParaListLength]) {
-    [PARA_UID] =          {.para = 0,          .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_UID]},
-    [PARA_TYPE] =         {.para = 0,          .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_TYPE]},
-    [PARA_FWVERSION] =    {.para = VER_COMBO,  .pFAccessCb = 0, .cbArg = 0,                 .defs = &cParaList[PARA_FWVERSION]},
-    [PARA_SAVE] =         {.para = 0,          .pFAccessCb = paraSaveCb, .cbArg = this,     .defs = &cParaList[PARA_SAVE]},
-    [PARA_START] =        {.para = 0,          .pFAccessCb = paraStartCb, .cbArg = this,    .defs = &cParaList[PARA_START]},
+    [PARA_UID] =          {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_UID]},
+    [PARA_TYPE] =         {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_TYPE]},
+    [PARA_FWVERSION] =    {.para = VER_COMBO,                               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_FWVERSION]},
+    [PARA_SAVE] =         {.para = 0,                                       .pFAccessCb = paraSaveCb,   .cbArg = this,    .defs = &cParaList[PARA_SAVE]},
+    [PARA_START] =        {.para = 0,                                       .pFAccessCb = paraStartCb,  .cbArg = this,    .defs = &cParaList[PARA_START]},
+    [PARA_DEVNAME0] =     {.pPara = (uint32_t*) &mSysEndpoint.epName[0],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME0]},
+    [PARA_DEVNAME1] =     {.pPara = (uint32_t*) &mSysEndpoint.epName[4],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME1]},
+    [PARA_DEVNAME2] =     {.pPara = (uint32_t*) &mSysEndpoint.epName[8],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME2]},
+    [PARA_DEVNAME3] =     {.pPara = (uint32_t*) &mSysEndpoint.epName[12],   .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME3]}
     }),
 
 // init Endpoint List Endpoint 
@@ -22,7 +26,7 @@ mEpListEndpoint( (endpoint_t) {
     .length = 1, 
     .para = mEpListPara,
     .next = 0,
-    .name = cTypeName
+    .typeName = cTypeName
 }),
 // init system endpoint
 mSysEndpoint( (endpoint_t) { 
@@ -33,7 +37,7 @@ mSysEndpoint( (endpoint_t) {
     .length = cParaListLength, 
     .para = mSysPara,
     .next = &mEpListEndpoint,
-    .name = cTypeName
+    .typeName = cTypeName
 })
 {
     for(int i = 0; i < PT_MAXENDPOINTS; i++)

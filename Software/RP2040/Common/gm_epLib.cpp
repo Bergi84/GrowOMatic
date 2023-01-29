@@ -47,66 +47,6 @@ TEpBase::TEpBase()
     mNext = 0;
 }
 
-void TEpBase::generateName()
-{
-    // find unused name
-    const char* newName = getTypeName();
-    uint32_t nameNo = 0;
-    
-    if(mPDev->mEpList)
-    {
-        TEpBase* tmp = mPDev->mEpList;
-        TEpBase* stop = 0;   // should hold the last
-
-        while(tmp != stop)
-        { 
-
-            char* tmpName = tmp->getEpName();
-            uint32_t k = 0;
-
-            // compare names
-            while(tmpName[k] == newName[k] && tmpName[k] != 0 && newName[k] != 0)
-            {
-                k++;
-            }
-            if(newName[k] == 0)
-            {
-                // device name is until end of newName the same
-                if(nameNo/10 + '0' == tmpName[k] && nameNo%10 + '0' == tmpName[k+1])
-                {
-                    // device name is the same
-                    nameNo++;
-                    stop = tmp;
-                }
-
-            }
-
-            // iterate to next item
-            if(tmp->mNext)
-                tmp = tmp->mNext;
-            else
-                tmp = mPDev->mEpList;
-
-            // init stop after first loop
-            if(stop == 0)
-                stop = mPDev->mEpList;   // should hold the last
-        }
-    }
-
-    // set name 
-    uint32_t i = 0;
-    while(i < DEVICE_NAME_LEN - 2 && newName[i] != 0)
-    {
-        mName[i] = newName[i];
-        i++;
-    }
-    mName[i] = nameNo/10 + '0';
-    i++;
-    mName[i] = nameNo%10 + '0';
-    i++;
-    mName[i] = 0;
-}
-
 void TEpBase::regUsage(GM_devUsedRec* mDevUsedRec)
 {
     mPDev->regUsage(mDevUsedRec);
@@ -119,6 +59,7 @@ void TEpBase::unregUsage(GM_devUsedRec* mDevUsedRec)
 
 void TEpBase::setEpName(char* aName) 
 {
+    // todo: send new endpoint name to endpoint
     uint32_t i = 0;
     while(aName[i] != 0 && i < EP_NAME_LEN) 
     {

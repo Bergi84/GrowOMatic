@@ -3,7 +3,11 @@
 GM_bus::GM_bus() :
 // init bus parameter list
 mBusPara( (TParaTable::paraRec_t[cParaListLength]) {
-    [PARA_MASTEREN] = {.para = 0,  .pFAccessCb = setBusModeCb, .cbArg = this, .defs = &cParaList[PARA_MASTEREN]},
+    [PARA_EPNAME0] =     {.pPara = (uint32_t*) &mBusEp.epName[0],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_EPNAME0]},
+    [PARA_EPNAME1] =     {.pPara = (uint32_t*) &mBusEp.epName[4],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_EPNAME1]},
+    [PARA_EPNAME2] =     {.pPara = (uint32_t*) &mBusEp.epName[8],    .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_EPNAME2]},
+    [PARA_EPNAME3] =     {.pPara = (uint32_t*) &mBusEp.epName[12],   .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_EPNAME3]},
+    [PARA_MASTEREN] =    {.para = 0,  .pFAccessCb = setBusModeCb, .cbArg = this, .defs = &cParaList[PARA_MASTEREN]},
     }),
 
 // init bus endpoint

@@ -2,6 +2,8 @@
 #define TERMAPP_H_
 
 #include "terminal.h"
+#include "termPathMng.h"
+#include <string.h>
 
 class TTermApp
 {
@@ -9,16 +11,7 @@ public:
 
 protected:
     TTermApp();
-
-private:
-    friend class TTerminal;
-
-    TTerminal* mTerm;
-    TTermApp* mNext;
-    const char* mKeyPhrase;
-
-    virtual void start(uint8_t* aStartArg);
-    virtual void parse(uint8_t aChar);
+    virtual ~TTermApp();
 
     // relaying functions becouse only parent class can access TTerminal
     inline void done()
@@ -31,6 +24,21 @@ private:
     {   mTerm->clrLine(); }
     inline void moveCursor(ctrlSym_e aDir, uint32_t aDist)
     {   mTerm->moveCursor(aDir, aDist);  }
+    inline TTermPathMng* getPathMng() {return mTerm->mPathMng; };
+
+protected:
+    friend class TTerminal;
+
+    const char* mKeyPhrase;
+
+    virtual void start(uint8_t* aStartArg) = 0;
+    virtual void parse(uint8_t aChar) = 0;
+
+private:
+    friend class TTerminal;
+
+    TTerminal* mTerm;
+    TTermApp* mNext;
 };
 
 #endif /* TERMAPP_H_*/

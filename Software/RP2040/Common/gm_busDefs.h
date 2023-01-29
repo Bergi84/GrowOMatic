@@ -2,21 +2,13 @@
 #define GM_BUSDEFS_H_
 
 #include <stdint.h>
+#include "commonDefs.h"
 #include "crc32.h"
 
 #define DEVICE_NAME_LEN     15
 #define EP_NAME_LEN         15
 
-typedef enum
-{
-    EC_SUCCESS,
-    EC_INVALID_DEVADR,
-    EC_INVALID_REGADR,
-    EC_QUEUE_FULL,
-    EC_TIMEOUT,
-    EC_INVALID_UID,
-    EC_NOT_INIT
-} errCode_T;
+
 
 static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
 static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
@@ -56,6 +48,12 @@ typedef enum {
     DT_DUAL_VALVE_CON = 2,
 } devType_t;
 
+constexpr const char* cDevTypeName[] = {
+    [DT_INVALID] =              "unknowen",
+    [DT_DUAL_LEVEL_SENSOR] =    "DualLevelSensor",
+    [DT_DUAL_VALVE_CON] =       "DualValveSensor",
+};
+
 typedef enum
 {
     DS_NEW,
@@ -93,10 +91,14 @@ protected:
     typedef enum
     {
         PARA_UID = 0,
-        PARA_TYPE = 1,
-        PARA_FWVERSION = 2,
-        PARA_SAVE = 3,
-        PARA_START = 4
+        PARA_TYPE,
+        PARA_FWVERSION,
+        PARA_SAVE,
+        PARA_START,
+        PARA_DEVNAME0,
+        PARA_DEVNAME1,
+        PARA_DEVNAME2,
+        PARA_DEVNAME3,
     } paraInd_t; 
 
     static constexpr epType_t cType = EPT_SYSTEM;
@@ -107,6 +109,10 @@ protected:
         [PARA_FWVERSION] =  {PARA_FLAG_R,                   "fwVersion"},
         [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,    "savePara"},
         [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,    "start"},
+        [PARA_DEVNAME0] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName0"},
+        [PARA_DEVNAME1] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName1"},
+        [PARA_DEVNAME2] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName2"},
+        [PARA_DEVNAME3] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName3"},
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "system";
@@ -117,14 +123,22 @@ class TEpBusDefs
 protected:
     typedef enum
     {
-        PARA_MASTEREN = 0
+        PARA_EPNAME0 = 0,
+        PARA_EPNAME1,
+        PARA_EPNAME2,
+        PARA_EPNAME3,
+        PARA_MASTEREN 
     } paraInd_t; 
 
     static constexpr epType_t cType = EPT_BUS;
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_MASTEREN] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW, "masterEn"},
+        [PARA_EPNAME0] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName0"},
+        [PARA_EPNAME1] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName1"},
+        [PARA_EPNAME2] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName2"},
+        [PARA_EPNAME3] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName3"},
+        [PARA_MASTEREN] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,   "masterEn"},
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "bus";

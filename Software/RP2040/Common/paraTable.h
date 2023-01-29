@@ -32,7 +32,8 @@ public:
         uint32_t length;
         paraRec_t* para;
         struct endpoint_s* next;
-        const char* name;
+        const char* typeName;
+        char epName[EP_NAME_LEN + 1];
     } endpoint_t;
 
     void init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage = 0);

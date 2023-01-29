@@ -34,6 +34,7 @@ class TTerminal
 {
 public:
     void init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng);
+    void addApp(TTermApp* aApp);
 
 private:
     friend class TTermApp;
@@ -52,6 +53,7 @@ private:
     uint32_t mEscPos;
 
     TTermApp* mRootApp;
+    TTermApp* mLastApp;
     TTermApp* mAktApp;
 
     typedef enum
@@ -83,6 +85,9 @@ private:
     void clrLine();
     void putChar(uint8_t aChar);
     void putString(const char *aStr, uint32_t len);
+
+    uint32_t findNextS(const char* str);
+    uint32_t findNextC(const char* str);
 
     // aDist max = 99
     void moveCursor(ctrlSym_e aDir, uint32_t aDist);

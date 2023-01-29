@@ -3,8 +3,8 @@
 
 #include "termPathMng.h"
 #include "gm_busMaster.h"
-#include "typeDefs.h"
 #include "paraTable.h"
+#include "gm_termAppPathAccess.h"
 
 class GM_termPathMng : public TTermPathMng
 {
@@ -28,11 +28,10 @@ public:
     void init(GM_busMaster* aBusMaster, TParaTable* aParaTable);
 
     // terminal path functions
-    virtual uint32_t getSubPathListLen(char* aPath = 0);
-    virtual void getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSubPathLen, char* aPath = 0);
+    virtual uint32_t getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSubPathLen, char* aPath = 0);
 
-    virtual void setAktPath(char* aPath, uint32_t aPathLen = 0);
-    virtual void getAktPath(char* aPath, uint32_t aPathLen);
+    virtual errCode_T setAktPath(char* aPath, uint32_t aPathLen = 0);
+    virtual uint32_t getAktPath(char* aPath, uint32_t aPathLen);
 
     // applikation functions
     pathObj_t getPathObj(uint8_t* aPath);
@@ -40,6 +39,8 @@ public:
 private:
     GM_busMaster* mBM;
     TParaTable* mPT;
+
+    gm_termAppPathAccess mPA;
 
     typedef enum pathType_e {
         PT_BUS,
@@ -71,7 +72,7 @@ private:
     pathRes_t mAktAdr;
     
     pathRes_t pathParse(char *aPathStr, uint32_t aStrLen = 0);
-    void genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t aBufLen);
+    uint32_t genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t aBufLen);
     void parseEpRegName(pathRes_t *aPath, GM_device* aDev, char* aStrBuf, uint32_t aBufLen);
     void parseLocEpRegName(pathRes_t *aPath, char* aStrBuf, uint32_t aBufLen);
     TEpBase* parseEpName(GM_device* aDev, char* aPathStr, uint32_t aPathStrLen);
@@ -81,6 +82,8 @@ private:
     GM_device* parseUid(char* aPathStr, uint32_t aPathStrLen);
     GM_device* parseDevName(char* aPathStr, uint32_t aPathStrLen);
 
+    uint32_t printSlaveName(uint32_t aSlaveInd, char* aStr, uint32_t aStrLen);
+    uint32_t printUid(uint32_t aUid, char* aStr, uint32_t aStrLen);
 };
 
 #endif /* GM_TERMPATHMNG_H_ */

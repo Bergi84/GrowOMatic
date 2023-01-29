@@ -19,7 +19,6 @@ private:
 
     static constexpr uint32_t CEpScanIndDone = -1;
 
-    static const char* mDevTypeNameList[];
     char mDevName[DEVICE_NAME_LEN + 1];
     GM_busMaster* mBusMaster;
     uint32_t mUid;
@@ -37,7 +36,7 @@ private:
     static void epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     void callStatUpCb();
     void startEpScan();
-    void generateName();
+    void reqDevName();
 public:
     GM_device(uint32_t aUid, GM_busMaster* aBusMaster);
 
@@ -46,7 +45,7 @@ public:
     void updateAdr(uint8_t aBus, uint8_t aAdr);
 
     devType_t getDevType() {return mType; };
-    const char* getDevTypeName() {return mDevTypeNameList[mType];}
+    const char* getDevTypeName() {return cDevTypeName[mType];}
     char* getDevName() {return mDevName;};
     void setDevName(char* aName);
     inline uint32_t getUid() {return mUid;}
