@@ -25,6 +25,12 @@ protected:
     inline void moveCursor(ctrlSym_e aDir, uint32_t aDist)
     {   mTerm->moveCursor(aDir, aDist);  }
     inline TTermPathMng* getPathMng() {return mTerm->mPathMng; };
+    inline uint32_t findNextS(const char* str)
+    {   return mTerm->findNextS(str);  };
+    inline uint32_t findNextC(const char* str)
+    {   return mTerm->findNextC(str);  };
+
+    void printErr(errCode_T aEc);
 
 protected:
     friend class TTerminal;

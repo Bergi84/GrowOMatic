@@ -5,23 +5,11 @@
 #include "gm_busMaster.h"
 #include "paraTable.h"
 #include "gm_termAppPathAccess.h"
+#include "gm_termPathDefs.h"
 
 class GM_termPathMng : public TTermPathMng
 {
 public:
-    typedef enum {
-        POT_NONE,
-        POT_FOLDER,
-        POT_LOCREG,
-        POT_EPREG
-    } pathObjType_t;
-
-    typedef struct {
-        pathObjType_t pot;
-        void* objP;
-        uint32_t ind;
-    } pathObj_t;
-
     GM_termPathMng();
     virtual ~GM_termPathMng();
 
@@ -34,7 +22,8 @@ public:
     virtual uint32_t getAktPath(char* aPath, uint32_t aPathLen);
 
     // applikation functions
-    pathObj_t getPathObj(uint8_t* aPath);
+    pathObj_t getPathObj(char* aPath, uint32_t aPathLen);
+    TParaTable* getParatable() {return mPT; };
 
 private:
     GM_busMaster* mBM;

@@ -93,7 +93,7 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
     
 }
 
-void TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
+errCode_T TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
@@ -108,11 +108,19 @@ void TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
         {
             tmp->pFAccessCb(tmp->cbArg, tmp, true);
         }
+        return EC_SUCCESS;
+    }
+    else
+    {
+        if(tmp)
+            return EC_PROTECTED;
+        else
+            return EC_INVALID_REGADR;
     }
 }
 
 
-bool TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
+errCode_T TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
@@ -126,11 +134,14 @@ bool TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
             *aData = *tmp->pPara;
         else
             *aData = tmp->para;
-        return true;
+        return EC_SUCCESS;
     }
     else
     {
-        return false;
+        if(tmp)
+            return EC_PROTECTED;
+        else
+            return EC_INVALID_REGADR;
     }
 }
 

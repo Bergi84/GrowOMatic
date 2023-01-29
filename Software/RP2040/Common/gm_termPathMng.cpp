@@ -771,15 +771,25 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
                 if(!mBM->isInit() || mBM->getBusNo() < busNo)
                     return 0;
 
+                char noBuf[4];
+                uint32_t noBufInd = 0;
                 do
+                {
+                    if(noBufInd >= 4)
+                        return 0;
+
+                    noBuf[noBufInd++] = busNo%10 + '0';
+                    busNo /= 10;
+                }
+                while(busNo != 0);
+
+                for(int i = 0; i < noBufInd; i++)
                 {
                     if(ind >= aBufLen - 1)
                         return 0;
 
-                    aStrBuf[ind++] = busNo%10 + '0';
-                    busNo /= 10;
+                    aStrBuf[ind++] = noBuf[noBufInd - 1 -i];
                 }
-                while(busNo != 0);
 
                 // slave adr
                 if(aPath->adr == CInvalidAdr)
@@ -979,4 +989,87 @@ uint32_t GM_termPathMng::printUid(uint32_t aUid, char* aStr, uint32_t aStrLen)
         aUid >>= 4;
     }
     return 8;
+}
+
+pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
+{
+    pathObj_t obj;
+    obj.objP = 0;
+    obj.offInd = 0;
+    obj.type = POT_NONE;
+
+    pathRes_t resPath = pathParse(aPath, aPathLen);
+
+    if(resPath.type == PT_INVALID || resPath.type == PT_ROOT)
+        return obj; 
+
+    if(resPath.offInd != CInvalidReg)
+    {
+        switch(resPath.type)
+        {
+            case PT_BUS:
+                {
+                    GM_device* dev = mBM->findDev(resPath.bus, resPath.adr);
+                    if(dev == 0)
+                        return obj; 
+
+                    TEpBase* ep = dev->findEp(resPath.baseInd);
+
+                    if(ep = 0)
+                        return obj;
+
+                    if(resPath.offInd >= ep->getParaListLen()) 
+                        return obj;
+
+                    obj.objP = (void*) ep;
+                    obj.type = POT_REMREG;
+                    obj.offInd = resPath.offInd;
+                }
+                break;
+
+                case PT_DEV:
+                case PT_UID:
+                {
+                    GM_device* dev = mBM->findDev(resPath.uid);
+                    if(dev == 0)
+                        return obj; 
+
+                    TEpBase* ep = dev->findEp(resPath.baseInd);
+
+                    if(ep = 0)
+                        return obj;
+
+                    if(resPath.offInd >= ep->getParaListLen()) 
+                        return obj;
+
+                    obj.objP = (void*) ep;
+                    obj.type = POT_REMREG;
+                    obj.offInd = resPath.offInd;
+                }
+                break;
+
+                case PT_LOC:
+                {
+                    TParaTable::endpoint_t* ep = mPT->findEp(resPath.baseInd);
+
+                    if(ep = 0)
+                        return obj;
+
+                    if(resPath.offInd >= ep->length) 
+                        return obj;
+
+                    obj.objP = (void*) ep;
+                    obj.type = POT_LOCREG;
+                    obj.offInd = resPath.offInd;
+                }
+                break;
+        }
+    }
+    else
+    {
+        obj.objP = 0;
+        obj.type = POT_FOLDER;
+        obj.offInd = 0;
+    }
+    return obj;
 }

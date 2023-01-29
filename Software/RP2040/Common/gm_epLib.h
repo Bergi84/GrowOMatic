@@ -24,16 +24,25 @@ protected:
 
 public:
     static TEpBase* newEp(epType_t aEpType);
+
     void regUsage(GM_devUsedRec* mDevUsedRec);
     void unregUsage(GM_devUsedRec* mDevUsedRec);
+
     inline epType_t getType() { return mType; };
     const char* getTypeName() {   return mTypeName;   };
+
     char* getEpName() {return mName;};
     void setEpName(char* aName);
+
     void reqEpName();
 
     const char* getParaName(uint16_t aInd) {if(aInd < mParaListLen) return mParaList[aInd].paraName; else return 0;};
+
     uint32_t getParaListLen() {return mParaListLen; };
+    inline errCode_T setPara(uint16_t aIndOff, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+        { return mPDev->queueWriteReq(mBaseAdr + aIndOff, aVal, reqCb, aArg); };
+    inline errCode_T reqPara(uint16_t aIndOff, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+        { return mPDev->queueReadReq(mBaseAdr + aIndOff, reqCb, aArg); };
 
     uint16_t getBaseAdr() {return mBaseAdr;};
 

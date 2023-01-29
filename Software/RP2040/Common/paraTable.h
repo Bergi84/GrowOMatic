@@ -40,8 +40,8 @@ public:
     void addEndpoint(endpoint_t* aEndpoint_t);
     endpoint_t* findEp(uint16_t baseInd);
     endpoint_t* getEpLL() {return &mSysEndpoint;};
-    void setPara(uint16_t aRegAdr, uint32_t aData);
-    bool getPara(uint16_t aRegAdr, uint32_t *aData);
+    errCode_T setPara(uint16_t aRegAdr, uint32_t aData);
+    errCode_T getPara(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
 
     void loadPara();

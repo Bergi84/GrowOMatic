@@ -4,7 +4,6 @@
 #include "stdint.h"
 #include "commonDefs.h"
 
-
 #define TPM_PATH_MAX_LEN                64
 #define TPM_FOLDER_MAX_LEN              16
 

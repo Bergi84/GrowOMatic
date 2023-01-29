@@ -117,13 +117,20 @@ void TTerminal::termRxTask(void* aArg)
 
         if(!pObj->mEscAkt)
         {
-            if(pObj->mAktApp)
+            if(buf[readCnt] == CTRLSYM_ETX)
             {
-                pObj->mAktApp->parse(buf[readCnt]);
+                pObj->exitApp();
             }
             else
             {
-                pObj->recordChar(buf[readCnt]);
+                if(pObj->mAktApp)
+                {
+                    pObj->mAktApp->parse(buf[readCnt]);
+                }
+                else
+                {
+                    pObj->recordChar(buf[readCnt]);
+                }
             }
         }
 

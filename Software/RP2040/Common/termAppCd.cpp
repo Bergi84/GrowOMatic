@@ -12,12 +12,7 @@ TTermAppCd::~TTermAppCd()
 
 void TTermAppCd::start(uint8_t* aStartArg)
 {
-    uint32_t pos;
-    while(  aStartArg[pos] != ' ' &&
-            aStartArg[pos] != '\n' &&
-            aStartArg[pos] != '\r' && 
-            aStartArg[pos] != 0)
-        pos++;
+    uint32_t pos = findNextS((char*) aStartArg);
 
     if(getPathMng()->setAktPath((char*)aStartArg, pos) != EC_SUCCESS)
     {
