@@ -6,20 +6,19 @@
 #include "capSens.h"
 #include "sequencer_armm0.h"
 #include "rp_uart.h"
-#include "gm_busSlave.h"
 #include "paraTable.h"
 #include "pico/unique_id.h"
 #include "terminal.h"
 #include "gm_termPathMng.h"
 #include "rp_flash.h"
+#include "gm_bus.h"
 
 TCapSens<gpio_capSens_chNo> gCapSens;
 TSequencer gSeq, gSeq_c1;
 THwUart gUart0;
 THwUart gUart1;
 TUsbUart gUartTerm;
-GM_busSlave gSlave;
-GM_busMaster gMaster;
+GM_bus gBus;
 TParaTable gParaTable;
 TTerminal gTerm;
 GM_termPathMng gPathMng;
@@ -102,9 +101,13 @@ int main()
 
     gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR, &gTableStorage);
 
-    gSlave.init(&gUart0, &gUart1, &gParaTable, &gSeq);
+    TUart* uartList[] = {&gUart0,  &gUart1};
 
-    gPathMng.init(&gMaster, &gParaTable);
+    gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gParaTable);
+
+    gPathMng.init(&gBus, &gParaTable);
+
+    // gParaTable.loadPara();
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 

@@ -2,6 +2,7 @@
 #include "gm_epLib.h"
 #include "pico/bootrom.h"
 #include "hardware/watchdog.h"
+#include <string.h>
 
 TParaTable::TParaTable() : 
 // init system parameter list
@@ -26,7 +27,7 @@ mEpListEndpoint( (endpoint_t) {
     .length = 1, 
     .para = mEpListPara,
     .next = 0,
-    .typeName = cTypeName
+    .typeName = "epList",
 }),
 // init system endpoint
 mSysEndpoint( (endpoint_t) { 
@@ -40,6 +41,9 @@ mSysEndpoint( (endpoint_t) {
     .typeName = cTypeName
 })
 {
+    strcpy(mSysEndpoint.epName, mSysEndpoint.typeName);
+    strcpy(mEpListEndpoint.epName, mEpListEndpoint.typeName);
+
     for(int i = 0; i < PT_MAXENDPOINTS; i++)
     {
         mEpListEndpointDefs[i].flags = PARA_FLAG_R | PARA_FLAG_P;
@@ -59,7 +63,8 @@ void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
-    // todo: if aEndpoint->startIndex == CInvalidRegAdr then allocate the next free endpoint index
+    // todo: if aEndpoint->epId.baseInd == CInvalidReg then allocate the next free endpoint index
+    while(aEndpoint->epId.baseInd == CInvalidReg);
 
     // avoid insertion of endpoint before end
     // and if endpoint list is full

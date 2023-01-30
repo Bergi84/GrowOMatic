@@ -91,7 +91,7 @@ private:
 
     // aDist max = 99
     void moveCursor(ctrlSym_e aDir, uint32_t aDist);
-    void newLine();
+    void newLine(bool aLineShift = true);
     void exitApp();
 };
 

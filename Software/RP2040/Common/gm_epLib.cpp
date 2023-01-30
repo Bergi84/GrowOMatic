@@ -68,3 +68,8 @@ void TEpBase::setEpName(char* aName)
     }
     mName[i] = 0;
 }
+
+void TEpBase::reqEpName()
+{
+    // todo: implement
+}

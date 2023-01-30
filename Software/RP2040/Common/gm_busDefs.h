@@ -31,6 +31,7 @@ static constexpr uint32_t CInvalidUid = -1;
 
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
+static constexpr uint32_t CBusBaseRegAdr = 0x0100;
 
 class GM_BusDefs : public TCrc32
 {

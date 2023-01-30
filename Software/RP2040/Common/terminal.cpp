@@ -3,6 +3,12 @@
 #include "termPathMng.h"
 #include <string.h>
 
+#include "termAppLs.h"
+#include "termAppCd.h"
+
+TTermAppCd gAppCd;
+TTermAppLs gAppLs;
+
 void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
 {
     mUart = aUart;
@@ -32,6 +38,9 @@ void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
     mRootApp = 0;
     mLastApp = 0;
     mAktApp = 0;
+
+    addApp(&gAppCd);
+    addApp(&gAppLs);
 }
 
 void TTerminal::rxCb(void* aArg)
@@ -289,18 +298,10 @@ void TTerminal::recordChar(uint8_t aChar)
                 if(mLineBuf[mAktLine][0] != 0)
                 {
                     parseLine();
-                    if(mAktLine == TERMINAL_LINE_CNT - 1)
-                        mAktLine = 0;
-                    else
-                        mAktLine++;
-                    
-                    mCpyLine = mAktLine;
-                    mCursorPos = 0;
-                    mLineBuf[mAktLine][mCursorPos] = 0;
                 }
                 else
                 {
-                    newLine();
+                    newLine(false);
                 }
                 break;
 
@@ -459,7 +460,7 @@ void TTerminal::parseLine()
 
         // find app and launch
         TTermApp* app = mRootApp;
-        while(app != 0 && strcmp((char*)cmpStr, app->mKeyPhrase) != 0)
+        while(app != 0 && strncmp((char*)cmpStr, app->mKeyPhrase, len) != 0)
             app = app->mNext;
 
         if(app != 0)
@@ -474,6 +475,7 @@ void TTerminal::parseLine()
         {
             const char* str = "unknowen command\r\n";
             putString(str, strlen(str));
+            newLine();
         }
     }
 }
@@ -549,7 +551,7 @@ void TTerminal::putChar(uint8_t aChar)
 
 uint32_t TTerminal::findNextS(const char* str)
 {
-    uint32_t pos;
+    uint32_t pos = 0;
     while(  str[pos] != ' ' &&
             str[pos] != '\n' &&
             str[pos] != '\r' && 
@@ -560,7 +562,7 @@ uint32_t TTerminal::findNextS(const char* str)
 
 uint32_t TTerminal::findNextC(const char* str)
 {
-    uint32_t pos;
+    uint32_t pos = 0;
     while(  (   str[pos] == ' '  ||
                 str[pos] == '\n' ||
                 str[pos] == '\r' ) && 
@@ -574,8 +576,20 @@ uint32_t TTerminal::findNextC(const char* str)
 }
 
 
-void TTerminal::newLine()
+void TTerminal::newLine(bool aLineShift)
 {
+    if(aLineShift)
+    {
+        if(mAktLine == TERMINAL_LINE_CNT - 1)
+            mAktLine = 0;
+        else
+            mAktLine++;
+        
+        mCpyLine = mAktLine;
+        mCursorPos = 0;
+        mLineBuf[mAktLine][mCursorPos] = 0;
+    }
+
     // we use mLineBuf as workbuffer
     uint32_t len = mPathMng->getAktPath((char*) mLineBuf[mAktLine], TERMINAL_LINE_LENGTH);
     mLineBuf[mAktLine][len++] = '>';

@@ -14,7 +14,8 @@ typedef enum
     EC_OUT_OF_MEM,
     EC_INVALID_PATH,
     EC_PROTECTED,
-    EC_INVALID_VALUE
+    EC_INVALID_VALUE,
+    EC_NOTAFOLDER
 } errCode_T;
 
 constexpr const char* CErrorDesc[] = {
@@ -29,7 +30,8 @@ constexpr const char* CErrorDesc[] = {
     [EC_OUT_OF_MEM] = "out of memory",
     [EC_INVALID_PATH] = "invalid path",
     [EC_PROTECTED] = "protected",
-    [EC_INVALID_VALUE] = "invalid value"
+    [EC_INVALID_VALUE] = "invalid value",
+    [EC_NOTAFOLDER] = "not a folder"
 };
 
 #endif

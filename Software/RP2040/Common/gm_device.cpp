@@ -140,6 +140,11 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
     }
 }
 
+void GM_device::reqDevName()
+{
+    // todo: implement
+}
+
 void GM_device::callStatUpCb()
 {
     GM_devUsedRec* akt = mDevUsedList;

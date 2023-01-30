@@ -34,6 +34,8 @@ public:
     char* getEpName() {return mName;};
     void setEpName(char* aName);
 
+    uint32_t getParaPer(uint16_t aInd) { if(aInd < mParaListLen) return mParaList[aInd].flags; else return 0;}
+
     void reqEpName();
 
     const char* getParaName(uint16_t aInd) {if(aInd < mParaListLen) return mParaList[aInd].paraName; else return 0;};

@@ -2,7 +2,7 @@
 #define GM_TERMPATHMNG_H_
 
 #include "termPathMng.h"
-#include "gm_busMaster.h"
+#include "gm_bus.h"
 #include "paraTable.h"
 #include "gm_termAppPathAccess.h"
 #include "gm_termPathDefs.h"
@@ -13,7 +13,7 @@ public:
     GM_termPathMng();
     virtual ~GM_termPathMng();
 
-    void init(GM_busMaster* aBusMaster, TParaTable* aParaTable);
+    void init(GM_bus* aBus, TParaTable* aParaTable);
 
     // terminal path functions
     virtual uint32_t getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSubPathLen, char* aPath = 0);

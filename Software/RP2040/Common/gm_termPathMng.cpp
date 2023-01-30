@@ -12,9 +12,9 @@ GM_termPathMng::~GM_termPathMng()
 
 }
 
-void GM_termPathMng::init(GM_busMaster* aBusMaster, TParaTable* aParaTable)
+void GM_termPathMng::init(GM_bus* aBus, TParaTable* aParaTable)
 {
-    mBM = aBusMaster;
+    mBM = aBus->getBusMaster();
     mPT = aParaTable;
     mAktAdr.type = PT_ROOT;
     mPathAccessApp = &mPA;
@@ -190,6 +190,8 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
 
             nameStr = ep->getEpName();
         }
+        if(nameStr == 0)
+            return 0;  
 
         uint32_t len = strlen(nameStr);
         if(aSubPathLen - 1 <= len)
@@ -227,6 +229,8 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
 
             nameStr = ep->getParaName(aInd);
         }
+        if(nameStr == 0)
+            return 0;    
 
         uint32_t len = strlen(nameStr);
         if(aSubPathLen - 1 <= len)
@@ -251,7 +255,10 @@ errCode_T GM_termPathMng::setAktPath(char* aPath, uint32_t aPathLen)
     }
     else
     {
-        return EC_INVALID_PATH;
+        if(newPath.offInd != CInvalidReg)
+            return EC_NOTAFOLDER;
+        else
+            return EC_INVALID_PATH;
     }
 }   
 
@@ -267,11 +274,14 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
 
     pathRes_t path;
 
+    uint32_t pathInd = 0;
+
     // init path resoluton struct
-    if(aPathStr[0] == '.')
+    if(aPathStr[0] == '.' && aPathStr[1] == '/')
     {
         // '.' means relative path to aktiv path
         path = mAktAdr;
+        pathInd = 2;
     }
     else
     {
@@ -279,6 +289,7 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
         {
             // '/' means a absolut path
             path.type = PT_ROOT;
+            pathInd = 1;
         }
         else
         {
@@ -286,12 +297,12 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
         }
     }
 
-    uint32_t pathInd = 1;
+    
 
     while(1)
     {
         // find next path element
-        char* pathEle = aPathStr + pathInd;
+        char* pathEle = &aPathStr[pathInd];
         uint32_t pathEleLen = 0;
 
         while(  pathEle[pathEleLen] != 0 && 
@@ -532,7 +543,7 @@ void GM_termPathMng::parseEpRegName(pathRes_t *aPath, GM_device* aDev, char* aSt
             TEpBase* ep = aDev->findEp(aPath->baseInd);
             uint16_t regOff = parseRegName(ep, aStrBuf, aBufLen);
 
-            if(regOff != CInvalidReg)
+            if(regOff == CInvalidReg)
             {
                 // reg name not found
                 aPath->type = PT_INVALID;
@@ -587,7 +598,7 @@ void GM_termPathMng::parseLocEpRegName(pathRes_t *aPath, char* aStrBuf, uint32_t
             TParaTable::endpoint_t* ep = mPT->findEp(aPath->baseInd);
             uint16_t regOff = parseLocRegName(ep, aStrBuf, aBufLen);
 
-            if(regOff != CInvalidReg)
+            if(regOff == CInvalidReg)
             {
                 // reg name not found
                 aPath->type = PT_INVALID;
@@ -864,7 +875,7 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
         return ind;
     }
 
-    if(ind < aBufLen - 1)
+    if(ind >= aBufLen - 1)
         return 0;
 
     aStrBuf[ind++] = '/';
@@ -918,7 +929,7 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
         return ind;
     }
 
-    if(ind < aBufLen - 1)
+    if(ind > aBufLen - 1)
         return 0;
 
     aStrBuf[ind++] = '/';
@@ -1052,7 +1063,7 @@ pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
                 {
                     TParaTable::endpoint_t* ep = mPT->findEp(resPath.baseInd);
 
-                    if(ep = 0)
+                    if(ep == 0)
                         return obj;
 
                     if(resPath.offInd >= ep->length) 

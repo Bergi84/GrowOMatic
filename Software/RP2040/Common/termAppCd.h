@@ -6,8 +6,6 @@
 class TTermAppCd : public TTermApp
 {
 public:
-
-protected:
     TTermAppCd();
     virtual ~TTermAppCd();
 

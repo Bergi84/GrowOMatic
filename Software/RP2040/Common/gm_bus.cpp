@@ -1,4 +1,5 @@
 #include "gm_bus.h"
+#include <string.h>
 
 GM_bus::GM_bus() :
 // init bus parameter list
@@ -13,15 +14,16 @@ mBusPara( (TParaTable::paraRec_t[cParaListLength]) {
 // init bus endpoint
 mBusEp( (TParaTable::endpoint_t) { 
     { { 
-        .baseInd= CInvalidReg,
+        .baseInd= CBusBaseRegAdr,
         .type = (uint16_t)EPT_BUS    
     } }, 
     .length = cParaListLength, 
     .para = mBusPara,
-    .next = 0
+    .next = 0,
+    .typeName = cTypeName
 })
 {
-
+    strcpy(mBusEp.epName, mBusEp.typeName);
 }
 
 void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)

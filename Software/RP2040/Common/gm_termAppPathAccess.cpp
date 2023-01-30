@@ -1,6 +1,6 @@
 #include "gm_termAppPathAccess.h"
 #include "gm_termPathMng.h"
-
+#include <stdio.h>
 #include <stdlib.h>
 
 gm_termAppPathAccess::gm_termAppPathAccess()
@@ -21,7 +21,7 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
 
     pathObj_t obj = pathMng->getPathObj((char*) aStartArg, pos);
     
-    if(obj.type != POT_REMREG || obj.type != POT_LOCREG)
+    if(obj.type != POT_REMREG && obj.type != POT_LOCREG)
     {
         printErr(EC_INVALID_PATH);
         done();
@@ -30,7 +30,7 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
 
     uint32_t valPos = findNextC((char*) &aStartArg[pos]);
 
-    if(valPos = 0)
+    if(valPos == 0)
     {
         // no further argument, read access
         readObj(&obj);
@@ -129,7 +129,40 @@ void gm_termAppPathAccess::writeCb (void* aArg, uint32_t* aVal, errCode_T aStatu
     }
     else
     {
-        pObj->readObj(pObj->mLastObj);
+        bool readPer;
+        const char* varName;
+        if(pObj->mLastObj->type == POT_REMREG)
+        {
+            // remote request
+            TEpBase* ep = (TEpBase*) pObj->mLastObj->objP;
+            readPer = (ep->getParaPer(pObj->mLastObj->offInd) & PARA_FLAG_R) != 0;
+            varName = ep->getParaName(pObj->mLastObj->offInd);
+        }
+        else
+        {
+            // local request
+            TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) pObj->mLastObj->objP;
+            readPer = (ep->para[pObj->mLastObj->offInd].defs->flags & PARA_FLAG_R) != 0;
+            varName = ep->para[pObj->mLastObj->offInd].defs->paraName;
+        }
+
+        if(readPer)
+        {
+            // if reading is allowed readback value
+            pObj->readObj(pObj->mLastObj);
+        }
+        else
+        {
+            // print written value if there is no read permission
+            pObj->putString(varName, strlen(varName));
+            pObj->putString(" = ", 3);
+
+            char printBuf[16];
+            snprintf(printBuf, 16, "%u", *aVal);
+            pObj->putString(printBuf, 16);
+            pObj->putChar('\r');
+            pObj->putChar('\n');
+        }
     }
 }
 
@@ -143,7 +176,30 @@ void gm_termAppPathAccess::readCb (void* aArg, uint32_t* aVal, errCode_T aStatus
     }
     else
     {
-        // todo: print value
+        const char* varName;
+
+        if(pObj->mLastObj->type == POT_REMREG)
+        {
+            // remote request
+            TEpBase* ep = (TEpBase*) pObj->mLastObj->objP;
+            varName = ep->getParaName(pObj->mLastObj->offInd);
+        }
+        else
+        {
+            // local request
+            TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) pObj->mLastObj->objP;
+            varName = ep->para[pObj->mLastObj->offInd].defs->paraName;
+        }
+
+        // print readed value
+        pObj->putString(varName, strlen(varName));
+        pObj->putString(" = ", 3);
+
+        char printBuf[16];
+        snprintf(printBuf, 16, "%u", *aVal);
+        pObj->putString(printBuf, 16);
+        pObj->putChar('\r');
+        pObj->putChar('\n');
     }
 
     pObj->done();

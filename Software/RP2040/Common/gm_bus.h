@@ -26,6 +26,8 @@ public:
 
     // first 2 uarts of list used for slave
     void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable);
+
+    GM_busMaster* getBusMaster() { return &mMaster; };
 };
 
 #endif /* GM_BUS_H_ */ 

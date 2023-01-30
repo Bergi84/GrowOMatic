@@ -25,6 +25,7 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/crc32.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termAppPathAccess.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/termAppCd.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/termAppLs.cpp
 )	
 		
 target_include_directories(dualLevelSens PUBLIC
