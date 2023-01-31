@@ -15,7 +15,8 @@ typedef enum
     EC_INVALID_PATH,
     EC_PROTECTED,
     EC_INVALID_VALUE,
-    EC_NOTAFOLDER
+    EC_NOTAFOLDER,
+    EC_NOTAFILE
 } errCode_T;
 
 constexpr const char* CErrorDesc[] = {
@@ -31,7 +32,8 @@ constexpr const char* CErrorDesc[] = {
     [EC_INVALID_PATH] = "invalid path",
     [EC_PROTECTED] = "protected",
     [EC_INVALID_VALUE] = "invalid value",
-    [EC_NOTAFOLDER] = "not a folder"
+    [EC_NOTAFOLDER] = "not a folder",
+    [EC_NOTAFILE] = "not a file"
 };
 
 #endif

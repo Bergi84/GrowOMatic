@@ -2,7 +2,7 @@
 #define GM_TEMAPPPATHACCESS_H_
 
 #include "termApp.h"
-#include "gm_termPathDefs.h"
+#include "gm_PathEle.h"
 
 class gm_termAppPathAccess : public TTermApp
 {
@@ -17,10 +17,7 @@ private:
     static void writeCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     static void readCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
 
-    void readObj(pathObj_t* aObj);
-    void writeObj(pathObj_t* aObj, uint32_t aVal);
-
-    pathObj_t* mLastObj;
+    TPathEle mPathEle;
 };
 
 #endif

@@ -5,7 +5,7 @@
 #include "gm_bus.h"
 #include "paraTable.h"
 #include "gm_termAppPathAccess.h"
-#include "gm_termPathDefs.h"
+#include "gm_pathEle.h"
 
 class GM_termPathMng : public TTermPathMng
 {
@@ -22,7 +22,7 @@ public:
     virtual uint32_t getAktPath(char* aPath, uint32_t aPathLen);
 
     // applikation functions
-    pathObj_t getPathObj(char* aPath, uint32_t aPathLen);
+    void getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle);
     TParaTable* getParatable() {return mPT; };
 
 private:

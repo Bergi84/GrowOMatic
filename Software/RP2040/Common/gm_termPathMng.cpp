@@ -1002,17 +1002,15 @@ uint32_t GM_termPathMng::printUid(uint32_t aUid, char* aStr, uint32_t aStrLen)
     return 8;
 }
 
-pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
+void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
 {
-    pathObj_t obj;
-    obj.objP = 0;
-    obj.offInd = 0;
-    obj.type = POT_NONE;
+    aEle->deInit();
 
     pathRes_t resPath = pathParse(aPath, aPathLen);
 
+
     if(resPath.type == PT_INVALID || resPath.type == PT_ROOT)
-        return obj; 
+        return; 
 
     if(resPath.offInd != CInvalidReg)
     {
@@ -1022,19 +1020,14 @@ pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
                 {
                     GM_device* dev = mBM->findDev(resPath.bus, resPath.adr);
                     if(dev == 0)
-                        return obj; 
+                        return; 
 
                     TEpBase* ep = dev->findEp(resPath.baseInd);
 
-                    if(ep = 0)
-                        return obj;
+                    if(ep == 0 || resPath.offInd >= ep->getParaListLen()) 
+                        return;
 
-                    if(resPath.offInd >= ep->getParaListLen()) 
-                        return obj;
-
-                    obj.objP = (void*) ep;
-                    obj.type = POT_REMREG;
-                    obj.offInd = resPath.offInd;
+                    aEle->init(ep, resPath.offInd);
                 }
                 break;
 
@@ -1043,19 +1036,14 @@ pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
                 {
                     GM_device* dev = mBM->findDev(resPath.uid);
                     if(dev == 0)
-                        return obj; 
+                        return; 
 
                     TEpBase* ep = dev->findEp(resPath.baseInd);
 
-                    if(ep = 0)
-                        return obj;
-
-                    if(resPath.offInd >= ep->getParaListLen()) 
-                        return obj;
-
-                    obj.objP = (void*) ep;
-                    obj.type = POT_REMREG;
-                    obj.offInd = resPath.offInd;
+                    if(ep == 0 || resPath.offInd >= ep->getParaListLen()) 
+                        return;
+                        
+                    aEle->init(ep, resPath.offInd);
                 }
                 break;
 
@@ -1064,23 +1052,18 @@ pathObj_t GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen)
                     TParaTable::endpoint_t* ep = mPT->findEp(resPath.baseInd);
 
                     if(ep == 0)
-                        return obj;
+                        return;
 
                     if(resPath.offInd >= ep->length) 
-                        return obj;
+                        return;
 
-                    obj.objP = (void*) ep;
-                    obj.type = POT_LOCREG;
-                    obj.offInd = resPath.offInd;
+                    aEle->init(ep, resPath.offInd, mPT);
                 }
                 break;
         }
     }
     else
     {
-        obj.objP = 0;
-        obj.type = POT_FOLDER;
-        obj.offInd = 0;
+        // todo: init for folder info
     }
-    return obj;
 }

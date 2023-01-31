@@ -19,11 +19,11 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
 
     GM_termPathMng* pathMng = (GM_termPathMng*) getPathMng();
 
-    pathObj_t obj = pathMng->getPathObj((char*) aStartArg, pos);
+    pathMng->getPathObj((char*) aStartArg, pos, &mPathEle);
     
-    if(obj.type != POT_REMREG && obj.type != POT_LOCREG)
+    if(!mPathEle.isFile())
     {
-        printErr(EC_INVALID_PATH);
+        printErr(EC_NOTAFILE);
         done();
         return;
     }
@@ -33,7 +33,13 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
     if(valPos == 0)
     {
         // no further argument, read access
-        readObj(&obj);
+        errCode_T ec = mPathEle.getValue(readCb, this);
+
+        if(ec != EC_SUCCESS)
+        {
+            printErr(ec);
+            done();
+        }
     }
     else
     {
@@ -51,65 +57,13 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
                 return;         
         }
 
-        writeObj(&obj, val);
-    }
-}
-
-void gm_termAppPathAccess::readObj(pathObj_t* aObj)
-{
-    mLastObj = aObj;
-
-    GM_termPathMng* pathMng = (GM_termPathMng*) getPathMng();
-
-    if(aObj->type == POT_REMREG)
-    {
-        // remote request
-        TEpBase* ep = (TEpBase*) aObj->objP;
-        errCode_T ec = ep->reqPara(aObj->offInd, readCb, this);
-        if(ec != EC_SUCCESS)
-        {
-            printErr(ec);
-            done();
-            return;
-        }
-    }
-    else
-    {
-        // local request
-        TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) aObj->objP;
-        uint32_t val;
-        uint16_t regAdr = ep->epId.baseInd + aObj->offInd;
-        errCode_T ec = pathMng->getParatable()->getPara(regAdr, &val);
-        readCb(this, &val, ec);
-    }
-}
-
-void gm_termAppPathAccess::writeObj(pathObj_t* aObj, uint32_t aVal)
-{
-    mLastObj = aObj;
-
-    GM_termPathMng* pathMng = (GM_termPathMng*) getPathMng();
-
-    if(aObj->type == POT_REMREG)
-    {
-        // remote request
-        TEpBase* ep = (TEpBase*) aObj->objP;
-        errCode_T ec = ep->setPara(aObj->offInd, aVal, writeCb, this);
+        errCode_T ec = mPathEle.setValue(val, writeCb, this);
 
         if(ec != EC_SUCCESS)
         {
             printErr(ec);
             done();
-            return;
         }
-    }
-    else
-    {
-        // local request
-        TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) aObj->objP;
-        uint16_t regAdr = ep->epId.baseInd + aObj->offInd;
-        errCode_T ec = pathMng->getParatable()->setPara(regAdr, aVal);
-        writeCb(this, &aVal, ec);
     }
 }
 
@@ -129,30 +83,20 @@ void gm_termAppPathAccess::writeCb (void* aArg, uint32_t* aVal, errCode_T aStatu
     }
     else
     {
-        bool readPer;
-        const char* varName;
-        if(pObj->mLastObj->type == POT_REMREG)
-        {
-            // remote request
-            TEpBase* ep = (TEpBase*) pObj->mLastObj->objP;
-            readPer = (ep->getParaPer(pObj->mLastObj->offInd) & PARA_FLAG_R) != 0;
-            varName = ep->getParaName(pObj->mLastObj->offInd);
-        }
-        else
-        {
-            // local request
-            TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) pObj->mLastObj->objP;
-            readPer = (ep->para[pObj->mLastObj->offInd].defs->flags & PARA_FLAG_R) != 0;
-            varName = ep->para[pObj->mLastObj->offInd].defs->paraName;
-        }
-
-        if(readPer)
+        if(pObj->mPathEle.getPer() & PARA_FLAG_R != 0)
         {
             // if reading is allowed readback value
-            pObj->readObj(pObj->mLastObj);
+            errCode_T ec = pObj->mPathEle.getValue(readCb, pObj);
+            if(ec != EC_SUCCESS)
+            {
+                pObj->printErr(ec);
+                pObj->done();
+            }
         }
         else
         {
+            const char* varName = pObj->mPathEle.getName();
+
             // print written value if there is no read permission
             pObj->putString(varName, strlen(varName));
             pObj->putString(" = ", 3);
@@ -176,20 +120,7 @@ void gm_termAppPathAccess::readCb (void* aArg, uint32_t* aVal, errCode_T aStatus
     }
     else
     {
-        const char* varName;
-
-        if(pObj->mLastObj->type == POT_REMREG)
-        {
-            // remote request
-            TEpBase* ep = (TEpBase*) pObj->mLastObj->objP;
-            varName = ep->getParaName(pObj->mLastObj->offInd);
-        }
-        else
-        {
-            // local request
-            TParaTable::endpoint_t* ep = (TParaTable::endpoint_t*) pObj->mLastObj->objP;
-            varName = ep->para[pObj->mLastObj->offInd].defs->paraName;
-        }
+        const char* varName = pObj->mPathEle.getName();
 
         // print readed value
         pObj->putString(varName, strlen(varName));
