@@ -69,6 +69,8 @@ public:
         aktivPin = 0;
 
         setNextSensPins();
+
+        mDebEmptyCall = 0;
     }
 
     void enable()
@@ -92,6 +94,7 @@ public:
     // this function installs the irq handler and only accepts "C" functions
     // or static memeber function. So we must provide an IRQ Handler wrapper function
     // for our capSens->irqHandler memeber function
+
     void setIrqHandler(void (*aIrqHandler)(void))
     {
         pio_set_irq0_source_enabled(pio, pis_interrupt0 , true);
@@ -107,13 +110,20 @@ public:
         }
     }
 
+    uint32_t mDebEmptyCall;
+
     inline void irqHandler()
     {
         pio_interrupt_clear(pio, 0);
 
         // for debugging, should never occure
-        if((pio->fstat & 0x00000F00) != 0x00000F00)
-            while(1);
+        // rx fifo has no Values
+
+        if((pio->fstat & 0x00000F00) != 0)
+        {
+            mDebEmptyCall++;
+            return;
+        }
 
         for(int i = 0; i < 4; i++)
         {

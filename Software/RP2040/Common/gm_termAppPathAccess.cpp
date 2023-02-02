@@ -83,7 +83,7 @@ void gm_termAppPathAccess::writeCb (void* aArg, uint32_t* aVal, errCode_T aStatu
     }
     else
     {
-        if(pObj->mPathEle.getPer() & PARA_FLAG_R != 0)
+        if((pObj->mPathEle.getPer() & PARA_FLAG_R) != 0)
         {
             // if reading is allowed readback value
             errCode_T ec = pObj->mPathEle.getValue(readCb, pObj);
@@ -106,6 +106,8 @@ void gm_termAppPathAccess::writeCb (void* aArg, uint32_t* aVal, errCode_T aStatu
             pObj->putString(printBuf, 16);
             pObj->putChar('\r');
             pObj->putChar('\n');
+
+            pObj->done();
         }
     }
 }

@@ -43,7 +43,7 @@ void GM_bus::setBusModeCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool a
 {
     GM_bus* pObj = (GM_bus*) aCbArg;
 
-    if(pObj->mBusPara[0].para)
+    if(pObj->mBusPara[PARA_MASTEREN].para)
     {
         if(pObj->mSlave.isInit())
             pObj->mSlave.deinit();

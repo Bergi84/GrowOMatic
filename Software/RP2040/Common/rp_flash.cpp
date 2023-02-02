@@ -21,7 +21,13 @@ void TFlash::init(uint32_t aOffset, uint32_t aSize, bool aSecCore)
 
 void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg)
 {
+    if(aStoreDataCb == 0)
+        return;
+
     uint32_t* writeBuf = (uint32_t*) malloc(FLASH_PAGE_SIZE);
+    for(int i = 0; i < FLASH_PAGE_SIZE >> 2; i++)
+        writeBuf[i] = 0;
+
     if(writeBuf == 0 || aSize > ((mSize >> 2) - 2))
         while(1);
 
@@ -30,48 +36,63 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
 
     uint32_t status = save_and_disable_interrupts();
     if(mSecCore)
-        multicore_lockout_start_blocking();
+    // bug in SDK 1.4.0
+    // multicore_lockout_start_blocking();
+        multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
 
     flash_range_erase(mOffset, mSize);
 
     bool retValue = true;
     uint32_t writePos = 0;
 
-    while(retValue && aSize > 0)
+    aSize++;    // we need addition uint32_t for crc
+    while((retValue || aSize == 1) && aSize > 0)
     {
         uint32_t aktSize;
         if(writePos == 0)
         {
-            if(aSize < (FLASH_PAGE_SIZE >> 2) - 1)
+            // first page holds also the length at address offset 0
+            if(aSize <= (FLASH_PAGE_SIZE >> 2) - 1)
             {
-                aktSize = aSize;
+                aktSize = aSize - 1;
             }
             else
             {
                 aktSize = ((FLASH_PAGE_SIZE >> 2) - 1);
             }
-            retValue = aStoreDataCb(aArg, &writeBuf[1], aktSize);
+            if(aktSize > 0)
+                retValue = aStoreDataCb(aArg, &writeBuf[1], aktSize);
+
+            for(int i = 0; i < aktSize + 1; i++)
+                crc = crcCalc(crc, writeBuf[i]);
         }
         else
         {
-            if(aSize < (FLASH_PAGE_SIZE >> 2))
+            if(aSize <= (FLASH_PAGE_SIZE >> 2))
             {
-                aktSize = aSize;
+                aktSize = aSize - 1;
             }
             else
             {
                 aktSize = (FLASH_PAGE_SIZE >> 2);
             }
-            retValue = aStoreDataCb(aArg, writeBuf, aktSize);
+            if(aktSize > 0)
+                retValue = aStoreDataCb(aArg, writeBuf, aktSize);
+
+            for(int i = 0; i < aktSize + 0; i++)
+                crc = crcCalc(crc, writeBuf[i]);
         }
         aSize -= aktSize;
 
-        for(int i = 0; i < aktSize; i++)
-            crc = crcCalc(crc, writeBuf[i]);
 
-        if(aSize == 0)
+
+        if(aSize == 1)
         {
-            writeBuf[aktSize] = crc;
+            aSize--;
+            if(writePos == 0)
+                writeBuf[aktSize + 1] = crc;
+            else
+                writeBuf[aktSize] = crc;
         }
         
         flash_range_program(mOffset + writePos, (uint8_t*) writeBuf, FLASH_PAGE_SIZE);
@@ -79,7 +100,8 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
     }
 
     if(mSecCore)
-        multicore_lockout_end_blocking();
+    //    multicore_lockout_end_blocking();
+        multicore_lockout_end_timeout_us((uint64_t)356*24*60*60*1000*1000);
     restore_interrupts(status);
 
     free(writeBuf);
@@ -87,11 +109,19 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
 
 void TFlash::load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg)
 {
+    if(aLoadDataCb == 0)
+        return;
+
     if(checkCrc())
     {
         uint32_t* data = (uint32_t*) (XIP_BASE + mOffset);
         aLoadDataCb(aArg, &data[1], data[0]);
     }
+}
+
+void TFlash::clear()
+{
+    flash_range_erase(mOffset, mSize);
 }
 
 uint32_t TFlash::getMaxSize()
@@ -116,12 +146,19 @@ bool TFlash::checkCrc()
     uint32_t* data = (uint32_t*) (XIP_BASE + mOffset);
 
     uint32_t size = data[0];
+    uint32_t storedCrc = data[size+1];
 
-    if(size != 0 && size != 0xFFFFFFFF)
+    if(size != 0 && size < mSize)
     {
-        for( int i = 1; i <= size; i++)
-        crc = crcCalc(crc, data[i]);
+        // without DMB and with enabled optimization the compiler 
+        // try to access the location data[size+1] also if size is an invalid value  
+        __dmb();    
+        for( int i = 0; i <= size; i++)
+            crc = crcCalc(crc, data[i]);
+        return (crc == storedCrc);
     }
-
-    return (crc == data[size+1]);
+    else
+    {
+        return false;
+    }
 }

@@ -17,6 +17,8 @@ public:
     // aLen is the size of the write buffer in words (uint32_t)
     virtual void load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg) = 0;
 
+    virtual void clear() = 0;
+
     // returns size in words
     virtual uint32_t getStoredSize() = 0;
     

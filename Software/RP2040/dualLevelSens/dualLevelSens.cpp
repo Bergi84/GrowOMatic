@@ -65,9 +65,9 @@ void main_c1()
     gSeq_c1.init(&__StackOneTop, PICO_STACK_SIZE);
     gSeq_c1.setIdleFunc(idle, NULL);
 
-    gCapSens.init(pio0, gpio_capSensExc_base, gpio_capSens_base, 0x000007FF, 62500, 125);
-    gCapSens.setIrqHandler(capSensIrqHandler);
-    gCapSens.enable();
+//    gCapSens.init(pio0, gpio_capSensExc_base, gpio_capSens_base, 0x000007FF, 62500, 125);
+//    gCapSens.setIrqHandler(capSensIrqHandler);
+//    gCapSens.enable();
 
     gSeq_c1.startIdle();
 }
@@ -107,7 +107,7 @@ int main()
 
     gPathMng.init(&gBus, &gParaTable);
 
-    // gParaTable.loadPara();
+    gParaTable.loadPara();
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 

@@ -24,6 +24,7 @@ public:
 
     virtual void store(uint32_t mSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);
     virtual void load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);
+    virtual void clear();
     
     virtual uint32_t getStoredSize();
     virtual uint32_t getMaxSize();

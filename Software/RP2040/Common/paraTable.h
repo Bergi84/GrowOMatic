@@ -46,6 +46,7 @@ public:
 
     void loadPara();
     void storePara();
+    void clearPara();
 
     void loadDefault(uint16_t aRegAdr = CInvalidReg);
 
@@ -61,8 +62,12 @@ private:
     endpoint_t mEpListEndpoint;
     paraDef_t mEpListEndpointDefs[PT_MAXENDPOINTS];
 
+    char mDevName[16];
+
     endpoint_t* mStoreLoadEp;
-    uint32_t mStoreLoadInd;
+    uint16_t mStoreLoadInd;
+    uint16_t mStoreLoadCnt;
+    bool mStoreLoadDone;
     uint32_t mNVCheckSum;
     uint32_t mNVLen;
 
