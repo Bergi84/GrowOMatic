@@ -46,9 +46,9 @@ private:
         [PT_UID] = "uid",
         [PT_DEV] = "dev",
     };
-    static constexpr const char* cSlaveStr = "slave";
-    static const uint32_t cSlaveStrLen = sizeof(cPathTypeName)/sizeof(char*);
-
+    static constexpr uint32_t cPathTypeNameLen = sizeof(cPathTypeName)/sizeof(char*);
+    static constexpr const char cSlaveStr[] = "slave";
+    
     typedef struct
     {
         pathType_t type;

@@ -7,6 +7,7 @@
 #include "sequencer_armm0.h"
 #include "rp_uart.h"
 #include "paraTable.h"
+#include "gm_system.h"
 #include "pico/unique_id.h"
 #include "terminal.h"
 #include "gm_termPathMng.h"
@@ -20,6 +21,7 @@ THwUart gUart1;
 TUsbUart gUartTerm;
 GM_bus gBus;
 TParaTable gParaTable;
+TSystem gSystem;
 TTerminal gTerm;
 GM_termPathMng gPathMng;
 TFlash gTableStorage;
@@ -51,7 +53,6 @@ void idle(void* aArg)
 
 extern uint32_t __StackOneTop;
 
-#define STATUP_FLAG 0x0000cafe
 
 void main_c1() 
 {
@@ -99,7 +100,8 @@ int main()
     gTableStorage.init(PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE, false);
 #endif
 
-    gParaTable.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR, &gTableStorage);
+    gParaTable.init(&gTableStorage);
+    gSystem.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR, &gParaTable);
 
     TUart* uartList[] = {&gUart0,  &gUart1};
 

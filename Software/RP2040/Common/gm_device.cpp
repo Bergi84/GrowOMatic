@@ -5,16 +5,16 @@
 GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
 {
     mUid = aUid;
-    GM_busMaster* mBusMaster = aBusMaster;
-    devType_t mType = DT_INVALID;
-    class TEpBase* epList = TEpBase::newEp(EPT_SYSTEM);
-    epList->setEpName((char*)epList->getTypeName());
-    mLastEp = epList;
+    mBusMaster = aBusMaster;
+    mType = DT_INVALID;
+    mLastEp = TEpBase::newEp(EPT_SYSTEM, this);
+    mEpList = mLastEp;
     mEpScanInd = 1;
     mBus = CInvalidBus;
     mAdr = CInvalidAdr;
     mNext = 0;
     mStat = DS_LOST;
+    mDevUsedList = 0;
 }
 
 void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
@@ -100,8 +100,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                 {
                     // new Endpoint, we always can insert the new Enpoints at the End
                     // because there is minimum the system endpoint in the list
-                    pObj->mLastEp->mNext = TEpBase::newEp((epType_t) epId.type );
-
+                    pObj->mLastEp->mNext = TEpBase::newEp((epType_t) epId.type, pObj);
                     pObj->mEpScanInd++;
                     // ignore unkowen endpoints
                     if(pObj->mLastEp->mNext)

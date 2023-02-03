@@ -1,22 +1,8 @@
 #include "paraTable.h"
 #include "gm_epLib.h"
-#include "pico/bootrom.h"
-#include "hardware/watchdog.h"
 #include <string.h>
 
-TParaTable::TParaTable() : 
-// init system parameter list
-mSysPara( (paraRec_t[cParaListLength]) {
-    [PARA_UID] =          {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_UID]},
-    [PARA_TYPE] =         {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_TYPE]},
-    [PARA_FWVERSION] =    {.para = VER_COMBO,                               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_FWVERSION]},
-    [PARA_SAVE] =         {.para = 0,                                       .pFAccessCb = paraSaveCb,   .cbArg = this,    .defs = &cParaList[PARA_SAVE]},
-    [PARA_START] =        {.para = 0,                                       .pFAccessCb = paraStartCb,  .cbArg = this,    .defs = &cParaList[PARA_START]},
-    [PARA_DEVNAME0] =     {.pPara = (uint32_t*) &mDevName[0],               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME0]},
-    [PARA_DEVNAME1] =     {.pPara = (uint32_t*) &mDevName[4],               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME1]},
-    [PARA_DEVNAME2] =     {.pPara = (uint32_t*) &mDevName[8],               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME2]},
-    [PARA_DEVNAME3] =     {.pPara = (uint32_t*) &mDevName[12],              .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_DEVNAME3]}
-    }),
+TParaTable::TParaTable() :
 
 // init Endpoint List Endpoint 
 mEpListEndpoint( (endpoint_t) {
@@ -28,45 +14,39 @@ mEpListEndpoint( (endpoint_t) {
     .para = mEpListPara,
     .next = 0,
     .typeName = "epList",
-}),
-// init system endpoint
-mSysEndpoint( (endpoint_t) { 
-    { { 
-        .baseInd = CSystemBaseRegAdr,
-        .type = (uint16_t)EPT_SYSTEM    
-    } }, 
-    .length = cParaListLength, 
-    .para = mSysPara,
-    .next = &mEpListEndpoint,
-    .typeName = cTypeName
 })
 {
-    strcpy(mSysEndpoint.epName, mSysEndpoint.typeName);
     strcpy(mEpListEndpoint.epName, mEpListEndpoint.typeName);
 
     for(int i = 0; i < PT_MAXENDPOINTS; i++)
     {
-        mEpListEndpointDefs[i].flags = PARA_FLAG_R | PARA_FLAG_P;
-        mEpListEndpointDefs[i].paraName = 0;
-        mEpListPara[i] = {.para = EPT_INVALID, .pFAccessCb = 0, .cbArg = 0, .defs = &mEpListEndpointDefs[i]};
+        mEpListPara[i] = {.para = EPT_INVALID, .pFAccessCb = 0, .cbArg = 0, .defs = &mEpListEndpointDefs};
     }
+
+    mTmpPara.cbArg = 0;
+    mTmpPara.pFAccessCb = 0;
 }
 
-void TParaTable::init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage)
+void TParaTable::init(TStorage* aStorage)
 {
-    while(CInvalidUid == aUniqueId);
-
-    mSysPara[PARA_UID].para = aUniqueId;
-    mSysPara[PARA_TYPE].para = (uint32_t) aDevType;
     mStorage = aStorage;
 }
 
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
+    if(aEndpoint->epId.type == EPT_SYSTEM)
+    {
+        aEndpoint->epId.baseInd = CSystemBaseRegAdr;
+        mRootEp = aEndpoint;
+        aEndpoint->next = &mEpListEndpoint;
+        return;
+    }
+
+
     // todo: if aEndpoint->epId.baseInd == CInvalidReg then allocate the next free endpoint index
     while(aEndpoint->epId.baseInd == CInvalidReg);
 
-    // avoid insertion of endpoint before end
+    // avoid insertion of endpoint before endpointlist
     // and if endpoint list is full
     if( aEndpoint->epId.baseInd < CEpListBaseRegAdr + PT_MAXENDPOINTS + 1 ||
         mEpListEndpoint.length >= PT_MAXENDPOINTS + 1)
@@ -78,7 +58,7 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 
     // insertion is only after mEpListEndpoint possible
     endpoint_t* tmp = &mEpListEndpoint;
-    uint32_t epListInd = 1;
+    uint32_t epListInd = 0;
     bool insertPend = true;
 
     while(tmp)
@@ -91,7 +71,8 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
         }
 
         // update endpoint list
-        mEpListPara[epListInd].pPara = &tmp->epId.id;
+        if(epListInd > 0)
+            mEpListPara[epListInd - 1].para = tmp->epId.id;
         epListInd++;
         tmp = tmp->next;
     }
@@ -150,6 +131,38 @@ errCode_T TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
     }
 }
 
+errCode_T TParaTable::getParaName(uint16_t aRegAdr, const char **aData)
+{
+    paraRec_t* tmp = findPara(aRegAdr);
+
+    if(tmp)
+    {
+        *aData = tmp->defs->paraName;
+        return EC_SUCCESS;
+    }
+    else
+    {
+        *aData = 0;
+        return EC_INVALID_REGADR;
+    }
+}
+
+errCode_T TParaTable::getParaPer(uint16_t aRegAdr, uint32_t *aData)
+{
+    paraRec_t* tmp = findPara(aRegAdr);
+    
+    if(tmp)
+    {
+        *aData = tmp->defs->flags;
+        return EC_SUCCESS;
+    }
+    else
+    {
+        *aData = 0;
+        return EC_INVALID_REGADR;
+    }
+}
+
 bool TParaTable::getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec)
 {
     paraRec_t* tmp = findPara(aRegAdr);
@@ -167,12 +180,20 @@ bool TParaTable::getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec)
 
 TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
 {
-    endpoint_t* tmp = &mSysEndpoint;
+    endpoint_t* tmp = mRootEp;
     while(tmp)
     {
-        if(tmp->epId.baseInd <= index && (tmp->epId.baseInd + tmp->length) > index)
+        if(tmp->epId.baseInd <= index)
         {
-            return &tmp->para[index - tmp->epId.baseInd];
+            if( (tmp->epId.baseInd + tmp->length) > index)
+            {
+                return &tmp->para[index - tmp->epId.baseInd];
+            } else if ( (tmp->epId.baseInd + tmp->length + 4) > index)
+            {
+                mTmpPara.pPara = (uint32_t*) &tmp->epName[(index - tmp->epId.baseInd - tmp->length) * 4], 
+                mTmpPara.defs = &CEpNameDefs[index - tmp->epId.baseInd - tmp->length];
+                return &mTmpPara;
+            }
         }
         tmp = tmp->next;
     }
@@ -181,7 +202,7 @@ TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
 
 TParaTable::endpoint_t* TParaTable::findEp(uint16_t baseInd)
 {
-    endpoint_t* tmp = &mSysEndpoint;
+    endpoint_t* tmp = mRootEp;
     while(tmp)
     {
         if(tmp->epId.baseInd == baseInd)
@@ -195,19 +216,19 @@ TParaTable::endpoint_t* TParaTable::findEp(uint16_t baseInd)
 
 void TParaTable::loadPara()
 {
-    mStoreLoadEp = &mSysEndpoint;
+    mStoreLoadEp = mRootEp;
     mStoreLoadCnt = 0;
     mStoreLoadInd = 0;
     mStoreLoadDone = false;
     calcNVCheckSum(&mNVCheckSum, &mNVLen);
     mStorage->load(loadParaCb, this);
-    if(mStoreLoadEp == &mSysEndpoint)
+    if(mStoreLoadInd == 0)
         loadDefault();
 };
 
 void TParaTable::storePara()
 {
-    mStoreLoadEp = &mSysEndpoint;
+    mStoreLoadEp = mRootEp;
     mStoreLoadCnt = 0;
     mStoreLoadInd = 0;
     mStoreLoadDone = false;
@@ -225,7 +246,7 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
     uint32_t crc = 0;
     uint32_t cnt = 0;
 
-    endpoint_t* tmpEp = &mSysEndpoint;
+    endpoint_t* tmpEp = mRootEp;
     while(tmpEp)
     {
         paraRec_t* tmpPar = tmpEp->para;
@@ -239,13 +260,18 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
                 cnt++;
             }
         }
+        // epname are virtual parameters and always NV
+        for(uint16_t i = len; i < len+4; i++)
+        {
+            crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
+            crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
+            cnt++;
+        }
         tmpEp = tmpEp->next;
     }
     *aCheckSum = crc;
     *aNVParaCnt = cnt;
 }
-
-
 
 bool TParaTable::storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
 {
@@ -269,20 +295,30 @@ bool TParaTable::storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
 
             while(tmpEp && !found)
             {
-                if(tmpPar[ind].defs->flags & PARA_FLAG_NV)
+                if(ind < len)
                 {
-                    found = true;
-                    if(tmpPar[ind].defs->flags & PARA_FLAG_P)
+                    // store real parameters
+                    if(tmpPar[ind].defs->flags & PARA_FLAG_NV)
                     {
-                        aData[inc] = *tmpPar[ind].pPara;
-                    }
-                    else
-                    {
-                        aData[inc] = tmpPar[ind].para;
+                        found = true;
+                        if(tmpPar[ind].defs->flags & PARA_FLAG_P)
+                        {
+                            aData[inc] = *tmpPar[ind].pPara;
+                        }
+                        else
+                        {
+                            aData[inc] = tmpPar[ind].para;
+                        }
                     }
                 }
+                else
+                {
+                    // store endpoint name as virtual parameter
+                    found = true;
+                    aData[inc] = *((uint32_t*) &tmpEp->epName[(ind - len)*4]);
+                }
 
-                if(ind < len)
+                if(ind < len+4)
                 {
                     ind++;
                 }
@@ -330,7 +366,9 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
     {
         if(pObj->mStoreLoadCnt == 0)
         {
-            aData[0] = pObj->mNVCheckSum;
+            if(aData[0] != pObj->mNVCheckSum)
+                return false;
+            
         }
         else
         {
@@ -339,25 +377,34 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
 
             while(tmpEp && !found)
             {
-                if(tmpPar[ind].defs->flags & PARA_FLAG_NV)
+                if(ind < len)
                 {
-                    found = true;
-                    if(tmpPar[ind].defs->flags & PARA_FLAG_P)
+                    if(tmpPar[ind].defs->flags & PARA_FLAG_NV)
                     {
-                        *tmpPar[ind].pPara = aData[inc];
-                    }
-                    else
-                    {
-                        tmpPar[ind].para = aData[inc];
-                    }
+                        found = true;
+                        if(tmpPar[ind].defs->flags & PARA_FLAG_P)
+                        {
+                            *tmpPar[ind].pPara = aData[inc];
+                        }
+                        else
+                        {
+                            tmpPar[ind].para = aData[inc];
+                        }
 
-                    if(tmpPar[ind].defs->flags & PARA_FLAG_FW)
-                    {
-                        tmpPar[ind].pFAccessCb(tmpPar[ind].cbArg, &tmpPar[ind], true);
+                        if(tmpPar[ind].defs->flags & PARA_FLAG_FW)
+                        {
+                            tmpPar[ind].pFAccessCb(tmpPar[ind].cbArg, &tmpPar[ind], true);
+                        }
                     }
                 }
-                   
-                if(ind < len)
+                else
+                {
+                    // load endpoint name as virtual parameter
+                    found = true;
+                    *((uint32_t*) &tmpEp->epName[(ind - len)*4]) = aData[inc];
+                } 
+
+                if(ind < len + 4)
                 {
                     ind++;
                 }
@@ -390,49 +437,6 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
         pObj->mStoreLoadDone = true;
 
     return true;
-}
-
-void TParaTable::paraSaveCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite)
-{
-    TParaTable* pObj = (TParaTable*) aCbArg;
-
-    switch(aPParaRec->para)
-    {
-        case 1:
-            pObj->storePara();
-            break;
-        
-        case 2:
-            pObj->loadPara();
-            break;
-
-        defualt:
-            pObj->clearPara();
-            break;
-    }
-}
-
-void TParaTable::paraStartCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite)
-{
-
-    TParaTable* pObj = (TParaTable*) aCbArg;
-
-    switch(aPParaRec->para)
-    {
-        case 1:
-            // todo: remove hardware dependend code
-            watchdog_enable(1, 1);
-            while(1);
-            break;
-        
-        case 2:
-            // todo: remove hardware dependend code
-            reset_usb_boot(0, 0);
-            break;
-
-        defualt:
-            break;
-    }
 }
 
 void TParaTable::loadDefault(uint16_t aRegAdr)

@@ -8,8 +8,6 @@
 #define DEVICE_NAME_LEN     15
 #define EP_NAME_LEN         15
 
-
-
 static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
 static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
 static constexpr uint32_t PARA_FLAG_RW = 0x00000003;     // is write and readable
@@ -32,6 +30,13 @@ static constexpr uint32_t CInvalidUid = -1;
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
+
+static constexpr paraDef_t CEpNameDefs[] = {
+    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
+    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName1"},
+    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName2"},
+    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName3"},
+};
 
 class GM_BusDefs : public TCrc32
 {
@@ -124,10 +129,6 @@ class TEpBusDefs
 protected:
     typedef enum
     {
-        PARA_EPNAME0 = 0,
-        PARA_EPNAME1,
-        PARA_EPNAME2,
-        PARA_EPNAME3,
         PARA_MASTEREN 
     } paraInd_t; 
 
@@ -135,10 +136,6 @@ protected:
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_EPNAME0] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName0"},
-        [PARA_EPNAME1] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName1"},
-        [PARA_EPNAME2] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName2"},
-        [PARA_EPNAME3] =        {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "epName3"},
         [PARA_MASTEREN] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,   "masterEn"},
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 

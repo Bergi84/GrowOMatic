@@ -89,7 +89,10 @@ uint32_t TPathEle::getPer()
     else
     {
         // local request
-        return mEp.loc->para[mOffInd].defs->flags;
+        uint32_t retVal;
+        uint16_t regAdr = mEp.loc->epId.baseInd + mOffInd;
+        mPt->getParaPer( regAdr, &retVal);
+        return retVal;
     }
 }
 
@@ -104,6 +107,9 @@ const char* TPathEle::getName()
     else
     {
         // local request
-        return mEp.loc->para[mOffInd].defs->paraName;
+        const char* retVal;
+        uint16_t regAdr = mEp.loc->epId.baseInd + mOffInd;
+        mPt->getParaName( regAdr, &retVal);
+        return retVal;
     }
 }

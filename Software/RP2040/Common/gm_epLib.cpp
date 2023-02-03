@@ -2,40 +2,40 @@
 #include "gm_busMaster.h"
 #include "gm_device.h"
 
-TEpSystem::TEpSystem()
+TEpSystem::TEpSystem(GM_device* aDev)
 {
     mType = cType;
     mParaList = cParaList;
     mParaListLen = cParaListLength;
     mTypeName = cTypeName;
+    mPDev = aDev;
     mNext = 0;
 }
 
-TEpBus::TEpBus()
+TEpBus::TEpBus(GM_device* aDev)
 {
     mType = cType;
     mParaList = cParaList;
     mParaListLen = cParaListLength;
     mTypeName = cTypeName;
+    mPDev = aDev;
     mNext = 0;
 }
 
-TEpBase* TEpBase::newEp(epType_t aEpType)
+TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
 {
     switch(aEpType)
     {
         case EPT_SYSTEM:
-            return new TEpSystem();
+            return new TEpSystem(aDev);
 
         case EPT_BUS:
-            return new TEpBus();
+            return new TEpBus(aDev);
 
         default:
             return 0;
     }
 }
-
-const char TEpBase::cInvalidName[] = "unkowen";
 
 TEpBase::TEpBase()
 {

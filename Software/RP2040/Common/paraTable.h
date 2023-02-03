@@ -1,16 +1,14 @@
 #ifndef PARATABLE_H_
 #define PARATABLE_H_
 
-#include "stdint.h"
-#include "version.h"
-#include "gm_busDefs.h"
 #include "storage.h"
+#include "gm_busDefs.h"
 
 #ifndef PT_MAXENDPOINTS
 #define PT_MAXENDPOINTS 16
 #endif
 
-class TParaTable : private TEpSysDefs
+class TParaTable
 {
 public:
     TParaTable();
@@ -36,12 +34,14 @@ public:
         char epName[EP_NAME_LEN + 1];
     } endpoint_t;
 
-    void init(uint32_t aUniqueId, devType_t aDevType, TStorage* aStorage = 0);
+    void init(TStorage* aStorage);
     void addEndpoint(endpoint_t* aEndpoint_t);
     endpoint_t* findEp(uint16_t baseInd);
-    endpoint_t* getEpLL() {return &mSysEndpoint;};
+    endpoint_t* getEpLL() {return mRootEp;};
     errCode_T setPara(uint16_t aRegAdr, uint32_t aData);
     errCode_T getPara(uint16_t aRegAdr, uint32_t *aData);
+    errCode_T getParaName(uint16_t aRegAdr, const char **aData);
+    errCode_T getParaPer(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
 
     void loadPara();
@@ -55,14 +55,13 @@ private:
 
     paraRec_t* findPara(uint16_t index);
 
-    paraRec_t mSysPara[cParaListLength];
-    endpoint_t mSysEndpoint;
+    endpoint_t* mRootEp;
 
     paraRec_t mEpListPara[PT_MAXENDPOINTS];
     endpoint_t mEpListEndpoint;
-    paraDef_t mEpListEndpointDefs[PT_MAXENDPOINTS];
+    static constexpr paraDef_t mEpListEndpointDefs = {PARA_FLAG_R, 0};
 
-    char mDevName[16];
+    TParaTable::paraRec_t mTmpPara;
 
     endpoint_t* mStoreLoadEp;
     uint16_t mStoreLoadInd;
@@ -74,9 +73,6 @@ private:
     void calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt);
     static bool storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
     static bool loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen);
-    static void paraSaveCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite);
-    static void paraStartCb(void* aCbArg, struct paraRec_s* aPParaRec, bool aWrite);
-    void loadDefault(paraRec_t* aPara);
 };
 
 #endif /* PARATABLE_H_ */

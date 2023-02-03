@@ -54,6 +54,7 @@ void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
     {
         mUart = 0;
         mParaTable = aParaTable;
+        mSeq = aSeq;
 
         mDevListLength = 1;
         mParaTable->getPara(0, &mDeviceList[0]);
@@ -66,9 +67,9 @@ void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
 
         mSeq->addTask(mCoorTaskId, coorTask, this);
 
-        mDevListUpCb(mDevListUpCbArg, mDeviceList, mDevListLength);
-
         mInit = true;
+
+        mDevListUpCb(mDevListUpCbArg, mDeviceList, mDevListLength);
     }
 }
 
@@ -212,15 +213,14 @@ errCode_T TBusCoordinator::queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*,
     if(!mInit)
         return EC_NOT_INIT;
 
-    uint32_t status = save_and_disable_interrupts();
-
-    // check uid
-    if( aReqAdr->devAdr < mDevListLength;  // does the requested device adress exist?
-        aReqAdr->uid /= mDeviceList[aReqAdr->devAdr])  // is the uid correct?
+    // check uid and if index exists
+    if( (aReqAdr->devAdr >= mDevListLength) ||
+        (aReqAdr->uid != mDeviceList[aReqAdr->devAdr]))
     {
         return EC_INVALID_DEVADR;
     }
     
+    uint32_t status = save_and_disable_interrupts();
 
     uint8_t newWInd = mReqQueue.wInd == GM_QUEUELEN - 1 ? 0 : mReqQueue.wInd + 1;
     if(newWInd == mReqQueue.rInd)
@@ -253,9 +253,9 @@ errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void 
     if(!mInit)
         return EC_NOT_INIT;
 
-    // check uid
-    if( aReqAdr->devAdr < mDevListLength;  // does the requested device adress exist?
-        aReqAdr->uid /= mDeviceList[aReqAdr->devAdr])  // is the uid correct?
+    // check uid and if index exists
+    if( (aReqAdr->devAdr >= mDevListLength) ||
+        (aReqAdr->uid != mDeviceList[aReqAdr->devAdr]))
     {
         return EC_INVALID_DEVADR;
     }
@@ -528,7 +528,8 @@ void TBusCoordinator::coorTask(void* aArg)
                         else
                         {
                             uint32_t data;
-                            if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                            errCode_T ec = pObj->mParaTable->getPara(tmp->paraAdr, &data);
+                            if(ec == EC_SUCCESS)
                             {
                                 tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
                             }
@@ -825,7 +826,7 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
             newDev->updateAdr(bus, i);
 
             // add new device to list
-            if(pObj->mRootDev)
+            if(pObj->mRootDev == 0)
             {
                 pObj->mRootDev = newDev;
             }

@@ -20,10 +20,10 @@ protected:
     uint32_t mParaListLen;
     const char* mTypeName;
     char mName[EP_NAME_LEN + 1];
-    static const char cInvalidName[];
+    static constexpr char cInvalidName[] = "unkowen";
 
 public:
-    static TEpBase* newEp(epType_t aEpType);
+    static TEpBase* newEp(epType_t aEpType, GM_device* aDev);
 
     void regUsage(GM_devUsedRec* mDevUsedRec);
     void unregUsage(GM_devUsedRec* mDevUsedRec);
@@ -34,13 +34,30 @@ public:
     char* getEpName() {return mName;};
     void setEpName(char* aName);
 
-    uint32_t getParaPer(uint16_t aInd) { if(aInd < mParaListLen) return mParaList[aInd].flags; else return 0;}
+    uint32_t getParaPer(uint16_t aInd) {
+        if(aInd < mParaListLen) 
+            return mParaList[aInd].flags; 
+        else if(aInd < mParaListLen + 4) 
+            if(mType == EPT_SYSTEM)
+                return CEpNameDefs[aInd - mParaListLen].flags & ~PARA_FLAG_W; 
+            else
+                return CEpNameDefs[aInd - mParaListLen].flags; 
+        else 
+            return 0;
+    };
 
     void reqEpName();
 
-    const char* getParaName(uint16_t aInd) {if(aInd < mParaListLen) return mParaList[aInd].paraName; else return 0;};
+    const char* getParaName(uint16_t aInd) {
+        if(aInd < mParaListLen) 
+            return mParaList[aInd].paraName;
+        else if(aInd < mParaListLen + 4) 
+            return CEpNameDefs[aInd - mParaListLen].paraName; 
+        else 
+            return 0;
+    };
 
-    uint32_t getParaListLen() {return mParaListLen; };
+    uint32_t getParaListLen() {return mParaListLen + 4; };
     inline errCode_T setPara(uint16_t aIndOff, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
         { return mPDev->queueWriteReq(mBaseAdr + aIndOff, aVal, reqCb, aArg); };
     inline errCode_T reqPara(uint16_t aIndOff, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
@@ -54,22 +71,23 @@ public:
 class TEpSystem : public TEpBase, private TEpSysDefs
 {
 private:
-
+    TEpSystem();
 
 public:
-    TEpSystem();
+    TEpSystem(GM_device* aDev);
 
     // EP helper functions
     inline void getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg )
-    {   mPDev->queueReadReq(0x0000 + PARA_TYPE, reqEpListLenCb, aArg);  };
+    {   mPDev->queueReadReq(CSystemBaseRegAdr + PARA_TYPE, reqEpListLenCb, aArg);  };
 };
 
 class TEpBus : public TEpBase, private TEpBusDefs
 {
 private:
+    TEpBus();
 
 public:
-    TEpBus();
+    TEpBus(GM_device* aDev);
     // EP helper functions
 };
 

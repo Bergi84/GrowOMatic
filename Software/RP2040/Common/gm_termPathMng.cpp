@@ -116,11 +116,11 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
                 {
                     if(aInd < mBM->getBusNo() + PT_DEV)
                     {
-                        uint32_t len = strlen(cPathTypeName[aInd - mBM->getBusNo()]);
+                        uint32_t len = strlen(cPathTypeName[aInd - mBM->getBusNo() + 1]);
                         if(aSubPathLen - 1 <= len)
                             return 0;
 
-                        strcpy(aSubPath, cPathTypeName[aInd - mBM->getBusNo()]);         
+                        strcpy(aSubPath, cPathTypeName[aInd - mBM->getBusNo() + 1]);         
                         return len;               
                     }
                     else
@@ -156,7 +156,6 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
 
     if(path.type != PT_LOC)
     {   
-        GM_device* dev;
         if(path.type == PT_BUS)
             dev = mBM->findDev(path.bus, path.adr);
         else
@@ -212,10 +211,10 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
             if(epLoc == 0)
                 return 0;
 
-            if(aInd >= epLoc->length)
+            if(aInd >= epLoc->length + 4)
                 return 0;
 
-            nameStr = epLoc->para[aInd].defs->paraName;
+            mPT->getParaName(path.baseInd + aInd, &nameStr);
         }
         else
         {
@@ -403,23 +402,23 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
                     else
                     {
                         // find slave number
-
+                        uint32_t len = strlen(cSlaveStr);
                         if( mBM->isInit() && 
-                            strncmp(pathEle, cSlaveStr, cSlaveStrLen) == 0 &&
-                            cSlaveStrLen < pathEleLen)
+                            strncmp(pathEle, cSlaveStr, len) == 0 &&
+                            len < pathEleLen)
                         {
                             uint32_t slaveNo = 0;                        
 
-                            for(int i = cSlaveStrLen; i < pathEleLen; i++)
+                            for(int i = len; i < pathEleLen; i++)
                             {
-                                if(pathEle[cSlaveStrLen] < '0' || pathEle[cSlaveStrLen] > '9')
+                                if(pathEle[len] < '0' || pathEle[len] > '9')
                                 {
                                     path.type = PT_INVALID;
                                     return path;
                                 }
                                 else
                                 {
-                                    slaveNo = slaveNo*10 + (pathEle[cSlaveStrLen] - '0');
+                                    slaveNo = slaveNo*10 + (pathEle[len] - '0');
                                 }
                             }
                             path.adr = slaveNo;
@@ -693,7 +692,19 @@ uint16_t GM_termPathMng::parseLocRegName(TParaTable::endpoint_t* aEp, char* aPat
     int32_t offInd = 0;
     while(offInd < len)
     {
-        const char* regName = aEp->para[offInd].defs->paraName;
+        const char* regName;
+        mPT->getParaName(aEp->epId.baseInd + offInd, &regName);
+
+        if( strncmp(regName, aPathStr, aPathStrLen) == 0 && 
+            strlen(regName) == aPathStrLen)
+            return offInd;
+
+        offInd++;
+    }
+        
+    while(offInd < len+4)
+    {
+        const char* regName = CEpNameDefs[offInd-len].paraName;
 
         if( strncmp(regName, aPathStr, aPathStrLen) == 0 && 
             strlen(regName) == aPathStrLen)
@@ -936,11 +947,7 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
 
     if(aPath->type == PT_LOC)
     {
-        uint32_t listLen = epLoc->length;
-        if(listLen <= aPath->offInd)
-            return 0;
-
-        nameStr = epLoc->para[aPath->offInd].defs->paraName;
+        mPT->getParaName(aPath->offInd + aPath->baseInd, &nameStr);
     }
     else
     {    
@@ -965,24 +972,8 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
 
 uint32_t GM_termPathMng::printSlaveName(uint32_t aSlaveInd, char* aStr, uint32_t aStrLen)
 {
-    uint32_t ind = 0;
-    if(aStrLen - 1 <= cSlaveStrLen)
-        return 0;
-
-    strcpy(aStr, cSlaveStr);
-    ind += cSlaveStrLen;
-
     // add slave no
-    uint32_t slaveNo = aSlaveInd;
-    while(slaveNo != 0)
-    {
-        if(ind >= aStrLen - 1)
-            return 0;
-
-        aStr[ind++] = slaveNo%10 + '0';
-        slaveNo /= 10;
-    }
-    return ind;
+    return snprintf(aStr, aStrLen, "%s%u", cSlaveStr, aSlaveInd);
 }
 
 uint32_t GM_termPathMng::printUid(uint32_t aUid, char* aStr, uint32_t aStrLen)
@@ -1054,7 +1045,7 @@ void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
                     if(ep == 0)
                         return;
 
-                    if(resPath.offInd >= ep->length) 
+                    if(resPath.offInd >= ep->length + 4) 
                         return;
 
                     aEle->init(ep, resPath.offInd, mPT);
