@@ -9,7 +9,7 @@ GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
     mType = DT_INVALID;
     mLastEp = TEpBase::newEp(EPT_SYSTEM, this);
     mEpList = mLastEp;
-    mEpScanInd = 1;
+    mEpScanInd = 0;
     mBus = CInvalidBus;
     mAdr = CInvalidAdr;
     mNext = 0;
@@ -56,7 +56,8 @@ void GM_device::startEpScan()
     if(mType == DT_INVALID)
     {
         // first endpoint is always system
-        ((TEpSystem*) mEpList)->getDevType(epScanCb, this);
+        errCode_T ec = ((TEpSystem*) mEpList)->getDevType(epScanCb, this);
+        checkErr(ec);
     }
     else
     {
@@ -64,9 +65,38 @@ void GM_device::startEpScan()
         adr.aBus = mBus;
         adr.devAdr = mAdr;
         adr.uid = mUid;
-        adr.regAdr = CEpListBaseRegAdr + mEpScanInd - 1;
+        adr.regAdr = CEpListBaseRegAdr + mEpScanInd;
 
-        mBusMaster->queueReadReq(&adr, epScanCb, this);
+        errCode_T ec = mBusMaster->queueReadReq(&adr, epScanCb, this);
+        checkErr(ec);
+    }
+}
+
+void GM_device::reqNameCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
+{
+    GM_device* pObj = (GM_device*) aArg;
+
+    if(aStatus != EC_SUCCESS)
+    {
+        pObj->checkErr(aStatus);
+        return;
+    }
+
+    pObj->mWaitForName = false;
+    pObj->startEpScan();
+}
+
+errCode_T GM_device::reqDevName(void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg)
+{
+    return ((TEpSystem*)mEpList)->reqDevName(&mDevName[0], aReqCb, aArg);
+}
+
+void GM_device::checkErr(errCode_T aEc)
+{
+    if(aEc != EC_SUCCESS)
+    {
+        mStat = DS_LOST;
+        void callStatUpCb();
     }
 }
 
@@ -81,35 +111,56 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             if(pObj->mType == DT_INVALID)
             {
                 pObj->mType = devType_t (*aVal);
-                pObj->startEpScan();
-                pObj->reqDevName();
+
+                pObj->mWaitForName = true;
+                errCode_T ec = pObj->reqDevName(reqNameCb, pObj);
+                pObj->checkErr(ec);
             }
             else
             {
-                epId_u epId;
-                epId.id = *aVal;
-
-                if(epId.type == EPT_INVALID)
+                if(pObj->mWaitForName)
                 {
-                    // scan done
-                    pObj->mEpScanInd = CEpScanIndDone;
-                    pObj->mStat = DS_AVAILABLE;
-                    pObj->callStatUpCb();
+                    errCode_T ec;
+                    if(pObj->mEpScanInd == 0)
+                        ec = pObj->reqDevName(reqNameCb, pObj);
+                    else
+                        ec = pObj->mLastEp->reqEpName(reqNameCb, pObj);
+
+                    pObj->checkErr(ec);
                 }
                 else
                 {
-                    // new Endpoint, we always can insert the new Enpoints at the End
-                    // because there is minimum the system endpoint in the list
-                    pObj->mLastEp->mNext = TEpBase::newEp((epType_t) epId.type, pObj);
-                    pObj->mEpScanInd++;
-                    // ignore unkowen endpoints
-                    if(pObj->mLastEp->mNext)
+                    epId_u epId;
+                    epId.id = *aVal;
+
+                    if(epId.type == EPT_INVALID)
                     {
-                        pObj->mLastEp = pObj->mLastEp->mNext;
-                        pObj->mLastEp->mBaseAdr = epId.baseInd;
-                        pObj->mLastEp->reqEpName();
+                        // scan done
+                        pObj->mEpScanInd = CEpScanIndDone;
+                        pObj->mStat = DS_AVAILABLE;
+                        pObj->callStatUpCb();
                     }
-                    pObj->startEpScan();
+                    else
+                    {
+                        // new Endpoint, we always can insert the new Enpoints at the End
+                        // because there is minimum the system endpoint in the list
+                        pObj->mLastEp->mNext = TEpBase::newEp((epType_t) epId.type, pObj);
+                        pObj->mEpScanInd++;
+                        // ignore unkowen endpoints
+                        if(pObj->mLastEp->mNext)
+                        {
+                            pObj->mLastEp = pObj->mLastEp->mNext;
+                            pObj->mLastEp->mBaseAdr = epId.baseInd;
+
+                            pObj->mWaitForName = true;
+                            errCode_T ec = pObj->mLastEp->reqEpName(reqNameCb, pObj);
+                            pObj->checkErr(ec);
+                        }
+                        else
+                        {
+                            pObj->startEpScan();
+                        }
+                    }
                 }
             }
             break;
@@ -137,11 +188,6 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             break;
     
     }
-}
-
-void GM_device::reqDevName()
-{
-    // todo: implement
 }
 
 void GM_device::callStatUpCb()
@@ -218,10 +264,8 @@ errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb
     return mBusMaster->queueWriteReq(&adr, aVal, reqCb, aArg);   
 }
 
-void GM_device::setDevName(char* aName) 
+errCode_T GM_device::setDevName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg)
 {
-    // todo: send new device name to device
-
     uint32_t i = 0;
     while(aName[i] != 0 && i < DEVICE_NAME_LEN) 
     {
@@ -229,69 +273,10 @@ void GM_device::setDevName(char* aName)
         i++;
     }
     mDevName[i] = 0;
-}
 
-/*
-void GM_device::generateName()
-{
-    // find unused name
-    const char* newName = getDevTypeName();
-    uint32_t nameNo = 0;
     
-    if(mBusMaster->mRootDev)
-    {
-        GM_device* tmp = mBusMaster->mRootDev;
-        GM_device* stop = 0;   // should hold the last
-
-        while(tmp != stop)
-        { 
-
-            char* tmpName = getDevName();
-            uint32_t k = 0;
-
-            // compare names
-            while(tmpName[k] == newName[k] && tmpName[k] != 0 && newName[k] != 0)
-            {
-                k++;
-            }
-            if(newName[k] == 0)
-            {
-                // device name is until end of newName the same
-                if(nameNo/10 + '0' == tmpName[k] && nameNo%10 + '0' == tmpName[k+1])
-                {
-                    // device name is the same
-                    nameNo++;
-                    stop = tmp;
-                }
-
-            }
-
-            // iterate to next item
-            if(tmp->mNext)
-                tmp = tmp->mNext;
-            else
-                tmp = mBusMaster->mRootDev;
-
-            // init stop after first loop
-            if(stop == 0)
-                stop = mBusMaster->mRootDev;   // should hold the last
-        }
-    }
-
-    // set name 
-    uint32_t i = 0;
-    while(i < DEVICE_NAME_LEN - 2 && newName[i] != 0)
-    {
-        mDevName[i] = newName[i];
-        i++;
-    }
-    mDevName[i] = nameNo/10 + '0';
-    i++;
-    mDevName[i] = nameNo%10 + '0';
-    i++;
-    mDevName[i] = 0;
+    return ((TEpSystem*)mEpList)->setDevName(aName, aReqCb, aArg);
 }
-*/
 
 TEpBase* GM_device::findEp(uint16_t baseInd)
 {

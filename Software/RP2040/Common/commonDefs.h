@@ -16,7 +16,8 @@ typedef enum
     EC_PROTECTED,
     EC_INVALID_VALUE,
     EC_NOTAFOLDER,
-    EC_NOTAFILE
+    EC_NOTAFILE,
+    EC_NOT_IMPLEMENTED
 } errCode_T;
 
 constexpr const char* CErrorDesc[] = {

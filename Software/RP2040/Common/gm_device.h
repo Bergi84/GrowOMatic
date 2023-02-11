@@ -28,6 +28,7 @@ private:
     devStat_t mStat;
 
     uint32_t mEpScanInd;
+    bool mWaitForName;
     TEpBase* mEpList;
     TEpBase* mLastEp;
 
@@ -36,7 +37,10 @@ private:
     static void epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     void callStatUpCb();
     void startEpScan();
-    void reqDevName();
+    static void reqNameCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
+    errCode_T reqDevName(void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
+    void checkErr(errCode_T aEc);
+
 public:
     GM_device(uint32_t aUid, GM_busMaster* aBusMaster);
 
@@ -47,7 +51,7 @@ public:
     devType_t getDevType() {return mType; };
     const char* getDevTypeName() {return cDevTypeName[mType];}
     char* getDevName() {return mDevName;};
-    void setDevName(char* aName);
+    errCode_T setDevName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
     inline uint32_t getUid() {return mUid;}
 
     void regUsage(GM_devUsedRec* mDevUsedRec);

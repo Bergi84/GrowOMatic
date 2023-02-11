@@ -22,6 +22,13 @@ protected:
     char mName[EP_NAME_LEN + 1];
     static constexpr char cInvalidName[] = "unkowen";
 
+    void (*mNameCb) (void*, uint32_t*, errCode_T aStatus);
+    void *mNameCbArg;
+    uint8_t mNameInd;
+
+    static void setEpNameCb(void*, uint32_t*, errCode_T aStatus);
+    static void reqEpNameCb(void* aArg, uint32_t* aVal, errCode_T aStatus);
+
 public:
     static TEpBase* newEp(epType_t aEpType, GM_device* aDev);
 
@@ -32,7 +39,8 @@ public:
     const char* getTypeName() {   return mTypeName;   };
 
     char* getEpName() {return mName;};
-    void setEpName(char* aName);
+    errCode_T setEpName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
+    errCode_T reqEpName(void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
 
     uint32_t getParaPer(uint16_t aInd) {
         if(aInd < mParaListLen) 
@@ -45,8 +53,6 @@ public:
         else 
             return 0;
     };
-
-    void reqEpName();
 
     const char* getParaName(uint16_t aInd) {
         if(aInd < mParaListLen) 
@@ -73,12 +79,19 @@ class TEpSystem : public TEpBase, private TEpSysDefs
 private:
     TEpSystem();
 
+    char* mDevName;
+    static void setDevNameCb(void*, uint32_t*, errCode_T aStatus);
+    static void reqDevNameCb(void* aArg, uint32_t* aVal, errCode_T aStatus);
+
 public:
     TEpSystem(GM_device* aDev);
 
     // EP helper functions
-    inline void getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg )
-    {   mPDev->queueReadReq(CSystemBaseRegAdr + PARA_TYPE, reqEpListLenCb, aArg);  };
+    inline errCode_T getDevType(void (*reqEpListLenCb) (void*, uint32_t*, errCode_T aStatus), void* aArg )
+    {   return mPDev->queueReadReq(CSystemBaseRegAdr + PARA_TYPE, reqEpListLenCb, aArg);  };
+
+    errCode_T setDevName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
+    errCode_T reqDevName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);    
 };
 
 class TEpBus : public TEpBase, private TEpBusDefs
