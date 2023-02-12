@@ -18,7 +18,7 @@ private:
     TParaTable::endpoint_t mSysEndpoint;
     TParaTable* mPT;
 
-    char mDevName[16];
+    char mDevName[DEVICE_NAME_LEN + 1];
 
     static void paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraStartCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);

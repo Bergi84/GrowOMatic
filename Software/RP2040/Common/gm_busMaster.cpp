@@ -821,7 +821,6 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
             // device not found, add a new one
 
             // todo: avoid new and delete with a pool of defined size
-            // todo: set device name
             GM_device* newDev = new GM_device(aUidList[i], pObj);
             newDev->updateAdr(bus, i);
 

@@ -983,12 +983,13 @@ uint32_t GM_termPathMng::printUid(uint32_t aUid, char* aStr, uint32_t aStrLen)
 
     for(int i = 0; i < 8; i++)
     {
-        if(aUid & 0x0000000F > 9)
-            aStr[i] = (aUid & 0x0000000F) - 10 + 'a';
+        uint8_t chTmp = (aUid & 0xF0000000) >> 28;
+        if(chTmp > 9)
+            aStr[i] = chTmp - 10 + 'a';
         else
-            aStr[i] = (aUid & 0x0000000F) + '0';
+            aStr[i] = chTmp + '0';
 
-        aUid >>= 4;
+        aUid <<= 4;
     }
     return 8;
 }

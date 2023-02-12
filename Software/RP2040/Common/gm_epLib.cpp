@@ -57,7 +57,6 @@ void TEpSystem::reqDevNameCb(void* aArg, uint32_t* aVal, errCode_T aStatus)
     if(pObj->mNameInd < (EP_NAME_LEN + 4)/4)
     {
         errCode_T ec = pObj->reqPara(PARA_DEVNAME0 + pObj->mNameInd, pObj->reqDevNameCb, (void*) pObj);
-        pObj->mNameInd++;
 
         if(ec != EC_SUCCESS)
             pObj->mNameCb(pObj->mNameCbArg, 0, ec);  
@@ -191,7 +190,6 @@ void TEpBase::reqEpNameCb(void* aArg, uint32_t* aVal, errCode_T aStatus)
     if(pObj->mNameInd < (EP_NAME_LEN + 4)/4)
     {
         errCode_T ec = pObj->reqPara(pObj->mParaListLen + pObj->mNameInd, pObj->reqEpNameCb, (void*) pObj);
-        pObj->mNameInd++;
 
         if(ec != EC_SUCCESS)
             pObj->mNameCb(pObj->mNameCbArg, 0, ec);  

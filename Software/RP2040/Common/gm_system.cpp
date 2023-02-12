@@ -28,7 +28,7 @@ mSysEndpoint( (TParaTable::endpoint_t) {
     .typeName = cTypeName
 })
 {
-    strcpy(mSysEndpoint.epName, mSysEndpoint.typeName);
+    strncpy(mSysEndpoint.epName, mSysEndpoint.typeName, sizeof(mSysEndpoint.epName));
 }
 
 void TSystem::init(uint32_t aUniqueId, devType_t aDevType, TParaTable* aParaTable)
@@ -38,7 +38,7 @@ void TSystem::init(uint32_t aUniqueId, devType_t aDevType, TParaTable* aParaTabl
     mSysPara[PARA_UID].para = aUniqueId;
     mSysPara[PARA_TYPE].para = (uint32_t) aDevType;
 
-    strcpy(mDevName, cDevTypeName[aDevType]);
+    strncpy(mDevName, cDevTypeName[aDevType], sizeof(mDevName));
 
     mPT = aParaTable;
     aParaTable->addEndpoint(&mSysEndpoint);
