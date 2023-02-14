@@ -6,6 +6,7 @@
 #include "paraTable.h"
 #include "sequencer_armm0.h"
 #include "gm_busDefs.h"
+#include "pico/platform.h"
 
 class GM_busSlave : public GM_BusDefs
 {
@@ -16,6 +17,7 @@ private:
         uint32_t errCnt;
         uint32_t byteCnt;
         bool sec;
+        bool reqR;
     } com_t;
     com_t mCom[2];
 
@@ -24,7 +26,7 @@ private:
     static int64_t timeOutCb(alarm_id_t id, void* aPObj);
     static int64_t regTimeOutCb(alarm_id_t id, void* aPObj);
 
-    void rxCb(com_t* aCom);
+    void __time_critical_func(rxCb)(com_t* aCom);
 
     uint32_t mCrcInitVal;
     union {

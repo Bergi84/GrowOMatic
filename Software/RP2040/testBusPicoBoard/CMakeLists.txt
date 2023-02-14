@@ -1,10 +1,10 @@
-add_executable(dualLevelSens)
+add_executable(testBusPicoBoard)
 
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR})
-set(PICO_BOARD board_dualLevelSens)
+set(PICO_BOARD board_testBusPicoBoard)
 
-target_sources(dualLevelSens PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/dualLevelSens.cpp
+target_sources(testBusPicoBoard PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/testBusPicoBoard.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/sequencer_armm0.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/uart.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_uart.cpp
@@ -31,12 +31,12 @@ target_sources(dualLevelSens PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_debug.cpp
 )	
 		
-target_include_directories(dualLevelSens PUBLIC
+target_include_directories(testBusPicoBoard PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../common
 )	
 		
-target_link_libraries(dualLevelSens PUBLIC
+target_link_libraries(testBusPicoBoard PUBLIC
     pico_stdlib 
     hardware_pio 
     hardware_irq
@@ -48,16 +48,16 @@ target_link_libraries(dualLevelSens PUBLIC
     tinyusb_board
     )
 
-target_compile_definitions(dualLevelSens PUBLIC
+target_compile_definitions(testBusPicoBoard PUBLIC
     PICO_STACK_SIZE=0x1000
 )
 
-pico_generate_pio_header(dualLevelSens ${CMAKE_CURRENT_LIST_DIR}/../common/capSens.pio)
+pico_generate_pio_header(testBusPicoBoard ${CMAKE_CURRENT_LIST_DIR}/../common/capSens.pio)
 
 # exectue from ram
 # pico_set_binary_type(dualLevelSens copy_to_ram)
 
-# pico_enable_stdio_usb(dualLevelSens 1)
+# pico_enable_stdio_usb(testBusPicoBoard 1)
 
 # create map/bin/hex file etc.
-pico_add_extra_outputs(dualLevelSens)
+pico_add_extra_outputs(testBusPicoBoard)

@@ -41,7 +41,7 @@ void TSystem::init(uint32_t aUniqueId, devType_t aDevType, TParaTable* aParaTabl
     strncpy(mDevName, cDevTypeName[aDevType], sizeof(mDevName));
 
     mPT = aParaTable;
-    aParaTable->addEndpoint(&mSysEndpoint);
+    mPT->addEndpoint(&mSysEndpoint);
 }
 
 void TSystem::paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
@@ -50,6 +50,9 @@ void TSystem::paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aW
 
     switch(aPParaRec->para)
     {
+        case 0:
+            break;
+
         case 1:
             pObj->mPT->storePara();
             break;
@@ -58,7 +61,7 @@ void TSystem::paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aW
             pObj->mPT->loadPara();
             break;
 
-        defualt:
+        default:
             pObj->mPT->clearPara();
             break;
     }

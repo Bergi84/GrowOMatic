@@ -85,13 +85,16 @@ bool TSequencer::delTask(uint8_t aSeqID)
       // for __CLZ(usedId[i])
       uint32_t clzBuf = usedId[i];
       uint32_t clzCnt = 0;
-      for(; clzCnt < 32 and !(clzBuf & 0x80000000); clzCnt++)
+      while((clzCnt < 32) && ((clzBuf & 0x80000000) == 0))
       {
         clzCnt++;
-        clzBuf <<= 1;
+        clzBuf = clzBuf << 1;
       }
 
-      highestId = (31 - clzCnt) + i*32;
+      if(clzCnt == 32)
+        highestId = i*32;
+      else
+        highestId = (31 - clzCnt) + i*32;
     }
   }
 

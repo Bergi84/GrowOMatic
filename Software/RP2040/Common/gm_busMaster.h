@@ -110,6 +110,7 @@ private:
         S_DATA,
         S_CRC,
         S_TIMEOUT,
+        S_ECHOERR,
         S_READY
     } state_e;
     state_e mState;
@@ -119,12 +120,17 @@ private:
 
     alarm_id_t mTimeoutId;
     static int64_t timeOutCb(alarm_id_t id, void* aArg);
+    static int64_t echoErrCb(alarm_id_t id, void* aArg);
 
     repeating_timer_t mScanAlertId;
     static bool scanAlert(repeating_timer_t *rt);
 
     static void coorTask(void* aArg);
     uint8_t mCoorTaskId;
+
+    uint32_t mErrTimeout;
+    uint32_t mErrNoecho;
+    uint32_t mErrWrongCrc;
 
 public:
     void init(TUart* aUart, TSequencer* aSeq);

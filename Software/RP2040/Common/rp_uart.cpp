@@ -21,6 +21,7 @@ void THwUart::init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio)
     gpio_set_function(aTxGpio, GPIO_FUNC_UART);
     gpio_set_drive_strength(aTxGpio, GPIO_DRIVE_STRENGTH_12MA);
     gpio_set_slew_rate(aTxGpio, GPIO_SLEW_RATE_FAST);
+    gpio_set_pulls (aTxGpio, false, false);
 
     gpio_set_function(aRxGpio, GPIO_FUNC_UART);
     gpio_set_pulls (aRxGpio, true, false);
@@ -73,7 +74,7 @@ uint32_t THwUart::txBlock(uint8_t* aBuf, uint32_t aLen)
     while(len < aLen and uart_is_writable(mUart))
         uart_putc(mUart, aBuf[len++]);
 
-    enIrqCb(true);
+//    enIrqCb(true);
 
     return len;
 }
@@ -82,13 +83,13 @@ void THwUart::disableTx(bool aDis)
 {
     if(aDis)
     {
-        uart_get_hw(mUart)->cr &= ~UART_UARTCR_TXE_BITS;
+//        uart_get_hw(mUart)->cr &= ~UART_UARTCR_TXE_BITS;
         gpio_set_oeover(mTxGpio, GPIO_OVERRIDE_LOW);
         enIrqCb(false);
     }
     else
     {
-        uart_get_hw(mUart)->cr |= UART_UARTCR_TXE_BITS;
+//        uart_get_hw(mUart)->cr |= UART_UARTCR_TXE_BITS;
         gpio_set_oeover(mTxGpio, GPIO_OVERRIDE_NORMAL);
         enIrqCb(true);
     }
@@ -148,9 +149,8 @@ void THwUart::rxGetWait(void* &aAdr, uint32_t &aMsk)
 
 void THwUart::txChar(uint8_t aC)
 {
-    uart_putc (mUart, aC);
-
-    enIrqCb(true);
+//    enIrqCb(true);
+    uart_putc(mUart, aC);
 }
 
 bool THwUart::txFree()

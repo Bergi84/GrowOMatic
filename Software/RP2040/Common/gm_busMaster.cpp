@@ -17,6 +17,10 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
         mParaTable = 0;
         mSeq = aSeq;
 
+        mErrTimeout = 0;
+        mErrNoecho = 0;
+        mErrWrongCrc = 0;
+
         mUart->config(mBaudRate, UP_NONE);
 
         // clear RX buffer
@@ -347,10 +351,24 @@ void TBusCoordinator::coorTask(void* aArg)
                     }
                     else
                     {
-                        // there was an transmission error, retry to get uid
-                        pObj->mState = S_IDLE;
-                    }
+                        pObj->mErrWrongCrc++;
 
+                        // there was an transmission error, retry to get uid
+                        if(pObj->mRetryCnt < GM_MAXRETRY)
+                        {
+                            pObj->mRetryCnt++;
+                            pObj->mState = S_IDLE;
+                        } else {
+                            if(tmp->reqCb)
+                            {
+                                tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);                
+                            }
+                            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                            pObj->mState = S_IDLE;
+
+                            pObj->scan();
+                        }
+                    }
                 }
                 else
                 {
@@ -367,6 +385,8 @@ void TBusCoordinator::coorTask(void* aArg)
                     }
                     else
                     {
+                        pObj->mErrWrongCrc++;
+
                         // transmission error or device order changed
                         if(pObj->mRetryCnt < GM_MAXRETRY)
                         {
@@ -406,6 +426,8 @@ void TBusCoordinator::coorTask(void* aArg)
         }
         else
         {
+            pObj->mErrTimeout++;
+
             // transmission error or device order changed
             if(pObj->mRetryCnt < GM_MAXRETRY)
             {
@@ -423,6 +445,21 @@ void TBusCoordinator::coorTask(void* aArg)
             }            
         }
     };
+
+    if(pObj->mState == S_ECHOERR)
+    { 
+        reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
+
+        pObj->mErrNoecho++;
+
+        // bus is blocked or short circuite
+        if(tmp->reqCb)
+        {
+            tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
+        }
+        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+        pObj->mState = S_IDLE;
+    }
 
     if(pObj->mState == S_IDLE)
     {  
@@ -565,6 +602,9 @@ void TBusCoordinator::rxCb(void* aArg)
         reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
         if(!tmp->write && pObj->mByteCntR == 4)
         {
+            // cancle timeout for echo reception
+            cancel_alarm(pObj->mTimeoutId);
+
             // start timout for answare
             pObj->mTimeoutId = add_alarm_in_us(pObj->mReqTimeoutUs, pObj->timeOutCb, (void*) pObj, true);
             pObj->mUart->disableTx(true);
@@ -601,6 +641,17 @@ void TBusCoordinator::rxCb(void* aArg)
                     break;
             }
         }
+
+        // wait for echo reception of last byte
+        if(tmp->write && pObj->mByteCntW == 12 && pObj->mByteCntR == 12)
+        {
+            // cancle timeout for echo reception
+            cancel_alarm(pObj->mTimeoutId);
+
+            pObj->mState = S_READY;
+            pObj->mSeq->queueTask(pObj->mCoorTaskId);
+        }
+        
         rxCnt++;
     }
 }
@@ -625,6 +676,11 @@ void TBusCoordinator::sendReq()
                     mCrcCalc = crcCalc(mDeviceList[tmp->adr], mSdR);
                     mReqTimeoutUs = mByteTimeoutUs * 2 * tmp->adr + (mByteTimeUs * 9);
                 }
+
+                if(tmp->write)
+                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs * 12, echoErrCb, (void*) this, true);
+                else
+                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs * 4, echoErrCb, (void*) this, true);
 
                 mState = S_DEVADR;
                 mByteCntW = 1;
@@ -672,16 +728,13 @@ void TBusCoordinator::sendReq()
                 break;
 
             case S_CRC:
-                if(tmp->write)
+                if(tmp->write && mByteCntW << 12)
                 {
                     uint8_t byte = mCrcCalcB[mByteCntW-4];
                     mUart->txChar(byte);
 
-                    if(mByteCntW == 13)
-                    {
-                        mState = S_READY; 
-                        mSeq->queueTask(mCoorTaskId);
-                    }
+                    // switch to S_READY is donw after reception of last echo byte
+                    // in rxCb task
  
                     mByteCntW++;
                 }
@@ -704,6 +757,20 @@ int64_t TBusCoordinator::timeOutCb(alarm_id_t id, void* aArg)
     if(pObj->mState != S_READY)
     {
         pObj->mState = S_TIMEOUT;
+        pObj->mUart->disableTx(false);
+        pObj->mSeq->queueTask(pObj->mCoorTaskId);
+    }
+
+    return 0;
+}
+
+int64_t TBusCoordinator::echoErrCb(alarm_id_t id, void* aArg)
+{
+    TBusCoordinator* pObj = (TBusCoordinator*) aArg;
+
+    if(pObj->mState != S_READY)
+    {
+        pObj->mState = S_ECHOERR;
         pObj->mUart->disableTx(false);
         pObj->mSeq->queueTask(pObj->mCoorTaskId);
     }

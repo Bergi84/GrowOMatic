@@ -22,7 +22,7 @@ mBusEp( (TParaTable::endpoint_t) {
     strcpy(mBusEp.epName, mBusEp.typeName);
 }
 
-void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
+void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable, bool masterEn)
 {
     for(int i = 0; i < aListLen; i++)
     {
@@ -33,26 +33,32 @@ void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaT
     mParaTable = aParaTable;
 
     aParaTable->addEndpoint(&mBusEp);
+    setBusMode(masterEn);
 }
 
 void GM_bus::setBusModeCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
     GM_bus* pObj = (GM_bus*) aCbArg;
 
-    if(pObj->mBusPara[PARA_MASTEREN].para)
-    {
-        if(pObj->mSlave.isInit())
-            pObj->mSlave.deinit();
+    pObj->setBusMode(pObj->mBusPara[PARA_MASTEREN].para != 0);
+}
 
-        if(!pObj->mMaster.isInit())
-            pObj->mMaster.init(pObj->mUartList, pObj->mListLen, pObj->mSeq, pObj->mParaTable);
+void GM_bus::setBusMode(bool masterEn)
+{
+    if(masterEn)
+    {
+        if(mSlave.isInit())
+            mSlave.deinit();
+
+        if(!mMaster.isInit())
+            mMaster.init(mUartList, mListLen, mSeq, mParaTable);
     }
     else
     {
-        if(!pObj->mSlave.isInit())
-            pObj->mSlave.init(pObj->mUartList[0], pObj->mUartList[1], pObj->mParaTable, pObj->mSeq);
+        if(mMaster.isInit())
+            mMaster.deinit();
 
-        if(pObj->mMaster.isInit())
-            pObj->mMaster.deinit();
+        if(!mSlave.isInit())
+            mSlave.init(mUartList[0], mUartList[1], mParaTable, mSeq);
     }
 }

@@ -121,7 +121,18 @@ void TFlash::load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen
 
 void TFlash::clear()
 {
+    uint32_t status = save_and_disable_interrupts();
+    if(mSecCore)
+    // bug in SDK 1.4.0
+    // multicore_lockout_start_blocking();
+        multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
+
     flash_range_erase(mOffset, mSize);
+
+    if(mSecCore)
+    //    multicore_lockout_end_blocking();
+        multicore_lockout_end_timeout_us((uint64_t)356*24*60*60*1000*1000);
+    restore_interrupts(status);
 }
 
 uint32_t TFlash::getMaxSize()

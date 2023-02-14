@@ -222,8 +222,11 @@ void TParaTable::loadPara()
     mStoreLoadDone = false;
     calcNVCheckSum(&mNVCheckSum, &mNVLen);
     mStorage->load(loadParaCb, this);
+
+    /*
     if(mStoreLoadInd == 0)
         loadDefault();
+    */
 };
 
 void TParaTable::storePara()
@@ -238,7 +241,7 @@ void TParaTable::storePara()
 
 void TParaTable::clearPara()
 {
-    mStorage->store(mNVLen+1, storeParaCb, this);
+    mStorage->clear();
 }
 
 void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
@@ -261,11 +264,14 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
             }
         }
         // epname are virtual parameters and always NV
-        for(uint16_t i = len; i < len+4; i++)
+        if(tmpEp->epId.type != EPT_SYSTEM && tmpEp->epId.type != EPT_EPLIST)
         {
-            crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
-            crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
-            cnt++;
+            for(uint16_t i = len; i < len+4; i++)
+            {
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
+                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
+                cnt++;
+            }
         }
         tmpEp = tmpEp->next;
     }
@@ -314,11 +320,14 @@ bool TParaTable::storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
                 else
                 {
                     // store endpoint name as virtual parameter
-                    found = true;
-                    aData[inc] = *((uint32_t*) &tmpEp->epName[(ind - len)*4]);
+                    if(tmpEp->epId.type != EPT_SYSTEM && tmpEp->epId.type != EPT_EPLIST)
+                    {
+                        found = true;
+                        aData[inc] = *((uint32_t*) &tmpEp->epName[(ind - len)*4]);
+                    }
                 }
 
-                if(ind < len+4)
+                if(ind < len + 3)
                 {
                     ind++;
                 }
@@ -400,11 +409,14 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
                 else
                 {
                     // load endpoint name as virtual parameter
-                    found = true;
-                    *((uint32_t*) &tmpEp->epName[(ind - len)*4]) = aData[inc];
+                    if(tmpEp->epId.type != EPT_SYSTEM && tmpEp->epId.type != EPT_EPLIST)
+                    {
+                        found = true;
+                        *((uint32_t*) &tmpEp->epName[(ind - len)*4]) = aData[inc];
+                    }
                 } 
 
-                if(ind < len + 4)
+                if(ind < len + 3)
                 {
                     ind++;
                 }
@@ -437,9 +449,4 @@ bool TParaTable::loadParaCb(void* aArg, uint32_t* aData, uint32_t aLen)
         pObj->mStoreLoadDone = true;
 
     return true;
-}
-
-void TParaTable::loadDefault(uint16_t aRegAdr)
-{
-    // todo: restore default values
 }

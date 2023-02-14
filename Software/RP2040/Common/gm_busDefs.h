@@ -52,12 +52,14 @@ typedef enum {
     DT_INVALID,
     DT_DUAL_LEVEL_SENSOR = 1,
     DT_DUAL_VALVE_CON = 2,
+    DT_PICO_BOARD = 3
 } devType_t;
 
 constexpr const char* cDevTypeName[] = {
     [DT_INVALID] =              "unknowen",
     [DT_DUAL_LEVEL_SENSOR] =    "DualLevelSensor",
     [DT_DUAL_VALVE_CON] =       "DualValveSensor",
+    [DT_PICO_BOARD] =           "PicoBoard"
 };
 
 typedef enum
