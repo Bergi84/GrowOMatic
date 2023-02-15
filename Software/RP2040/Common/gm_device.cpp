@@ -19,12 +19,12 @@ GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
 
 void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
 {
-    mBus = aBus;
-    mAdr = aAdr;
-
     if(aBus == CInvalidBus && mStat != DS_LOST)
     {
+        mBusMaster->devLost(mBus, mUid);
         mStat = DS_LOST;
+        mBus = aBus;
+        mAdr = aAdr;
         if(mDevUsedList == 0)
         {
             mBusMaster->delDev(this);
@@ -34,6 +34,11 @@ void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
         {
             callStatUpCb();
         }
+    }
+    else
+    {
+        mBus = aBus;
+        mAdr = aAdr;
     }
 
     if(aBus != CInvalidBus && mStat == DS_LOST)
@@ -95,8 +100,7 @@ void GM_device::checkErr(errCode_T aEc)
 {
     if(aEc != EC_SUCCESS)
     {
-        mStat = DS_LOST;
-        void callStatUpCb();
+        updateAdr(CInvalidBus, CInvalidAdr);
     }
 }
 
@@ -183,8 +187,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
 //        case EC_INVALID_DEVADR:
         default:
             // lost device during scan
-            pObj->mStat = DS_LOST;
-            pObj->callStatUpCb();   
+            pObj->updateAdr(CInvalidBus, CInvalidAdr); 
             break;
     
     }

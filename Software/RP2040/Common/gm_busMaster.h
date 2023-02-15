@@ -166,6 +166,7 @@ private:
     static void mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen);
 
     void delDev(GM_device* aDev);
+    void devLost(uint8_t aBus, uint32_t aUid);
 
     GM_device* mRootDev;
 

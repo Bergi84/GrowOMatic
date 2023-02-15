@@ -24,7 +24,6 @@ private:
     static void rx0CbWrapper(void* aPObj);
     static void rx1CbWrapper(void* aPObj);
     static int64_t timeOutCb(alarm_id_t id, void* aPObj);
-    static int64_t regTimeOutCb(alarm_id_t id, void* aPObj);
 
     void __time_critical_func(rxCb)(com_t* aCom);
 

@@ -28,7 +28,7 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
         while(mUart->rxPending())
             mUart->rxChar(&tmp);
 
-        mUart->disableFifo(false);
+        mUart->disableFifo(true);
         mUart->disableTx(false);
         mUart->installRxCb(rxCb, (void*)this);
 
@@ -157,7 +157,9 @@ void TBusCoordinator::scanCb(void* aArg, uint32_t* UId, errCode_T aStatus)
             // rescan the hole bus
             pObj->mDevListLength = 0;
             pObj->mScanIndex = 0;
-            pObj->mDeviceListUpdated = true;            
+            pObj->mDeviceListUpdated = true;       
+
+            pObj->queueGetUid(pObj->mScanIndex, pObj->scanCb, pObj);
         }
         else
         {
@@ -321,6 +323,7 @@ void TBusCoordinator::coorTask(void* aArg)
                     tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
                 }
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                pObj->mRetryCnt = 0;
                 pObj->mState = S_IDLE;
             }
             else
@@ -335,9 +338,9 @@ void TBusCoordinator::coorTask(void* aArg)
                     locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[0]
                     locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[1]
                     locCrc = pObj->crcCalc(locCrc, tmp->dataB[0]);      // data[0]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[1]);      // data[0]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[2]);      // data[0]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[3]);      // data[0]
+                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[1]);      // data[1]
+                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[2]);      // data[2]
+                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[3]);      // data[3]
 
                     if(locCrc == pObj->mCrc)
                     {
@@ -347,6 +350,7 @@ void TBusCoordinator::coorTask(void* aArg)
                             tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
                         }
                         pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                        pObj->mRetryCnt = 0;
                         pObj->mState = S_IDLE;
                     }
                     else
@@ -467,7 +471,6 @@ void TBusCoordinator::coorTask(void* aArg)
         // virtual bus uses only state S_IDLE
         if(pObj->mUart)
         {
-            pObj->mRetryCnt = 0;
             // idle look for new element in queue
             if(pObj->mReqQueue.rInd != pObj->mReqQueue.wInd)
             {
@@ -592,14 +595,15 @@ void TBusCoordinator::rxCb(void* aArg)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) aArg;
 
+    reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
+
     uint32_t rxCnt = 0;
     while(pObj->mUart->rxPending() && rxCnt < 4)
     {
         uint8_t byte;
         pObj->mUart->rxChar(&byte);
         pObj->mByteCntR++;
-
-        reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
+        
         if(!tmp->write && pObj->mByteCntR == 4)
         {
             // cancle timeout for echo reception
@@ -627,8 +631,7 @@ void TBusCoordinator::rxCb(void* aArg)
                     break;
 
                 case S_CRC:
-                    tmp->dataB[pObj->mByteCntR-9] = byte;
-                    pObj->mCrcCalc = pObj->crcCalc(pObj->mCrcCalc, byte);
+                    pObj->mCrcB[pObj->mByteCntR-9] = byte;
                     if(pObj->mByteCntR == 12)
                     {
                         pObj->mState = S_READY;
@@ -641,18 +644,22 @@ void TBusCoordinator::rxCb(void* aArg)
                     break;
             }
         }
-
-        // wait for echo reception of last byte
-        if(tmp->write && pObj->mByteCntW == 12 && pObj->mByteCntR == 12)
-        {
-            // cancle timeout for echo reception
-            cancel_alarm(pObj->mTimeoutId);
-
-            pObj->mState = S_READY;
-            pObj->mSeq->queueTask(pObj->mCoorTaskId);
-        }
         
         rxCnt++;
+    }
+
+    // wait for echo reception of last byte
+    if(tmp->write && pObj->mByteCntW == 12 && pObj->mByteCntR == 12)
+    {
+        // cancle timeout for echo reception
+        pObj->mState = S_READY;
+        cancel_alarm(pObj->mTimeoutId);
+
+        pObj->mSeq->queueTask(pObj->mCoorTaskId);
+    }
+    else
+    {
+        pObj->sendReq();
     }
 }
 
@@ -874,6 +881,7 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
         {
             // device not found
             dev->updateAdr(CInvalidBus, CInvalidAdr);
+            dev = devBefore;
         }
         
         devBefore = dev;
@@ -924,6 +932,19 @@ void GM_busMaster::delDev(GM_device* aDev)
             }
             dev = dev->mNext;
         }
+    }
+}
+
+void GM_busMaster::devLost(uint8_t aBus, uint32_t aUid)
+{
+    for(int i = 0; i < mBusCoor[aBus].mDevListLength; i++)
+    {
+        if(mBusCoor[aBus].mDeviceList[i] == aUid)
+        {
+            mBusCoor[aBus].mDeviceList[i] = 0;
+            mBusCoor[aBus].scan();
+        }
+
     }
 }
 
