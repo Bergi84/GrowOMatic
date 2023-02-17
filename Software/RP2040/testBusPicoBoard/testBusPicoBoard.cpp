@@ -95,6 +95,7 @@ int main()
 
     gParaTable.init(&gTableStorage);
     gSystem.init(*((uint32_t*) uId.id), DT_PICO_BOARD, &gParaTable);
+    gSystem.setSysLed(gpio_systemLed);
 
     TUart* uartList[] = {&gUart0,  &gUart1};
 

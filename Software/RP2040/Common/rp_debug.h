@@ -28,7 +28,7 @@ public:
 
     inline void togglePnt(uint32_t pinNo)
     {
-        if(mInit) gpio_clr_mask(mPinMap[pinNo]);
+        if(mInit) gpio_xor_mask(mPinMap[pinNo]);
     }
 
     uint32_t mHighestPin;

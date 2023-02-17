@@ -43,6 +43,7 @@ public:
     errCode_T getParaName(uint16_t aRegAdr, const char **aData);
     errCode_T getParaPer(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
+    void setActiveCb(void (*aCb)(void* aArg), void* aArg);
 
     void loadPara();
     void storePara();
@@ -69,6 +70,8 @@ private:
     bool mStoreLoadDone;
     uint32_t mNVCheckSum;
     uint32_t mNVLen;
+    void (*mActiveCb)(void* aArg);
+    void* mActiveCbArg;
 
     void calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt);
     static bool storeParaCb(void* aArg, uint32_t* aData, uint32_t aLen);

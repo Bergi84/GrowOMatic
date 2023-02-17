@@ -25,6 +25,9 @@ mEpListEndpoint( (endpoint_t) {
 
     mTmpPara.cbArg = 0;
     mTmpPara.pFAccessCb = 0;
+
+    mActiveCb = 0;
+    mActiveCbArg = 0;
 }
 
 void TParaTable::init(TStorage* aStorage)
@@ -83,6 +86,9 @@ errCode_T TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
 
+    if(mActiveCb != 0)
+        mActiveCb(mActiveCbArg);
+
     if(tmp && tmp->defs->flags & PARA_FLAG_W)
     {
         if(tmp->defs->flags & PARA_FLAG_P)
@@ -109,6 +115,9 @@ errCode_T TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
 errCode_T TParaTable::getPara(uint16_t aRegAdr, uint32_t *aData)
 {
     paraRec_t* tmp = findPara(aRegAdr);
+
+    if(mActiveCb != 0)
+        mActiveCb(mActiveCbArg);
 
     if(tmp && tmp->defs->flags & PARA_FLAG_R)
     {
@@ -176,6 +185,12 @@ bool TParaTable::getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec)
     {
         return false;
     }   
+}
+
+void TParaTable::setActiveCb(void (*aCb)(void* aArg), void* aArg)
+{
+    mActiveCb = aCb;
+    mActiveCbArg = aArg;
 }
 
 TParaTable::paraRec_t* TParaTable::findPara(uint16_t index)
@@ -252,24 +267,42 @@ void TParaTable::calcNVCheckSum(uint32_t* aCheckSum, uint32_t* aNVParaCnt)
     endpoint_t* tmpEp = mRootEp;
     while(tmpEp)
     {
-        paraRec_t* tmpPar = tmpEp->para;
+        // epName
+        uint32_t pos = 0;
+        while(tmpEp->epName[pos] != 0)
+        {
+            crc = GM_BusDefs::crcCalc(crc, (uint8_t) tmpEp->epName[pos]);
+            pos++;
+        }
+
+        // non volatile parameter namens
         uint32_t len = tmpEp->length;
         for(uint16_t i = 0; i < len; i++)
         {
-            if(tmpPar[i].defs->flags & PARA_FLAG_NV)
+            paraRec_t* tmpPar = &tmpEp->para[i];
+            if(tmpPar->defs->flags & PARA_FLAG_NV)
             {
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
+                uint32_t pos = 0;
+                while(tmpPar->defs->paraName[pos] != 0)
+                {
+                    crc = GM_BusDefs::crcCalc(crc, (uint8_t) tmpPar->defs->paraName[pos]);
+                    pos++;
+                }
                 cnt++;
             }
         }
-        // epname are virtual parameters and always NV
+
+        // epname are virtual parameters and always non volatile
         if(tmpEp->epId.type != EPT_SYSTEM && tmpEp->epId.type != EPT_EPLIST)
         {
             for(uint16_t i = len; i < len+4; i++)
             {
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) (tmpEp->epId.baseInd + i));
-                crc = GM_BusDefs::crcCalc(crc, (uint8_t) ((tmpEp->epId.baseInd + i) >> 8));
+                uint32_t pos = 0;
+                while(CEpNameDefs[i - len].paraName[pos] != 0)
+                {
+                    crc = GM_BusDefs::crcCalc(crc, (uint8_t) CEpNameDefs[i - len].paraName[pos]);
+                    pos++;
+                }
                 cnt++;
             }
         }
