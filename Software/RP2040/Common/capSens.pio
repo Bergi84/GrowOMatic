@@ -116,17 +116,19 @@ static inline void capSens_init(PIO pio, uint excPinBase, uint sensPinBase, uint
     for(uint i = 0; i < sensPinCount; i++)
     {
         pio_gpio_init(pio, i + sensPinBase);
+        gpio_set_drive_strength(i + sensPinBase, GPIO_DRIVE_STRENGTH_12MA);
+        gpio_set_slew_rate(i + sensPinBase, GPIO_SLEW_RATE_FAST);
         gpio_set_pulls (i + sensPinBase, false, false);
         pinMsk |= 1 << (i + sensPinBase);
         gpio_set_input_hysteresis_enabled (i + sensPinBase, true);
-        if( sensPinPolMsk & (1 << i) == 0)
+        if( (sensPinPolMsk & (1 << i)) != 0)
         {
             gpio_set_inover (i + sensPinBase, GPIO_OVERRIDE_INVERT);
         }
     }
 
     uint32_t pinDir = 3 << excPinBase;
-    uint32_t pinOut = (1 << excPinBase) | (~sensPinPolMsk) << sensPinBase;
+    uint32_t pinOut = (1 << excPinBase) | (sensPinPolMsk) << sensPinBase;
 
     uint offsetMaster = pio_add_program(pio, &capSens_master_program);
     pio_sm_config cMaster = capSens_master_program_get_default_config(offsetMaster);

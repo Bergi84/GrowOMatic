@@ -19,6 +19,7 @@ class TCapSens {
     uint sumCnt;
     uint sampleCnt;
     uint sumShift;
+    uint maxShift;
     uint aktivPin;
 
     uint maxChgCnt;
@@ -60,7 +61,7 @@ public:
 
         capSens_init(aPio, aExcPinBase, aSensPinBase, sensPinCount, aSensPinPolMsk, aMaxChgCnt, aDchgCnt);
 
-        for(uint i = 0; i < sensPinCount; i++)
+        for(uint i = 0; i < 4; i++)
         {
             sumBuf[i] = 0;
         }
@@ -87,7 +88,13 @@ public:
             tmp >>= 1;
             cnt++;
         }
-        sumShift = cnt;
+
+        if(cnt < 4)
+            cnt = 4;
+
+
+        sumShift = cnt - 4;
+        maxShift = 4;
         sampleCnt = 1 << cnt;
     }
 
@@ -138,7 +145,7 @@ public:
 
             for(int i = 0; i < 4; i++)
             {
-                capVal[aktivPin] = maxChgCnt - (sumBuf[i] >> sumShift);
+                capVal[aktivPin] = (maxChgCnt << maxShift) - (sumBuf[i] >> sumShift);
                 sumBuf[i] = 0;
                 if(aktivPin == sensPinCount - 1)
                 {
