@@ -7,7 +7,7 @@ TSystem::TSystem() :
 // init system parameter list
 mSysPara( (TParaTable::paraRec_t[cParaListLength]) {
     [PARA_UID] =          {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_UID]},
-    [PARA_TYPE] =         {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_TYPE]},
+    [PARA_TYPE] =         {.para = DT_INVALID,                              .pFAccessCb = paraTypeCb,   .cbArg = 0,       .defs = &cParaList[PARA_TYPE]},
     [PARA_FWVERSION] =    {.para = VER_COMBO,                               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_FWVERSION]},
     [PARA_SAVE] =         {.para = 0,                                       .pFAccessCb = paraSaveCb,   .cbArg = this,    .defs = &cParaList[PARA_SAVE]},
     [PARA_START] =        {.para = 0,                                       .pFAccessCb = paraStartCb,  .cbArg = this,    .defs = &cParaList[PARA_START]},
@@ -34,14 +34,11 @@ mSysEndpoint( (TParaTable::endpoint_t) {
     mSysLedTimerId = -1;
 }
 
-void TSystem::init(uint32_t aUniqueId, devType_t aDevType, TParaTable* aParaTable)
+void TSystem::init(uint32_t aUniqueId, TParaTable* aParaTable)
 {
     while(CInvalidUid == aUniqueId);
 
     mSysPara[PARA_UID].para = aUniqueId;
-    mSysPara[PARA_TYPE].para = (uint32_t) aDevType;
-
-    strncpy(mDevName, cDevTypeName[aDevType], sizeof(mDevName));
 
     mPT = aParaTable;
     mPT->addEndpoint(&mSysEndpoint);
@@ -114,6 +111,10 @@ void TSystem::paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aW
             pObj->mPT->loadPara();
             break;
 
+        case 0xdeadbeef:
+            // todo: clear device type storage
+            break;
+
         default:
             pObj->mPT->clearPara();
             break;
@@ -145,4 +146,28 @@ void TSystem::paraFlashLed(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool 
     TSystem* pObj = (TSystem*) aCbArg;
 
     pObj->sysLedFastFlash(aPParaRec->para);
+}
+
+void TSystem::paraTypeCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+{
+    TSystem* pObj = (TSystem*) aCbArg;
+
+    if(pObj->mDevType == DT_INVALID)
+    {  
+        pObj->mDevType = (devType_t) aPParaRec->para;
+        strncpy(pObj->mDevName, cDevTypeName[aPParaRec->para], sizeof(mDevName));
+    }
+    else
+    {
+        aPParaRec->para = pObj->mDevType;
+    }
+}
+
+void TSystem::setDevType(devType_t aDevType)
+{
+    if(mDevType == DT_INVALID)
+    {
+        mDevType = aDevType;
+        strncpy(mDevName, cDevTypeName[aDevType], sizeof(mDevName));
+    }
 }

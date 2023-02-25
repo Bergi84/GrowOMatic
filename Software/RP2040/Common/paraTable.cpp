@@ -10,12 +10,19 @@ mEpListEndpoint( (endpoint_t) {
         .baseInd = CEpListBaseRegAdr,
         .type = (uint16_t)EPT_EPLIST    
     } }, 
-    .length = 1, 
+    .length = 0, 
     .para = mEpListPara,
     .next = 0,
     .typeName = "epList",
 })
 {
+
+}
+
+void TParaTable::init(TStorage* aStorage)
+{
+    mStorage = aStorage;
+
     strcpy(mEpListEndpoint.epName, mEpListEndpoint.typeName);
 
     for(int i = 0; i < PT_MAXENDPOINTS; i++)
@@ -30,11 +37,6 @@ mEpListEndpoint( (endpoint_t) {
     mActiveCbArg = 0;
 }
 
-void TParaTable::init(TStorage* aStorage)
-{
-    mStorage = aStorage;
-}
-
 void TParaTable::addEndpoint(endpoint_t* aEndpoint)
 {
     if(aEndpoint->epId.type == EPT_SYSTEM)
@@ -46,7 +48,6 @@ void TParaTable::addEndpoint(endpoint_t* aEndpoint)
     }
 
 
-    // todo: if aEndpoint->epId.baseInd == CInvalidReg then allocate the next free endpoint index
     while(aEndpoint->epId.baseInd == CInvalidReg);
 
     // avoid insertion of endpoint before endpointlist

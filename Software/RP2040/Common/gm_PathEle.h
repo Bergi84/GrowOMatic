@@ -12,7 +12,9 @@ private:
         POT_NONE,
         POT_FOLDER,
         POT_LOCREG,
-        POT_REMREG
+        POT_REMREG,
+        POT_LOCEP,
+        POT_REMEP
     } pathObjType_t;
 
     pathObjType_t mType;
@@ -27,8 +29,8 @@ private:
 private:
     friend class GM_termPathMng;
 
-    void init(TParaTable::endpoint_t* aEp, uint16_t aOffInd, TParaTable* aPt);
-    void init(TEpBase* aEp, uint16_t aOffInd);
+    void init(TParaTable::endpoint_t* aEp, TParaTable* aPt, uint16_t aOffInd = CInvalidReg);
+    void init(TEpBase* aEp, uint16_t aOffInd = CInvalidReg);
     void deInit();
 
 public:
@@ -36,12 +38,14 @@ public:
 
     bool isFolder();
     bool isFile();
+    bool isEndPoint();
 
     errCode_T getValue(void (*aCb) (void* aArg, uint32_t* aVal, errCode_T aStatus), void* aArg);
     errCode_T setValue(uint32_t aVal, void (*aCb) (void* aArg, uint32_t* aVal, errCode_T aStatus), void* aArg);
 
     uint32_t getPer();
     const char* getName();
+    epType_t getEpType();
 };
 
 #endif

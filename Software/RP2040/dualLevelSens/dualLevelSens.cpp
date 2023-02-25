@@ -14,7 +14,7 @@
 #include "rp_flash.h"
 #include "gm_bus.h"
 
-TCapSens<gpio_capSens_chNo> gCapSens;
+TCapSens gCapSens;
 TSequencer gSeq, gSeq_c1;
 THwUart gUart0;
 THwUart gUart1;
@@ -67,7 +67,7 @@ void main_c1()
     gSeq_c1.setIdleFunc(idle, NULL);
 
     
-    gCapSens.init(pio0, gpio_capSensExc_base, gpio_capSens_base, 0x000007FF /*0x3FF800*/, 62500, 125);
+    gCapSens.init(pio0, gpio_capSensExc_base, gpio_capSens_base, gpio_capSens_chNo, 0x000007FF, 62500, 125);
     gCapSens.setIrqHandler(capSensIrqHandler);
     gCapSens.enable();
 
@@ -102,7 +102,8 @@ int main()
 #endif
 
     gParaTable.init(&gTableStorage);
-    gSystem.init(*((uint32_t*) uId.id), DT_DUAL_LEVEL_SENSOR, &gParaTable);
+    gSystem.init(*((uint32_t*) uId.id), &gParaTable);
+    gSystem.setDevType(DT_DUAL_LEVEL_SENSOR);
     gSystem.setSysLed(gpio_systemLed);
 
     TUart* uartList[] = {&gUart0,  &gUart1};

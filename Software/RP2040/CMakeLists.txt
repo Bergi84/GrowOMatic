@@ -15,6 +15,7 @@ pico_sdk_init()
 add_subdirectory(dualLevelSens)
 add_subdirectory(testSequencer)
 add_subdirectory(testBusPicoBoard)
+add_subdirectory(uniFw)
 
 add_compile_options(-Wall
         -Wno-format          # int != int32_t as far as the compiler is concerned because gcc has int32_t as long int

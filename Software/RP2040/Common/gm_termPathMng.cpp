@@ -88,7 +88,7 @@ uint32_t GM_termPathMng::getSubPath(uint32_t aInd, char* aSubPath, uint32_t aSub
             return 0;
 
         case PT_ROOT:
-            if(mBM->isInit())
+            if(mBM != 0 && mBM->isInit())
             {
                 if(aInd < mBM->getBusNo())
                 {
@@ -333,7 +333,7 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
         switch(path.type)
         {
             case PT_ROOT:
-                if(     mBM->isInit() && 
+                if(     mBM != 0 && mBM->isInit() && 
                         strncmp(pathEle, cPathTypeName[PT_BUS], strlen(cPathTypeName[PT_BUS])) == 0 &&
                         strlen(cPathTypeName[PT_BUS]) < pathEleLen)
                 {
@@ -365,7 +365,7 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
                     path.baseInd = CInvalidReg;
                     path.offInd = CInvalidReg;
                 }
-                else if (   mBM->isInit() && 
+                else if (   mBM != 0 && mBM->isInit() && 
                             strncmp(pathEle, cPathTypeName[PT_UID], strlen(cPathTypeName[PT_UID])) == 0 &&
                             strlen(cPathTypeName[PT_UID]) == pathEleLen)
                 {
@@ -374,7 +374,7 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
                     path.baseInd = CInvalidReg;
                     path.offInd = CInvalidReg;
                 } 
-                else if (   mBM->isInit() && 
+                else if (   mBM != 0 && mBM->isInit() && 
                             strncmp(pathEle, cPathTypeName[PT_DEV], strlen(cPathTypeName[PT_DEV])) == 0 &&
                             strlen(cPathTypeName[PT_DEV]) == pathEleLen)
                 {
@@ -403,8 +403,7 @@ GM_termPathMng::pathRes_t GM_termPathMng::pathParse(char *aPathStr, uint32_t aSt
                     {
                         // find slave number
                         uint32_t len = strlen(cSlaveStr);
-                        if( mBM->isInit() && 
-                            strncmp(pathEle, cSlaveStr, len) == 0 &&
+                        if( strncmp(pathEle, cSlaveStr, len) == 0 &&
                             len < pathEleLen)
                         {
                             uint32_t slaveNo = 0;                        
@@ -790,7 +789,7 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
             {
                 // add bus no
                 uint32_t busNo = aPath->bus;
-                if(!mBM->isInit() || mBM->getBusNo() < busNo)
+                if(mBM->getBusNo() < busNo)
                     return 0;
 
                 char noBuf[4];
@@ -830,7 +829,7 @@ uint32_t GM_termPathMng::genPathString(pathRes_t *aPath, char* aStrBuf, uint32_t
             break;
 
         case PT_LOC:
-            // todo: implement
+            // nothing todo
             break;
 
         case PT_UID:
@@ -1004,7 +1003,7 @@ void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
     if(resPath.type == PT_INVALID || resPath.type == PT_ROOT)
         return; 
 
-    if(resPath.offInd != CInvalidReg)
+    if(resPath.baseInd != CInvalidReg)
     {
         switch(resPath.type)
         {
@@ -1016,7 +1015,7 @@ void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
 
                     TEpBase* ep = dev->findEp(resPath.baseInd);
 
-                    if(ep == 0 || resPath.offInd >= ep->getParaListLen()) 
+                    if(ep == 0 || (resPath.offInd != CInvalidReg && resPath.offInd >= ep->getParaListLen())) 
                         return;
 
                     aEle->init(ep, resPath.offInd);
@@ -1032,7 +1031,7 @@ void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
 
                     TEpBase* ep = dev->findEp(resPath.baseInd);
 
-                    if(ep == 0 || resPath.offInd >= ep->getParaListLen()) 
+                    if(ep == 0 || (resPath.offInd != CInvalidReg && resPath.offInd >= ep->getParaListLen())) 
                         return;
                         
                     aEle->init(ep, resPath.offInd);
@@ -1046,16 +1045,12 @@ void GM_termPathMng::getPathObj(char* aPath, uint32_t aPathLen, TPathEle* aEle)
                     if(ep == 0)
                         return;
 
-                    if(resPath.offInd >= ep->length + 4) 
+                    if(resPath.offInd != CInvalidReg && resPath.offInd >= ep->length + 4) 
                         return;
 
-                    aEle->init(ep, resPath.offInd, mPT);
+                    aEle->init(ep, mPT, resPath.offInd);
                 }
                 break;
         }
-    }
-    else
-    {
-        // todo: init for folder info
     }
 }

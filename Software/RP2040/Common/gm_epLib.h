@@ -101,6 +101,18 @@ private:
 
 public:
     TEpBus(GM_device* aDev);
+
+    // EP helper functions
+};
+
+class TEpCapLevel : public TEpBase, private TEpCapLevelDefs
+{
+private:
+    TEpCapLevel();
+
+public:
+    TEpCapLevel(GM_device* aDev);
+    
     // EP helper functions
 };
 

@@ -7,12 +7,13 @@
 #include "capSens.pio.h"
 #include "hardware/irq.h"
 
+#define MAX_SENSE_PIN_CNT   32
 
-template<uint sensPinCount>
 class TCapSens {
     PIO pio;
     uint excPinBase;
     uint sensPinBase;
+    uint sensPinCount;
     uint sensPinPolMsk;
 
     uint sumBuf[4];
@@ -50,16 +51,17 @@ class TCapSens {
     }
 
 public:
-    uint capVal[sensPinCount];
-    void init(PIO aPio, uint aExcPinBase, uint aSensPinBase, uint aSensPinPolMsk, uint aMaxChgCnt, uint aDchgCnt)
+    uint capVal[MAX_SENSE_PIN_CNT];
+    void init(PIO aPio, uint aExcPinBase, uint aSensPinBase, uint aSensPinCnt, uint aSensPinPolMsk, uint aMaxChgCnt, uint aDchgCnt)
     {
         pio = aPio;
         excPinBase = aExcPinBase;
         sensPinBase = aSensPinBase;
+        sensPinCount = aSensPinCnt;
         sensPinPolMsk = aSensPinPolMsk;
         maxChgCnt = aMaxChgCnt;
 
-        capSens_init(aPio, aExcPinBase, aSensPinBase, sensPinCount, aSensPinPolMsk, aMaxChgCnt, aDchgCnt);
+        capSens_init(aPio, aExcPinBase, aSensPinBase, aSensPinCnt, aSensPinPolMsk, aMaxChgCnt, aDchgCnt);
 
         for(uint i = 0; i < 4; i++)
         {

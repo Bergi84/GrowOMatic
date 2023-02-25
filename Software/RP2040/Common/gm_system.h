@@ -14,10 +14,10 @@ class TSystem : private TEpSysDefs
 public:
     TSystem();
 
-    void init(uint32_t aUniqueId, devType_t aDevType, TParaTable* aParaTable);
+    void init(uint32_t aUniqueId, TParaTable* aParaTable);
     void setSysLed(uint32_t aGpioNo);
-
     void sysLedFastFlash(uint32_t aSeconds);
+    void setDevType(devType_t aDevType);
 
 private:
     static constexpr uint32_t CFlashTimeUs = 100000; 
@@ -31,10 +31,12 @@ private:
     uint32_t mSysLed;
     alarm_id_t mSysLedTimerId;
     uint32_t mFastFlashCnt;
+    devType_t mDevType;
 
     static void paraSaveCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraStartCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraFlashLed(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
+    static void paraTypeCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
 
     static void sysLedSignalAktivty(void* aPObj);
     static int64_t sysLedCb(alarm_id_t id, void* aPObj);

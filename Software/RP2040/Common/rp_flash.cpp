@@ -19,9 +19,16 @@ void TFlash::init(uint32_t aOffset, uint32_t aSize, bool aSecCore)
     mSecCore = aSecCore;
 }
 
+void TFlash::deinit()
+{
+    mOffset = 0;
+    mSize = 0;
+    mSecCore = false;
+}
+
 void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg)
 {
-    if(aStoreDataCb == 0)
+    if(aStoreDataCb == 0 || mSize == 0)
         return;
 
     uint32_t* writeBuf = (uint32_t*) malloc(FLASH_PAGE_SIZE);
@@ -109,7 +116,7 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
 
 void TFlash::load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg)
 {
-    if(aLoadDataCb == 0)
+    if(aLoadDataCb == 0 || mSize == 0)
         return;
 
     if(checkCrc())

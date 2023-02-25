@@ -90,12 +90,13 @@ typedef enum {
     EPT_INVALID = 0,
     EPT_SYSTEM = 1,
     EPT_EPLIST = 2,
-    EPT_BUS = 3
+    EPT_BUS = 3,
+    EPT_CAPLEVEL = 4
 } epType_t; 
 
 class TEpSysDefs
 {
-protected:
+public:
     typedef enum
     {
         PARA_UID = 0,
@@ -110,11 +111,12 @@ protected:
         PARA_DEVNAME3,
     } paraInd_t; 
 
+protected:
     static constexpr epType_t cType = EPT_SYSTEM;
 
     static constexpr paraDef_t cParaList[] = {
         [PARA_UID] =        {PARA_FLAG_R,                   "uniqueId"},
-        [PARA_TYPE] =       {PARA_FLAG_R,                   "deviceType"},
+        [PARA_TYPE] =       {PARA_FLAG_R | PARA_FLAG_NV | PARA_FLAG_FW,    "deviceType"},
         [PARA_FWVERSION] =  {PARA_FLAG_R,                   "fwVersion"},
         [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,    "savePara"},
         [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,    "start"},
@@ -144,6 +146,70 @@ protected:
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "bus";
+};
+
+class TEpCapLevelDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_LEVEL,
+        PARA_VAL_AS,
+        PARA_VAL_L10,
+        PARA_VAL_L20,
+        PARA_VAL_L30,
+        PARA_VAL_L40,
+        PARA_VAL_L50,
+        PARA_VAL_L60,
+        PARA_VAL_L70,
+        PARA_VAL_L80,
+        PARA_VAL_L90,
+        PARA_VAL_L100,
+        PARA_CAL,
+        PARA_THRES,
+        PARA_CAL_L10,
+        PARA_CAL_L20,
+        PARA_CAL_L30,
+        PARA_CAL_L40,
+        PARA_CAL_L50,
+        PARA_CAL_L60,
+        PARA_CAL_L70,
+        PARA_CAL_L80,
+        PARA_CAL_L90,
+        PARA_CAL_L100,
+    } paraInd_t; 
+
+    static constexpr epType_t cType = EPT_CAPLEVEL;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_LEVEL] =       {PARA_FLAG_R | PARA_FLAG_FR,   "level"},
+        [PARA_VAL_AS] =      {PARA_FLAG_R | PARA_FLAG_FR,   "valAS"},
+        [PARA_VAL_L10] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL10"},
+        [PARA_VAL_L20] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL20"},
+        [PARA_VAL_L30] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL30"},
+        [PARA_VAL_L40] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL40"},
+        [PARA_VAL_L50] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL50"},
+        [PARA_VAL_L60] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL60"},
+        [PARA_VAL_L70] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL70"},
+        [PARA_VAL_L80] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL80"},
+        [PARA_VAL_L90] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL90"},
+        [PARA_VAL_L100] =    {PARA_FLAG_R | PARA_FLAG_FR,   "valL100"},
+        [PARA_CAL] =         {PARA_FLAG_W | PARA_FLAG_FW,   "cal"},
+        [PARA_THRES] =       {PARA_FLAG_RW | PARA_FLAG_NV,  "threshold"},
+        [PARA_CAL_L10] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL10"},
+        [PARA_CAL_L20] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL20"},
+        [PARA_CAL_L30] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL30"},
+        [PARA_CAL_L40] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL40"},
+        [PARA_CAL_L50] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL50"},
+        [PARA_CAL_L60] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL60"},
+        [PARA_CAL_L70] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL70"},
+        [PARA_CAL_L80] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL80"},
+        [PARA_CAL_L90] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL90"},
+        [PARA_CAL_L100] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL100"}
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "capLevel";
 };
 
 #endif /* GM_BUSDEFS_H_*/

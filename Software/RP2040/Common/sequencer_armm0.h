@@ -6,6 +6,7 @@
  */
 
 #include "pico/stdlib.h"
+#include "hardware/sync.h"
 
 #ifndef SEQUENCER_ARMM0_H_
 #define SEQUENCER_ARMM0_H_
@@ -44,20 +45,24 @@ private:
   taskCbRec_t;
 
   taskCbRec_t tasks[SEQ_MAXTASKS];
-  taskCbRec_t idleCb;
+  taskCbRec_t mIdleCb;
 
-  static constexpr uint8_t invalidId = -1;
-  static constexpr uint32_t arrayLen = ((SEQ_MAXTASKS - 1)/32 + 1);
-  uint32_t usedId[arrayLen];
-  uint32_t aktivTask[arrayLen];
-  uint32_t queuedTask[arrayLen];
+  static constexpr uint8_t CInvalidId = -1;
+  static constexpr uint32_t CArrayLen = ((SEQ_MAXTASKS - 1)/32 + 1);
+  uint32_t mUsedId[CArrayLen];
+  uint32_t mAktivTask[CArrayLen];
+  uint32_t mQueuedTask[CArrayLen];
+  spin_lock_t *mSpinLock;
 
-  uint8_t schedLastStackInd;
-  uint8_t schedLastTaskId;
-  uint8_t highestTaskId;
+  uint8_t mSschedLastStackInd;
+  uint8_t mSchedLastTaskId;
+  uint8_t mHighestTaskId;
 
 public:
   bool init(void* aStackBase, uint32_t aStackSize);
+
+  // only queue Task function is allowed to call from interrupt kontext
+  // all other functions must called from idle Task
   bool addTask(uint8_t &aSeqID, void (*aPFunc)(void*), void* aPArg);
   uint32_t getAktivTask();
   bool delTask(uint8_t aSeqID);

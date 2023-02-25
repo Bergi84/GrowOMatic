@@ -20,7 +20,8 @@ public:
     // aOffset gives the start position in flash for the data storage sector
     // aSize is the size of the data storage sector, aSecCore signals that the second
     // core is running and has executed multicore_lockout_victim_init()
-    void init(uint32_t aOffset, uint32_t aSize, bool aSecCore);
+    void init(uint32_t aOffset, uint32_t aSize, bool aSecCore = true);
+    void deinit();
 
     virtual void store(uint32_t mSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);
     virtual void load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);

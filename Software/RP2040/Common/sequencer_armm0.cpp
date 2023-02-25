@@ -6,59 +6,64 @@
  */
 
 #include "sequencer_armm0.h"
-#include "hardware/sync.h"
 
 bool TSequencer::init(void* aStackBase, uint32_t aStackSize)
 {
   stackBaseAdr = (uint8_t*) aStackBase;
   stackSize = aStackSize/SEQ_MAXSTACKS;
 
-  for(int i = 0; i < arrayLen; i++)
+  for(int i = 0; i < CArrayLen; i++)
   {
-    usedId[i] = 0;
+    mUsedId[i] = 0;
   }
 
   for(int i = 0; i < SEQ_MAXSTACKS; i++)
   {
     stacks[i].sp = 0;
     stacks[i].event = 0;
-    stacks[i].id = invalidId;
+    stacks[i].id = CInvalidId;
   }
 
-  schedLastStackInd = 0;
-  schedLastTaskId = 0;
-  highestTaskId = 0;
+  mSschedLastStackInd = 0;
+  mSchedLastTaskId = 0;
+  mHighestTaskId = 0;
 
-  idleCb.pFunc = 0;
+  mIdleCb.pFunc = 0;
+
+  mSpinLock = spin_lock_instance(spin_lock_claim_unused(true));
 
   return true;
 }
 
 bool TSequencer::addTask(uint8_t &aSeqID, void (*aPFunc)(void*) , void* aPArg)
 {
-  for(int i = 0; i < arrayLen; i++)
+  for(int i = 0; i < CArrayLen; i++)
   {
     for(int j = 0; j < 32; j++)
     {
       uint32_t mask = (1U << j);
-      if((usedId[i] & mask) == 0)
+      if((mUsedId[i] & mask) == 0 && (mAktivTask[i] & mask))
       {
         uint8_t tmpID = i*32 + j;
         if(tmpID >= SEQ_MAXTASKS)
         {
-          aSeqID = invalidId;
+          aSeqID = CInvalidId;
           return false;
         }
         else
         {
-          usedId[i] |= mask;
-          aktivTask[i] &= ~mask;
-          queuedTask[i] &= ~mask;
           tasks[tmpID].pFunc = aPFunc;
           tasks[tmpID].pArg = aPArg;
           aSeqID = tmpID;
-          if(highestTaskId < tmpID)
-            highestTaskId = tmpID;
+          if(mHighestTaskId < tmpID)
+            mHighestTaskId = tmpID;
+
+          uint32_t status = spin_lock_blocking(mSpinLock);
+
+          mUsedId[i] |= mask;
+          mQueuedTask[i] &= ~mask;
+
+          spin_unlock(mSpinLock, status);
 
           return true;
         }
@@ -73,17 +78,17 @@ bool TSequencer::delTask(uint8_t aSeqID)
   uint32_t i = aSeqID >> 5;
   uint32_t j = aSeqID & 0x1F;
 
-  usedId[i] &= ~(1U << j);
+  mUsedId[i] &= ~(1U << j);
 
   uint8_t highestId = 0;
 
-  for(int i = 0; i < arrayLen; i++)
+  for(int i = 0; i < CArrayLen; i++)
   {
-    if(usedId[i] != 0)
+    if(mUsedId[i] != 0)
     {
       // cortex M0 do not support __CLZ so we need an emulation
       // for __CLZ(usedId[i])
-      uint32_t clzBuf = usedId[i];
+      uint32_t clzBuf = mUsedId[i];
       uint32_t clzCnt = 0;
       while((clzCnt < 32) && ((clzBuf & 0x80000000) == 0))
       {
@@ -98,7 +103,7 @@ bool TSequencer::delTask(uint8_t aSeqID)
     }
   }
 
-  highestTaskId = highestId;
+  mHighestTaskId = highestId;
 
   return true;
 }
@@ -127,13 +132,13 @@ bool TSequencer::queueTask(uint8_t aSeqID)
   uint32_t j = aSeqID & 0x1F;
   uint32_t mask = 1U << j;
 
-  if(usedId[i] & mask)
+  if(mUsedId[i] & mask)
   {
-    uint32_t status = save_and_disable_interrupts();
+    uint32_t status = spin_lock_blocking(mSpinLock);
 
-    queuedTask[i] |= mask;
+    mQueuedTask[i] |= mask;
 
-    restore_interrupts(status);
+    spin_unlock(mSpinLock, status);
 
     return true;
   }
@@ -174,8 +179,8 @@ uint32_t TSequencer::getAktivTask()
 
 bool TSequencer::setIdleFunc(void (*aPFunc)(void*), void* aPArg)
 {
-  idleCb.pFunc = aPFunc;
-  idleCb.pArg = aPArg;
+  mIdleCb.pFunc = aPFunc;
+  mIdleCb.pArg = aPArg;
 
   return true;
 }
@@ -213,15 +218,15 @@ inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
   uint32_t j = taskInd & 0x1F;
   uint32_t mask = 1U << j;
 
-  aktivTask[i] |= mask;
+  mAktivTask[i] |= mask;
 
   // can be modified from interrupt context
   // and is not a atomic instruction
-  uint32_t status = save_and_disable_interrupts();
+  uint32_t status = spin_lock_blocking(mSpinLock);
 
-  queuedTask[i] &= ~mask;
+  mQueuedTask[i] &= ~mask;
 
-  restore_interrupts(status);
+  spin_unlock(mSpinLock, status);
 
   taskCbRec_t* task = &tasks[taskInd];
 
@@ -229,9 +234,9 @@ inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
   task->pFunc(task->pArg);
 
   // set task as inactive
-  aktivTask[i] &= ~mask;
+  mAktivTask[i] &= ~mask;
   stack->sp = 0;
-  stack->id = invalidId;
+  stack->id = CInvalidId;
 
   // return is not allowed because the stack is not valid anymore
   // so we call the scheduler instead
@@ -349,8 +354,8 @@ void TSequencer::scheduler()
   {
     // check waiting tasks and search free stack for new task
     // waiting tasks have always a higher priority
-    uint8_t freeInd = invalidId;
-    uint8_t endInd = schedLastStackInd;
+    uint8_t freeInd = CInvalidId;
+    uint8_t endInd = mSschedLastStackInd;
     uint8_t tmpId = endInd;
 
     do
@@ -363,7 +368,7 @@ void TSequencer::scheduler()
         {
           // todo: check stack integrity
           stacks[tmpId].event = 0;
-          schedLastStackInd = tmpId;
+          mSschedLastStackInd = tmpId;
           aktivStackInd = tmpId;
           switchTask(&stacks[tmpId].sp, false); // this function never returns
         }
@@ -377,22 +382,22 @@ void TSequencer::scheduler()
 
     // if a free stack is available
     // search queued task for execution
-    if(freeInd != invalidId)
+    if(freeInd != CInvalidId)
     {
-      endInd = schedLastTaskId;
+      endInd = mSchedLastTaskId;
       tmpId = endInd;
 
       do
       {
-        tmpId = (tmpId == highestTaskId) ? 0 : tmpId + 1;
+        tmpId = (tmpId == mHighestTaskId) ? 0 : tmpId + 1;
 
         uint32_t i = tmpId >> 5;
         uint32_t j = tmpId & 0x1F;
         uint32_t mask = 1U << j;
 
-        if(usedId[i] & queuedTask[i] & ~aktivTask[i] & mask)
+        if(mUsedId[i] & mQueuedTask[i] & ~mAktivTask[i] & mask)
         {
-          schedLastTaskId = tmpId;
+          mSchedLastTaskId = tmpId;
           startTask(freeInd, tmpId);  // this function never return
         }
 
@@ -401,9 +406,9 @@ void TSequencer::scheduler()
     }
 
     // all stacks used or nothing todo, goto low power mode
-    if(idleCb.pFunc != 0)
+    if(mIdleCb.pFunc != 0)
     {
-      idleCb.pFunc(idleCb.pArg);
+      mIdleCb.pFunc(mIdleCb.pArg);
     }
   }
 }
