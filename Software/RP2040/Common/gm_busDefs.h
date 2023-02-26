@@ -15,6 +15,7 @@ static constexpr uint32_t PARA_FLAG_NV = 0x00000004;     // is non volatile stor
 static constexpr uint32_t PARA_FLAG_S =  0x00000008;     // is scopable
 static constexpr uint32_t PARA_FLAG_FR = 0x00000010;     // call update callback before read 
 static constexpr uint32_t PARA_FLAG_FW = 0x00000020;     // call update callback after write
+static constexpr uint32_t PARA_FLAG_FRW = 0x00000030;     // call update callback after write
 static constexpr uint32_t PARA_FLAG_P =  0x00000040;     // parameter is a pointer
 
 typedef struct {
@@ -30,6 +31,7 @@ static constexpr uint32_t CInvalidUid = -1;
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
+static constexpr uint32_t CCapLevelBaseRegAdr = 0x0200;
 
 static constexpr paraDef_t CEpNameDefs[] = {
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
@@ -167,6 +169,8 @@ protected:
         PARA_VAL_L100,
         PARA_CAL,
         PARA_THRES,
+        PARA_DIR,
+        PARA_CAL_AS,
         PARA_CAL_L10,
         PARA_CAL_L20,
         PARA_CAL_L30,
@@ -197,6 +201,8 @@ protected:
         [PARA_VAL_L100] =    {PARA_FLAG_R | PARA_FLAG_FR,   "valL100"},
         [PARA_CAL] =         {PARA_FLAG_W | PARA_FLAG_FW,   "cal"},
         [PARA_THRES] =       {PARA_FLAG_RW | PARA_FLAG_NV,  "threshold"},
+        [PARA_DIR] =         {PARA_FLAG_RW | PARA_FLAG_NV,  "dir"},
+        [PARA_CAL_AS] =      {PARA_FLAG_RW | PARA_FLAG_NV,   "calAS"},
         [PARA_CAL_L10] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL10"},
         [PARA_CAL_L20] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL20"},
         [PARA_CAL_L30] =     {PARA_FLAG_RW | PARA_FLAG_NV,   "calL30"},

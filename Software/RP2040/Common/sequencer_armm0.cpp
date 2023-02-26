@@ -60,8 +60,8 @@ bool TSequencer::addTask(uint8_t &aSeqID, void (*aPFunc)(void*) , void* aPArg)
 
           uint32_t status = spin_lock_blocking(mSpinLock);
 
-          mUsedId[i] |= mask;
           mQueuedTask[i] &= ~mask;
+          mUsedId[i] |= mask;
 
           spin_unlock(mSpinLock, status);
 
