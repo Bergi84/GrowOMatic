@@ -147,6 +147,17 @@ public:
         {
             // stop aquisition
             mPio->irq_force = 0x02;
+
+            // clear fifo
+            while(!(mPio->fstat & 0x00000100))
+                volatile uint32_t dump = mPio->rxf[0];
+            while(!(mPio->fstat & 0x00000200))
+                volatile uint32_t dump = mPio->rxf[1];
+            while(!(mPio->fstat & 0x00000400))
+                volatile uint32_t dump = mPio->rxf[2];
+            while(!(mPio->fstat & 0x00000800))
+                volatile uint32_t dump = mPio->rxf[3];    
+
             while(mPio->sm[0].addr != 20); // should be the wait instruction of master (wait 0 irq 1)
 
             for(int i = 0; i < 4; i++)
@@ -162,17 +173,7 @@ public:
                     mAktivPin++;
                 }
             }
-            mSumCnt = 0;
-
-            // clear fifo
-            while(!(mPio->fstat & 0x00000100))
-                volatile uint32_t dump = mPio->rxf[0];
-            while(!(mPio->fstat & 0x00000200))
-                volatile uint32_t dump = mPio->rxf[1];
-            while(!(mPio->fstat & 0x00000400))
-                volatile uint32_t dump = mPio->rxf[2];
-            while(!(mPio->fstat & 0x00000800))
-                volatile uint32_t dump = mPio->rxf[3];      
+            mSumCnt = 0;  
 
             setNextSensPins();
 

@@ -170,38 +170,36 @@ void GM_dualCapSense::paraValCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
 {
     GM_dualCapSense *pObj = (GM_dualCapSense*) aCbArg;
 
-    uint32_t paraOffCal = PARA_VAL_AS - PARA_CAL_AS;
-
     if(aPParaRec >= &pObj->mPara[0][PARA_VAL_AS] && aPParaRec <= &pObj->mPara[0][PARA_VAL_L100])
     {
-        uint32_t paraInd = (aPParaRec - &pObj->mPara[0][PARA_VAL_AS])/sizeof(struct TParaTable::paraRec_s);
+        uint32_t paraInd = (aPParaRec - &pObj->mPara[0][PARA_VAL_AS]);
 
         if(paraInd == 0)
         {
             // aktiv shield
-            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_p] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_p] - pObj->mPara[0][PARA_CAL_AS].para;
         }
         else
         {  
             // sensor field
-            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_p + paraInd - 1] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_p + paraInd - 1] - pObj->mPara[0][PARA_CAL_AS + paraInd].para;
         }
 
     }
 
     if(aPParaRec >= &pObj->mPara[1][PARA_VAL_AS] && aPParaRec <= &pObj->mPara[1][PARA_VAL_L100])
     {
-        uint32_t paraInd = (aPParaRec - &pObj->mPara[1][PARA_VAL_AS])/sizeof(struct TParaTable::paraRec_s);
+        uint32_t paraInd = (aPParaRec - &pObj->mPara[1][PARA_VAL_AS]);
         
         if(paraInd == 0)
         {
             // aktiv shield
-            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_n] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_n] - pObj->mPara[1][PARA_CAL_AS].para;
         }
         else
         {  
             // sensor field
-            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_n + paraInd - 1] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_n + paraInd - 1] - pObj->mPara[1][PARA_CAL_AS + paraInd].para;
         }
     }
 }
@@ -209,8 +207,6 @@ void GM_dualCapSense::paraValCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
 void GM_dualCapSense::paraCalCb(void* aCbArg, struct TParaTable::paraRec_s* aPParaRec, bool aWrite)
 {
     GM_dualCapSense *pObj = (GM_dualCapSense*) aCbArg;
-
-    uint32_t paraOffCal = PARA_VAL_AS - PARA_CAL_AS;
 
     if(aPParaRec == &pObj->mPara[0][PARA_CAL])
     {
