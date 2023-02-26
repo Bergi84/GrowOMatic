@@ -90,6 +90,7 @@ private:
     TSequencer* mSeq;
 
     irq_handler_t mTusbIrq;
+    bool mTxCbEn;
 
 public:
     TUsbUart();
@@ -133,6 +134,7 @@ public:
         irq_remove_handler(USBCTRL_IRQ, mTusbIrq);
         irq_set_exclusive_handler(USBCTRL_IRQ, pFunc);
         irq_set_enabled (USBCTRL_IRQ, true);
+        mSeq->queueTask(mTaskIdWorker);
     }
 };
 

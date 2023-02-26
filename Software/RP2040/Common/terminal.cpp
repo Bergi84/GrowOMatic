@@ -19,6 +19,7 @@ void TTerminal::init(TUart* aUart, TSequencer *aSeq, TTermPathMng *aPathMng)
 
     mUart->config(112500, UP_NONE);
     mUart->installRxCb(rxCb, this);
+    mUart->installTxCb(txCb, this);
 
     mSeq->addTask(mRxTaskId, termRxTask, this);
     mSeq->addTask(mTxTaskId, termTxTask, this);
@@ -50,11 +51,13 @@ void TTerminal::rxCb(void* aArg)
     pObj->mSeq->queueTask(pObj->mRxTaskId);
 }
 
-void TTerminal::txCb(void* aArg)
+bool TTerminal::txCb(void* aArg)
 {
     TTerminal *pObj = (TTerminal*) aArg; 
 
     pObj->mSeq->queueTask(pObj->mTxTaskId);
+
+    return false;
 }
 
 void TTerminal::termTxTask(void* aArg)
@@ -66,21 +69,24 @@ void TTerminal::termTxTask(void* aArg)
 
     if(locWInd != locRInd)
     {
+        uint32_t txAvail;
+        uint32_t txLen;
         if(locWInd > locRInd)
         {
-            uint32_t txAvail = locWInd - locRInd;
-            uint32_t txLen = pObj->mUart->txBlock(&pObj->mTxBuf[pObj->mTxBufRInd], txAvail);
+            txAvail = locWInd - locRInd;
+            txLen = pObj->mUart->txBlock(&pObj->mTxBuf[pObj->mTxBufRInd], txAvail);
             pObj->mTxBufRInd += txLen;
         }
         else
         {
-            uint32_t txAvail = TERMINAL_TX_BUF_LEN - locRInd;
-            uint32_t txLen = pObj->mUart->txBlock(&pObj->mTxBuf[pObj->mTxBufRInd], txAvail);
+            txAvail = TERMINAL_TX_BUF_LEN - locRInd;
+            txLen = pObj->mUart->txBlock(&pObj->mTxBuf[pObj->mTxBufRInd], txAvail);
             if(txLen == txAvail)
             {         
                 if(locWInd > 0)
                 {
-                    txLen = pObj->mUart->txBlock(&pObj->mTxBuf[0], locWInd);
+                    txAvail = locWInd;
+                    txLen = pObj->mUart->txBlock(&pObj->mTxBuf[0], txAvail);
                     pObj->mTxBufRInd = txLen;
                 }
                 else
@@ -595,7 +601,7 @@ void TTerminal::newLine(bool aLineShift)
     mLineBuf[mAktLine][len++] = '>';
     mLineBuf[mAktLine][len++] = 0;
 
-    putString((char*) mLineBuf[mAktLine], TERMINAL_LINE_LENGTH);
+    putString((char*) mLineBuf[mAktLine], len + 2);
     mLineBuf[mAktLine][0] = 0;
 }
 

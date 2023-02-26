@@ -10,36 +10,36 @@
 #define MAX_SENSE_PIN_CNT   32
 
 class TCapSens {
-    PIO pio;
-    uint excPinBase;
-    uint sensPinBase;
-    uint sensPinCount;
-    uint sensPinPolMsk;
+    PIO mPio;
+    uint mExcPinBase;
+    uint mSensPinBase;
+    uint mSensPinCount;
+    uint mSensPinPolMsk;
 
-    uint sumBuf[4];
-    uint sumCnt;
-    uint sampleCnt;
-    uint sumShift;
-    uint maxShift;
-    uint aktivPin;
+    uint mSumBuf[4];
+    uint mSumCnt;
+    uint mSampleCnt;
+    uint mSumShift;
+    uint mMaxShift;
+    uint mAktivPin;
 
-    uint maxChgCnt;
+    uint mMaxChgCnt;
 
     inline void setSensCh(uint sm, uint gpio)
     {
-        uint32_t tmp = pio->sm[sm].execctrl;
+        uint32_t tmp = mPio->sm[sm].execctrl;
         tmp &= ~PIO_SM0_EXECCTRL_JMP_PIN_BITS;
         tmp |= gpio << PIO_SM0_EXECCTRL_JMP_PIN_LSB;
-        pio->sm[sm].execctrl = tmp;
+        mPio->sm[sm].execctrl = tmp;
     }
 
     inline void setNextSensPins()
     {
-        uint tmp = aktivPin;
+        uint tmp = mAktivPin;
         for(int i = 0; i < 4; i++)
         {
-            setSensCh(i, tmp + sensPinBase);
-            if(tmp == sensPinCount - 1)
+            setSensCh(i, tmp + mSensPinBase);
+            if(tmp == mSensPinCount - 1)
             {
                 tmp = 0;
             }
@@ -51,25 +51,29 @@ class TCapSens {
     }
 
 public:
-    uint capVal[MAX_SENSE_PIN_CNT];
+    uint mCapVal[MAX_SENSE_PIN_CNT];
     void init(PIO aPio, uint aExcPinBase, uint aSensPinBase, uint aSensPinCnt, uint aSensPinPolMsk, uint aMaxChgCnt, uint aDchgCnt)
     {
-        pio = aPio;
-        excPinBase = aExcPinBase;
-        sensPinBase = aSensPinBase;
-        sensPinCount = aSensPinCnt;
-        sensPinPolMsk = aSensPinPolMsk;
-        maxChgCnt = aMaxChgCnt;
+        mPio = aPio;
+        mExcPinBase = aExcPinBase;
+        mSensPinBase = aSensPinBase;
+        mSensPinCount = aSensPinCnt;
+        mSensPinPolMsk = aSensPinPolMsk;
+        mMaxChgCnt = aMaxChgCnt;
 
         capSens_init(aPio, aExcPinBase, aSensPinBase, aSensPinCnt, aSensPinPolMsk, aMaxChgCnt, aDchgCnt);
 
         for(uint i = 0; i < 4; i++)
         {
-            sumBuf[i] = 0;
+            mSumBuf[i] = 0;
+        }
+        for(uint i = 0; i < MAX_SENSE_PIN_CNT; i++)
+        {
+            mCapVal[i] = 0;
         }
         setOverSampling(256);
-        sumCnt = 0;
-        aktivPin = 0;
+        mSumCnt = 0;
+        mAktivPin = 0;
 
         setNextSensPins();
 
@@ -78,7 +82,7 @@ public:
 
     void enable()
     {
-        pio_set_sm_mask_enabled (pio, 0xF, true); 
+        pio_set_sm_mask_enabled (mPio, 0xF, true); 
     };
 
     void setOverSampling(uint aSampleCnt)
@@ -95,9 +99,9 @@ public:
             cnt = 4;
 
 
-        sumShift = cnt - 4;
-        maxShift = 4;
-        sampleCnt = 1 << cnt;
+        mSumShift = cnt - 4;
+        mMaxShift = 4;
+        mSampleCnt = 1 << cnt;
     }
 
     // this function installs the irq handler and only accepts "C" functions
@@ -106,8 +110,8 @@ public:
 
     void setIrqHandler(void (*aIrqHandler)(void))
     {
-        pio_set_irq0_source_enabled(pio, pis_interrupt0 , true);
-        if(pio == pio0)
+        pio_set_irq0_source_enabled(mPio, pis_interrupt0 , true);
+        if(mPio == pio0)
         {       
             irq_set_exclusive_handler(PIO0_IRQ_0, aIrqHandler);
             irq_set_enabled(PIO0_IRQ_0, true);
@@ -123,12 +127,12 @@ public:
 
     inline void irqHandler()
     {
-        pio_interrupt_clear(pio, 0);
+        pio_interrupt_clear(mPio, 0);
 
         // for debugging, should never occure
         // rx fifo has no Values
 
-        if((pio->fstat & 0x00000F00) != 0)
+        if((mPio->fstat & 0x00000F00) != 0)
         {
             mDebEmptyCall++;
             return;
@@ -136,48 +140,48 @@ public:
 
         for(int i = 0; i < 4; i++)
         {
-            sumBuf[i] += pio->rxf[i];
+            mSumBuf[i] += mPio->rxf[i];
         }
 
-        if(sumCnt == sampleCnt - 1)
+        if(mSumCnt == mSampleCnt - 1)
         {
             // stop aquisition
-            pio->irq_force = 0x02;
-            while(pio->sm[0].addr != 20); // should be the wait instruction of master (wait 0 irq 1)
+            mPio->irq_force = 0x02;
+            while(mPio->sm[0].addr != 20); // should be the wait instruction of master (wait 0 irq 1)
 
             for(int i = 0; i < 4; i++)
             {
-                capVal[aktivPin] = (maxChgCnt << maxShift) - (sumBuf[i] >> sumShift);
-                sumBuf[i] = 0;
-                if(aktivPin == sensPinCount - 1)
+                mCapVal[mAktivPin] = (mMaxChgCnt << mMaxShift) - (mSumBuf[i] >> mSumShift);
+                mSumBuf[i] = 0;
+                if(mAktivPin == mSensPinCount - 1)
                 {
-                    aktivPin = 0;
+                    mAktivPin = 0;
                 }
                 else
                 {
-                    aktivPin++;
+                    mAktivPin++;
                 }
             }
-            sumCnt = 0;
+            mSumCnt = 0;
 
             // clear fifo
-            while(!(pio->fstat & 0x00000100))
-                volatile uint32_t dump = pio->rxf[0];
-            while(!(pio->fstat & 0x00000200))
-                volatile uint32_t dump = pio->rxf[1];
-            while(!(pio->fstat & 0x00000400))
-                volatile uint32_t dump = pio->rxf[2];
-            while(!(pio->fstat & 0x00000800))
-                volatile uint32_t dump = pio->rxf[3];      
+            while(!(mPio->fstat & 0x00000100))
+                volatile uint32_t dump = mPio->rxf[0];
+            while(!(mPio->fstat & 0x00000200))
+                volatile uint32_t dump = mPio->rxf[1];
+            while(!(mPio->fstat & 0x00000400))
+                volatile uint32_t dump = mPio->rxf[2];
+            while(!(mPio->fstat & 0x00000800))
+                volatile uint32_t dump = mPio->rxf[3];      
 
             setNextSensPins();
 
             // start pio
-            pio->irq = 0x02;
+            mPio->irq = 0x02;
         }
         else
         {
-            sumCnt++;
+            mSumCnt++;
         }
     }
 };

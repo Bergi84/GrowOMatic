@@ -74,7 +74,7 @@ uint32_t THwUart::txBlock(uint8_t* aBuf, uint32_t aLen)
     while(len < aLen and uart_is_writable(mUart))
         uart_putc(mUart, aBuf[len++]);
 
-//    enIrqCb(true);
+    enIrqCb(true);
 
     return len;
 }
@@ -149,8 +149,8 @@ void THwUart::rxGetWait(void* &aAdr, uint32_t &aMsk)
 
 void THwUart::txChar(uint8_t aC)
 {
-//    enIrqCb(true);
     uart_putc(mUart, aC);
+    enIrqCb(true);
 }
 
 bool THwUart::txFree()
@@ -188,8 +188,8 @@ void TUsbUart::tusbWorker(void* aArg)
     tud_cdc_write_flush();
     if(tud_cdc_connected())
     {
-        if(tud_cdc_write_available() && pObj->mTxCb != 0)
-            pObj->mTxCb(pObj->mTxCbArg);
+        if(tud_cdc_write_available() && pObj->mTxCb != 0 && pObj->mTxCbEn)
+            pObj->mTxCbEn = pObj->mTxCb(pObj->mTxCbArg);
         if(tud_cdc_available() && pObj->mRxCb != 0)
             pObj->mRxCb(pObj->mRxCbArg);
     }
@@ -197,6 +197,8 @@ void TUsbUart::tusbWorker(void* aArg)
 
 void TUsbUart::init(TSequencer *aSeq)
 {
+    mTxCbEn = false;
+
     mSeq = aSeq;
     mSeq->addTask(mTaskIdWorker, tusbWorker, this);
 
@@ -225,6 +227,8 @@ bool TUsbUart::rxPending()
 
 void TUsbUart::txChar(uint8_t aC)
 {
+    mTxCbEn = true;
+
     // wait until byte can be written
     while(!tud_cdc_connected() || tud_cdc_write_available() == 0)
     {
@@ -243,6 +247,8 @@ void TUsbUart::txChar(uint8_t aC)
 
 uint32_t TUsbUart::txBlock(uint8_t* aBuf, uint32_t aLen)
 {
+    mTxCbEn = true;
+
     if(!tud_cdc_connected())
         return 0;
 

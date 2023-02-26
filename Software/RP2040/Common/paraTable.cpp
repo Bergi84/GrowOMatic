@@ -97,7 +97,7 @@ errCode_T TParaTable::setPara(uint16_t aRegAdr, uint32_t aData)
         else
             tmp->para = aData;
 
-        if(tmp->defs->flags & PARA_FLAG_FW && tmp->pFAccessCb)
+        if((tmp->defs->flags & PARA_FLAG_FW) != 0 && tmp->pFAccessCb)
         {
             tmp->pFAccessCb(tmp->cbArg, tmp, true);
         }

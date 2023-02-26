@@ -24,6 +24,7 @@ public:
     static void setIrqHandler(void* aArg, void (*aIrqHandler)(void))
     {
         ((GM_dualCapSense*)aArg)->mCapSens.setIrqHandler(aIrqHandler);
+        ((GM_dualCapSense*)aArg)->mCapSens.enable();
     }
 
     inline void irqHandler(void)

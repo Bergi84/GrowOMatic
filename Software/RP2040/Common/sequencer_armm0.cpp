@@ -9,8 +9,8 @@
 
 bool TSequencer::init(void* aStackBase, uint32_t aStackSize)
 {
-  stackBaseAdr = (uint8_t*) aStackBase;
-  stackSize = aStackSize/SEQ_MAXSTACKS;
+  mStackBaseAdr = (uint8_t*) aStackBase;
+  mStackSize = aStackSize/SEQ_MAXSTACKS;
 
   for(int i = 0; i < CArrayLen; i++)
   {
@@ -19,9 +19,9 @@ bool TSequencer::init(void* aStackBase, uint32_t aStackSize)
 
   for(int i = 0; i < SEQ_MAXSTACKS; i++)
   {
-    stacks[i].sp = 0;
-    stacks[i].event = 0;
-    stacks[i].id = CInvalidId;
+    mStacks[i].sp = 0;
+    mStacks[i].event = 0;
+    mStacks[i].id = CInvalidId;
   }
 
   mSschedLastStackInd = 0;
@@ -42,7 +42,7 @@ bool TSequencer::addTask(uint8_t &aSeqID, void (*aPFunc)(void*) , void* aPArg)
     for(int j = 0; j < 32; j++)
     {
       uint32_t mask = (1U << j);
-      if((mUsedId[i] & mask) == 0 && (mAktivTask[i] & mask))
+      if(((mUsedId[i] & mask) == 0) && ((mAktivTask[i] & mask) == 0))
       {
         uint8_t tmpID = i*32 + j;
         if(tmpID >= SEQ_MAXTASKS)
@@ -112,11 +112,11 @@ bool TSequencer::killTask(uint8_t aSeqID)
 {
   for(int i = 0; i < SEQ_MAXTASKS; i++)
   {
-    if(stacks[i].id == aSeqID)
+    if(mStacks[i].id == aSeqID)
     {
-      stacks[i].id = 0;
-      stacks[i].event = 0;
-      if(i == aktivStackInd)
+      mStacks[i].id = 0;
+      mStacks[i].event = 0;
+      if(i == mAktivStackInd)
       {
         scheduler();
       }
@@ -151,7 +151,7 @@ void TSequencer::waitForEvent(bool* aEvt)
   if(aEvt == 0)
     return;
 
-  stackRec_t* stack = &stacks[aktivStackInd];
+  stackRec_t* stack = &mStacks[mAktivStackInd];
   // bool can a 8Bit value so we must avoid 
   // unaligend access
   stack->event = (uint32_t*)(((uint32_t)aEvt) & 0xFFFFFFFC);          // alligned address
@@ -165,7 +165,7 @@ void TSequencer::waitForEvent(uint32_t* aEvt, uint32_t msk)
   if(aEvt == 0)
     return;
 
-  stackRec_t* stack = &stacks[aktivStackInd];
+  stackRec_t* stack = &mStacks[mAktivStackInd];
   stack->event = aEvt;
   stack->msk = msk;     // mask
   
@@ -174,7 +174,7 @@ void TSequencer::waitForEvent(uint32_t* aEvt, uint32_t msk)
 
 uint32_t TSequencer::getAktivTask()
 {
-  return stacks[aktivStackInd].id;
+  return mStacks[mAktivStackInd].id;
 }
 
 bool TSequencer::setIdleFunc(void (*aPFunc)(void*), void* aPArg)
@@ -187,7 +187,7 @@ bool TSequencer::setIdleFunc(void (*aPFunc)(void*), void* aPArg)
 
 inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
 {
-  void *sp = (void*)(((uint32_t)stackBaseAdr) - stackSize * stackInd);
+  void *sp = (void*)(((uint32_t)mStackBaseAdr) - mStackSize * stackInd);
   uint32_t clobber;
 
   // switch to new stack
@@ -205,11 +205,11 @@ inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
     : "memory"
   );
 
-  aktivStackInd = stackInd;
-  stackRec_t* stack = &stacks[stackInd];
+  mAktivStackInd = stackInd;
+  stackRec_t* stack = &mStacks[stackInd];
 
   // store stack context
-  stack->sp = stacks[stackInd].sp;
+  stack->sp = mStacks[stackInd].sp;
   stack->event = 0;
   stack->id = taskInd;
 
@@ -362,15 +362,15 @@ void TSequencer::scheduler()
     {
       tmpId = (tmpId == SEQ_MAXSTACKS - 1) ? 0 : tmpId + 1;
 
-      if(stacks[tmpId].sp != 0)
+      if(mStacks[tmpId].sp != 0)
       {
-        if(stacks[tmpId].event != 0 && (*stacks[tmpId].event & stacks[tmpId].msk))
+        if(mStacks[tmpId].event != 0 && (*mStacks[tmpId].event & mStacks[tmpId].msk))
         {
           // todo: check stack integrity
-          stacks[tmpId].event = 0;
+          mStacks[tmpId].event = 0;
           mSschedLastStackInd = tmpId;
-          aktivStackInd = tmpId;
-          switchTask(&stacks[tmpId].sp, false); // this function never returns
+          mAktivStackInd = tmpId;
+          switchTask(&mStacks[tmpId].sp, false); // this function never returns
         }
       }
       else

@@ -115,7 +115,7 @@ void GM_dualCapSense::paraLevelCb(void* aCbArg, struct TParaTable::paraRec_s* aP
         {
             for(int i = 9; i >= 0; i--)
             {
-                uint32_t val = pObj->mCapSens.capVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
+                uint32_t val = pObj->mCapSens.mCapVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
                 if(val > pObj->mPara[0][PARA_THRES].para)
                     level += 10;
                 else
@@ -127,7 +127,7 @@ void GM_dualCapSense::paraLevelCb(void* aCbArg, struct TParaTable::paraRec_s* aP
         {
             for(int i = 0; i <= 9; i++)
             {
-                uint32_t val = pObj->mCapSens.capVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
+                uint32_t val = pObj->mCapSens.mCapVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
                 if(val > pObj->mPara[0][PARA_THRES].para)
                     level += 10;
                 else
@@ -143,7 +143,7 @@ void GM_dualCapSense::paraLevelCb(void* aCbArg, struct TParaTable::paraRec_s* aP
         {
             for(int i = 9; i >= 0; i--)
             {
-                uint32_t val = pObj->mCapSens.capVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
+                uint32_t val = pObj->mCapSens.mCapVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
                 if(val > pObj->mPara[1][PARA_THRES].para)
                     level += 10;
                 else
@@ -155,7 +155,7 @@ void GM_dualCapSense::paraLevelCb(void* aCbArg, struct TParaTable::paraRec_s* aP
         {
             for(int i = 0; i <= 9; i++)
             {
-                uint32_t val = pObj->mCapSens.capVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
+                uint32_t val = pObj->mCapSens.mCapVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
                 if(val > pObj->mPara[1][PARA_THRES].para)
                     level += 10;
                 else
@@ -179,12 +179,12 @@ void GM_dualCapSense::paraValCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
         if(paraInd == 0)
         {
             // aktiv shield
-            aPParaRec->para = pObj->mCapSens.capVal[cap_ch_as_p] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_p] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
         }
         else
         {  
             // sensor field
-            aPParaRec->para = pObj->mCapSens.capVal[cap_ch_sens_p + paraInd - 1] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_p + paraInd - 1] - pObj->mPara[0][PARA_VAL_AS + paraInd + paraOffCal].para;
         }
 
     }
@@ -196,12 +196,12 @@ void GM_dualCapSense::paraValCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
         if(paraInd == 0)
         {
             // aktiv shield
-            aPParaRec->para = pObj->mCapSens.capVal[cap_ch_as_n] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_as_n] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
         }
         else
         {  
             // sensor field
-            aPParaRec->para = pObj->mCapSens.capVal[cap_ch_sens_n + paraInd - 1] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
+            aPParaRec->para = pObj->mCapSens.mCapVal[cap_ch_sens_n + paraInd - 1] - pObj->mPara[1][PARA_VAL_AS + paraInd + paraOffCal].para;
         }
     }
 }
@@ -217,17 +217,17 @@ void GM_dualCapSense::paraCalCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
         switch(aPParaRec->para)
         {
             case 1:
-                pObj->mPara[0][PARA_CAL_AS].para = pObj->mCapSens.capVal[cap_ch_as_p];
+                pObj->mPara[0][PARA_CAL_AS].para = pObj->mCapSens.mCapVal[cap_ch_as_p];
 
                 for(int i = 0; i < 10; i++)
-                    pObj->mPara[0][PARA_CAL_L10 + i].para = pObj->mCapSens.capVal[cap_ch_sens_p + i];
+                    pObj->mPara[0][PARA_CAL_L10 + i].para = pObj->mCapSens.mCapVal[cap_ch_sens_p + i];
                 break;
 
             case 2:
                 {
                     uint32_t sum = 0;
                     for(int i = 0; i < 10; i++)
-                        sum += pObj->mCapSens.capVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
+                        sum += pObj->mCapSens.mCapVal[cap_ch_sens_p + i] - pObj->mPara[0][i + PARA_CAL_L10].para;
 
                     pObj->mPara[0][PARA_THRES].para = sum/20;
                 }
@@ -244,17 +244,17 @@ void GM_dualCapSense::paraCalCb(void* aCbArg, struct TParaTable::paraRec_s* aPPa
         switch(aPParaRec->para)
         {
             case 1:
-                pObj->mPara[1][PARA_CAL_AS].para = pObj->mCapSens.capVal[cap_ch_as_n];
+                pObj->mPara[1][PARA_CAL_AS].para = pObj->mCapSens.mCapVal[cap_ch_as_n];
 
                 for(int i = 0; i < 10; i++)
-                    pObj->mPara[1][PARA_CAL_L10 + i].para = pObj->mCapSens.capVal[cap_ch_sens_n + i];
+                    pObj->mPara[1][PARA_CAL_L10 + i].para = pObj->mCapSens.mCapVal[cap_ch_sens_n + i];
                 break;
 
             case 2:
                 {
                     uint32_t sum = 0;
                     for(int i = 0; i < 10; i++)
-                        sum += pObj->mCapSens.capVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
+                        sum += pObj->mCapSens.mCapVal[cap_ch_sens_n + i] - pObj->mPara[1][i + PARA_CAL_L10].para;
 
                     pObj->mPara[1][PARA_THRES].para = sum/20;
                 }

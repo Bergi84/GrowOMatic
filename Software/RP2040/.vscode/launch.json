@@ -5,6 +5,7 @@
     // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "cortex-debug",
             "request": "launch",
@@ -34,6 +35,28 @@
             "cwd": "${workspaceRoot}",
             "executable": "./build/testBusPicoBoard/testBusPicoBoard.elf",
             "name": "Debug testBusPicoBoard",
+            "device": "Pico2040",
+            "configFiles": [
+                "interface/picoprobe.cfg",
+                "target/rp2040.cfg", 
+            ],
+            "searchDir": ["D:\\Programme\\openocd_rp2040\\tcl"],
+            "runToEntryPoint": "main",
+            "postRestartCommands": [
+                "break main",
+                "continue"
+            ],
+            "showDevDebugOutput": "both",
+            "svdFile": "D:/Projekte/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
+        }
+
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/uniFw/uniFw.elf",
+            "name": "Debug uniFw",
             "device": "Pico2040",
             "configFiles": [
                 "interface/picoprobe.cfg",

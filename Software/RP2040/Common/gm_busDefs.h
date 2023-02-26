@@ -118,7 +118,7 @@ protected:
 
     static constexpr paraDef_t cParaList[] = {
         [PARA_UID] =        {PARA_FLAG_R,                   "uniqueId"},
-        [PARA_TYPE] =       {PARA_FLAG_R | PARA_FLAG_NV | PARA_FLAG_FW,    "deviceType"},
+        [PARA_TYPE] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,    "deviceType"},
         [PARA_FWVERSION] =  {PARA_FLAG_R,                   "fwVersion"},
         [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,    "savePara"},
         [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,    "start"},

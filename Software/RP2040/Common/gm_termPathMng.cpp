@@ -14,7 +14,10 @@ GM_termPathMng::~GM_termPathMng()
 
 void GM_termPathMng::init(GM_bus* aBus, TParaTable* aParaTable)
 {
-    mBM = aBus->getBusMaster();
+    if(aBus != 0)
+        mBM = aBus->getBusMaster();
+    else
+        mBM = 0;
     mPT = aParaTable;
     mAktAdr.type = PT_ROOT;
     mPathAccessApp = &mPA;

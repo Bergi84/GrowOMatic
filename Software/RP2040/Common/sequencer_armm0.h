@@ -32,10 +32,10 @@ private:
   }
   stackRec_t;
 
-  uint8_t* stackBaseAdr;
-  uint32_t stackSize;
-  stackRec_t stacks[SEQ_MAXSTACKS];
-  volatile uint8_t aktivStackInd;
+  uint8_t* mStackBaseAdr;
+  uint32_t mStackSize;
+  stackRec_t mStacks[SEQ_MAXSTACKS];
+  volatile uint8_t mAktivStackInd;
 
   typedef struct
   {

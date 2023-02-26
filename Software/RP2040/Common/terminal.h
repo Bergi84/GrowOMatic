@@ -28,7 +28,7 @@ enum ctrlSym_e {
 #define TERMINAL_LINE_LENGTH        81
 #define TERMINAL_LINE_CNT           5
 #define TERMINAL_MAX_ESC_LEN        16
-#define TERMINAL_TX_BUF_LEN         512
+#define TERMINAL_TX_BUF_LEN         1024
 
 class TTerminal 
 {
@@ -73,7 +73,7 @@ private:
     uint32_t mTxBufRInd;
 
     static void rxCb(void* aArg);
-    static void txCb(void* aArg);
+    static bool txCb(void* aArg);
 
     void recordChar(uint8_t aChar);
     static void termTxTask(void* aArg);

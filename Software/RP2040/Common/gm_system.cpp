@@ -7,7 +7,7 @@ TSystem::TSystem() :
 // init system parameter list
 mSysPara( (TParaTable::paraRec_t[cParaListLength]) {
     [PARA_UID] =          {.para = 0,                                       .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_UID]},
-    [PARA_TYPE] =         {.para = DT_INVALID,                              .pFAccessCb = paraTypeCb,   .cbArg = 0,       .defs = &cParaList[PARA_TYPE]},
+    [PARA_TYPE] =         {.para = DT_INVALID,                              .pFAccessCb = paraTypeCb,   .cbArg = this,       .defs = &cParaList[PARA_TYPE]},
     [PARA_FWVERSION] =    {.para = VER_COMBO,                               .pFAccessCb = 0,            .cbArg = 0,       .defs = &cParaList[PARA_FWVERSION]},
     [PARA_SAVE] =         {.para = 0,                                       .pFAccessCb = paraSaveCb,   .cbArg = this,    .defs = &cParaList[PARA_SAVE]},
     [PARA_START] =        {.para = 0,                                       .pFAccessCb = paraStartCb,  .cbArg = this,    .defs = &cParaList[PARA_START]},
