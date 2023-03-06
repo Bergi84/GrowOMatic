@@ -61,3 +61,8 @@ void TTermAppLs::parse(uint8_t aChar)
 {
 
 }
+
+void TTermAppLs::exit()
+{
+
+}

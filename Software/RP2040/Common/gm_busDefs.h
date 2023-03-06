@@ -18,6 +18,7 @@ static constexpr uint32_t PARA_FLAG_FW = 0x00000020;     // call update callback
 static constexpr uint32_t PARA_FLAG_FRW = 0x00000030;     // call update callback after write
 static constexpr uint32_t PARA_FLAG_P =  0x00000040;     // parameter is a pointer
 
+
 typedef struct {
     uint32_t flags;
     const char* paraName;

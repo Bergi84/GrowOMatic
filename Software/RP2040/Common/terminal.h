@@ -22,7 +22,9 @@ enum ctrlSym_e {
     CTRLSYM_DOWN,
     CTRLSYM_LEFT,
     CTRLSYM_RIGHT,
-    CTRLSYM_EL
+    CTRLSYM_EL,     // clear line from Cursor to end
+    CTRLSYM_ES,     // clear screen from Cursor to end
+    CTRLSYM_POS00   // move cursor to 00
 };
 
 #define TERMINAL_LINE_LENGTH        81

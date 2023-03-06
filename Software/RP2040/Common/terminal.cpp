@@ -549,6 +549,13 @@ void TTerminal::putChar(uint8_t aChar)
             case CTRLSYM_EL:
                 putString("\033[K",3);
                 break;
+            case CTRLSYM_ES:
+                putString("\033[J",3);
+                break;
+            case CTRLSYM_POS00:
+                putString("\033[H",3);
+                break;               
+            
         }
     }
 
@@ -607,6 +614,7 @@ void TTerminal::newLine(bool aLineShift)
 
 void TTerminal::exitApp()
 {
+    mAktApp->exit();
     mAktApp = 0;
     newLine();
 }

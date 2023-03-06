@@ -39,6 +39,7 @@ protected:
 
     virtual void start(uint8_t* aStartArg) = 0;
     virtual void parse(uint8_t aChar) = 0;
+    virtual void exit() = 0;
 
 private:
     friend class TTerminal;

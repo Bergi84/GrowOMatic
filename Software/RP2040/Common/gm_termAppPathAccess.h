@@ -12,6 +12,7 @@ public:
 
     virtual void start(uint8_t* aStartArg);
     virtual void parse(uint8_t aChar);
+    virtual void exit();
 
 private:
     static void writeCb (void* aArg, uint32_t* aVal, errCode_T aStatus);

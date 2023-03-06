@@ -99,6 +99,39 @@ errCode_T TPathEle::setValue(uint32_t aVal, void (*aCb) (void* aArg, uint32_t* a
     return EC_INVALID_PATH;
 }
 
+errCode_T TPathEle::getSubObj(int16_t aOffInd, TPathEle* aPathEle)
+{
+    if(aPathEle == 0)
+        return EC_INVALID_PATH;
+
+    aPathEle->deInit();
+
+    if(isEndPoint())
+    {
+        
+        if(mType == POT_REMREG)
+        {
+            if(aOffInd >=  mEp.rem->getParaListLen())
+                return EC_INVALID_PATH;
+
+            // remote request
+            aPathEle->init(mEp.rem, aOffInd);
+            return EC_SUCCESS;
+        }
+        else
+        {
+            if(aOffInd >=  mEp.loc->length)
+                return EC_INVALID_PATH;
+
+            // local request
+            aPathEle->init(mEp.loc, mPt, aOffInd);
+
+            return EC_SUCCESS;
+        }
+    }
+    return EC_INVALID_PATH; 
+}
+
 uint32_t TPathEle::getPer()
 {
     if(isFile())

@@ -14,6 +14,7 @@ private:
 
     virtual void start(uint8_t* aStartArg);
     virtual void parse(uint8_t aChar);
+    virtual void exit();
 };
 
 #endif /* TERMAPP_H_*/

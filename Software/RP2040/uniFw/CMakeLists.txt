@@ -30,6 +30,7 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_system.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_debug.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dualCapSens.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termMonitor.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC

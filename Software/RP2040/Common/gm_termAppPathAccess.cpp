@@ -72,6 +72,11 @@ void gm_termAppPathAccess::parse(uint8_t aChar)
     // we ignore all inputs
 }
 
+void gm_termAppPathAccess::exit()
+{
+    
+}
+
 void gm_termAppPathAccess::writeCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
 {
     gm_termAppPathAccess* pObj = (gm_termAppPathAccess* )aArg;

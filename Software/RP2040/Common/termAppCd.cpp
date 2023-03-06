@@ -26,3 +26,8 @@ void TTermAppCd::parse(uint8_t aChar)
 {
 
 }
+
+void TTermAppCd::exit()
+{
+
+}

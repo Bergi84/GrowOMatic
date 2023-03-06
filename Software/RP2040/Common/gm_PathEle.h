@@ -42,6 +42,7 @@ public:
 
     errCode_T getValue(void (*aCb) (void* aArg, uint32_t* aVal, errCode_T aStatus), void* aArg);
     errCode_T setValue(uint32_t aVal, void (*aCb) (void* aArg, uint32_t* aVal, errCode_T aStatus), void* aArg);
+    errCode_T getSubObj(int16_t aOffInd, TPathEle* aPathEle);
 
     uint32_t getPer();
     const char* getName();
