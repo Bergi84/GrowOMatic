@@ -15,6 +15,7 @@
 #include "gm_bus.h"
 #include "rp_debug.h"
 #include "gm_dualCapSens.h"
+#include "gm_termMonitor.h"
 
 // objekts used for each configutation
 TSequencer gSeq, gSeq_c1;
@@ -27,6 +28,7 @@ TSystem gSystem;
 TTerminal gTerm;
 GM_termPathMng gPathMng;
 TFlash gTableStorage;
+gm_termMonitor gTermMonitor;
 
 // configutation depended objects
 GM_dualCapSense* gDualCapSens;
@@ -187,6 +189,9 @@ int main()
     gUartTerm.setIrqHandler(uartTermIrqHandler);
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
+
+    gTermMonitor.init(&gSeq);
+    gTerm.addApp(&gTermMonitor);
 
     gSeq.startIdle();
 }

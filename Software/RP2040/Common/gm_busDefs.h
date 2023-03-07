@@ -10,13 +10,15 @@
 
 static constexpr uint32_t PARA_FLAG_W =  0x00000001;     // is writable
 static constexpr uint32_t PARA_FLAG_R =  0x00000002;     // is readable
-static constexpr uint32_t PARA_FLAG_RW = 0x00000003;     // is write and readable
 static constexpr uint32_t PARA_FLAG_NV = 0x00000004;     // is non volatile stored
 static constexpr uint32_t PARA_FLAG_S =  0x00000008;     // is scopable
 static constexpr uint32_t PARA_FLAG_FR = 0x00000010;     // call update callback before read 
 static constexpr uint32_t PARA_FLAG_FW = 0x00000020;     // call update callback after write
-static constexpr uint32_t PARA_FLAG_FRW = 0x00000030;     // call update callback after write
 static constexpr uint32_t PARA_FLAG_P =  0x00000040;     // parameter is a pointer
+
+static constexpr uint32_t PARA_FLAG_RW = PARA_FLAG_R | PARA_FLAG_W;
+static constexpr uint32_t PARA_FLAG_FRFW = PARA_FLAG_FR | PARA_FLAG_FW; 
+static constexpr uint32_t PARA_FLAG_FRS = PARA_FLAG_FR | PARA_FLAG_S;
 
 
 typedef struct {
@@ -188,18 +190,18 @@ protected:
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_LEVEL] =       {PARA_FLAG_R | PARA_FLAG_FR,   "level"},
-        [PARA_VAL_AS] =      {PARA_FLAG_R | PARA_FLAG_FR,   "valAS"},
-        [PARA_VAL_L10] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL10"},
-        [PARA_VAL_L20] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL20"},
-        [PARA_VAL_L30] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL30"},
-        [PARA_VAL_L40] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL40"},
-        [PARA_VAL_L50] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL50"},
-        [PARA_VAL_L60] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL60"},
-        [PARA_VAL_L70] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL70"},
-        [PARA_VAL_L80] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL80"},
-        [PARA_VAL_L90] =     {PARA_FLAG_R | PARA_FLAG_FR,   "valL90"},
-        [PARA_VAL_L100] =    {PARA_FLAG_R | PARA_FLAG_FR,   "valL100"},
+        [PARA_LEVEL] =       {PARA_FLAG_R | PARA_FLAG_FRS,   "level"},
+        [PARA_VAL_AS] =      {PARA_FLAG_R | PARA_FLAG_FRS,   "valAS"},
+        [PARA_VAL_L10] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL10"},
+        [PARA_VAL_L20] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL20"},
+        [PARA_VAL_L30] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL30"},
+        [PARA_VAL_L40] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL40"},
+        [PARA_VAL_L50] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL50"},
+        [PARA_VAL_L60] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL60"},
+        [PARA_VAL_L70] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL70"},
+        [PARA_VAL_L80] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL80"},
+        [PARA_VAL_L90] =     {PARA_FLAG_R | PARA_FLAG_FRS,   "valL90"},
+        [PARA_VAL_L100] =    {PARA_FLAG_R | PARA_FLAG_FRS,   "valL100"},
         [PARA_CAL] =         {PARA_FLAG_W | PARA_FLAG_FW,   "cal"},
         [PARA_THRES] =       {PARA_FLAG_RW | PARA_FLAG_NV,  "threshold"},
         [PARA_DIR] =         {PARA_FLAG_RW | PARA_FLAG_NV,  "dir"},
