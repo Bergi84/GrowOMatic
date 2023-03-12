@@ -135,7 +135,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                     mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
 
                     // calculate turnaround timout = transfaretime + 50% * bytetime
-                    mTurnAroundTimeout = mByteTimeoutUs * 2 * (byte - 1) + (mByteTimeUs * 3 >> 2);
+                    mTurnAroundTimeout = mByteTimeoutUs * 2 * (byte - 1) + ((mByteTimeUs * 3) >> 1);
                 }
             }
             break;
@@ -280,20 +280,17 @@ void GM_busSlave::rxCb (com_t* aCom)
                 }
                 else
                 {
-                    cancel_alarm(mTimeoutId);
-
                     // forword data until turnaround
-                    if(aCom->byteCnt < 4)
+                    if(aCom->byteCnt <= 4)
                     {
+                        cancel_alarm(mTimeoutId);
                         aCom->otherCom->uart->txChar(byte);
                         mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
                     }
 
                     if(aCom->byteCnt == 4)
                     {
-                        aCom->otherCom->uart->txChar(byte);
                         aCom->uart->disableTx(false);
-                        mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
                     }
                 }
             }

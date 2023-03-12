@@ -23,11 +23,13 @@
 #define GM_MAXRETRY    3
 #endif
 
+class GM_bus;
 
 class TBusCoordinator : public GM_BusDefs
 {
 private:
     friend class GM_busMaster;
+    friend class GM_bus;
 
     TBusCoordinator();
 
@@ -92,7 +94,9 @@ private:
     void queueGetUid(uint8_t aAdr, void (*reqCb) (void*, uint32_t*, errCode_T), void* aArg);
 
     void sendReq();
-    static void rxCb(void* aArg);
+
+
+    static void __time_critical_func(rxCb)(void* aArg);
 
     union {
         uint32_t mCrc;
@@ -122,7 +126,7 @@ private:
     static int64_t timeOutCb(alarm_id_t id, void* aArg);
     static int64_t echoErrCb(alarm_id_t id, void* aArg);
 
-    repeating_timer_t mScanAlertId;
+    repeating_timer_t mScanAlertTimer;
     static bool scanAlert(repeating_timer_t *rt);
 
     static void coorTask(void* aArg);
@@ -153,6 +157,7 @@ class GM_busMaster
 {
 private:
     friend class GM_device;
+    friend class GM_bus;
 
     TBusCoordinator mBusCoor[GM_MAXUARTS + 1];  // bus 0 is the lokal device
     TSequencer* mSeq;
@@ -170,7 +175,7 @@ private:
 
     GM_device* mRootDev;
 
-    uint8_t mBusNo;
+    uint32_t mBusNo;
 
     bool mInit;
 

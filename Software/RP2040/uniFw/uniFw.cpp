@@ -35,22 +35,22 @@ GM_dualCapSense* gDualCapSens;
 
 
 // interrupt wrappers
-void uartTermIrqHandler()
+void __time_critical_func(uartTermIrqHandler)()
 {
     gUartTerm.irqHandler();
 }
 
-void uart0IrqHandler()
+void __time_critical_func(uart0IrqHandler)()
 {
     gUart0.irqHandler();
 }
 
-void uart1IrqHandler()
+void __time_critical_func(uart1IrqHandler)()
 {
     gUart1.irqHandler();
 }
 
-void dualCapSensIrqHandler()
+void __time_critical_func(dualCapSensIrqHandler)()
 {
     gDualCapSens->irqHandler();
 }
@@ -122,7 +122,7 @@ int main()
     gTableStorage.init(FLASH_TYPE_STORAGE, FLASH_TYPE_STORAGE_SIZE);
 
     gParaTable.init(&gTableStorage);
-    gSystem.init(*((uint32_t*) uId.id), &gParaTable);
+    gSystem.init(*((uint32_t*) &uId.id[4]), &gParaTable);
 
     gParaTable.loadPara();
 
@@ -131,7 +131,7 @@ int main()
 
     if(val != DT_INVALID)
     {
-        gTableStorage.init(PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE);
+        gTableStorage.init(FLASH_PT_STORAGE, FLASH_PT_STORAGE_SIZE);
     }
 
     switch(val)

@@ -46,7 +46,7 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
         mScanIntervallUs = 1000000;
 
         mSeq->addTask(mCoorTaskId, coorTask, this);
-        add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertId);
+        add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertTimer);
 
         mInit = true;
     }
@@ -84,7 +84,7 @@ void TBusCoordinator::deinit()
         if(mUart)
         {
             // todo: wait until S_IDLE before disable bus
-            cancel_repeating_timer(&mScanAlertId);
+            cancel_repeating_timer(&mScanAlertTimer);
             mUart->installRxCb(0, 0);
         }
 
@@ -608,10 +608,10 @@ void TBusCoordinator::rxCb(void* aArg)
         {
             // cancle timeout for echo reception
             cancel_alarm(pObj->mTimeoutId);
+            pObj->mUart->disableTx(true);
 
             // start timout for answare
             pObj->mTimeoutId = add_alarm_in_us(pObj->mReqTimeoutUs, pObj->timeOutCb, (void*) pObj, true);
-            pObj->mUart->disableTx(true);
         }
 
         if(!tmp->write && pObj->mByteCntR > 4)
@@ -735,9 +735,9 @@ void TBusCoordinator::sendReq()
                 break;
 
             case S_CRC:
-                if(tmp->write && mByteCntW << 12)
+                if(tmp->write && mByteCntW < 12)
                 {
-                    uint8_t byte = mCrcCalcB[mByteCntW-4];
+                    uint8_t byte = mCrcCalcB[mByteCntW-8];
                     mUart->txChar(byte);
 
                     // switch to S_READY is donw after reception of last echo byte
@@ -751,7 +751,7 @@ void TBusCoordinator::sendReq()
                 }
                 break;
 
-            case S_READY:
+            default:
                 return;
         }
     }
@@ -859,7 +859,7 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
 
     uint32_t devFound[8] = {0};
 
-    // search if device already exist
+    // search for existing devices
     GM_device* dev = pObj->mRootDev;
     GM_device* devBefore = 0;
     while(dev != 0)
@@ -879,7 +879,7 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
 
         if(!found && dev->mBus == bus)
         {
-            // device not found
+            // device not found on same bus
             dev->updateAdr(CInvalidBus, CInvalidAdr);
             dev = devBefore;
         }
@@ -929,6 +929,7 @@ void GM_busMaster::delDev(GM_device* aDev)
             {
                 dev->mNext = dev->mNext->mNext;
                 delete aDev;
+                return;
             }
             dev = dev->mNext;
         }

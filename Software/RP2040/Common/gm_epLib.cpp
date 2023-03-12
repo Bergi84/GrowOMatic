@@ -133,6 +133,9 @@ TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
         case EPT_BUS:
             return new TEpBus(aDev);
 
+        case EPT_CAPLEVEL:
+            return new TEpCapLevel(aDev);
+
         default:
             return 0;
     }
@@ -189,7 +192,11 @@ void TEpBase::reqEpNameCb(void* aArg, uint32_t* aVal, errCode_T aStatus)
     TEpBase* pObj = (TEpBase*) aArg;
 
     if(aStatus != EC_SUCCESS)
+    {
+        pObj->mName[0] = 0;
         pObj->mNameCb(pObj->mNameCbArg, 0, aStatus);
+        return;
+    }
 
     pObj->mName[0 + pObj->mNameInd*4] = (uint8_t) (*aVal);
     pObj->mName[1 + pObj->mNameInd*4] = (uint8_t) ((*aVal) >> 8);

@@ -52,9 +52,9 @@ void gm_termAppPathAccess::start(uint8_t* aStartArg)
 
         if(valEnd == valStr)
         {
-                printErr(EC_INVALID_VALUE);
-                done();
-                return;         
+            printErr(EC_INVALID_VALUE);
+            done();
+            return;         
         }
 
         errCode_T ec = mPathEle.setValue(val, writeCb, this);

@@ -614,9 +614,12 @@ void TTerminal::newLine(bool aLineShift)
 
 void TTerminal::exitApp()
 {
-    mAktApp->exit();
-    mAktApp = 0;
-    newLine();
+    if(mAktApp != 0)
+    {
+        mAktApp->exit();
+        mAktApp = 0;
+        newLine();
+    }
 }
 
 void TTerminal::addApp(TTermApp* aApp)

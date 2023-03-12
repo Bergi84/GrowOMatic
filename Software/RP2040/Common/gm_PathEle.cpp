@@ -109,7 +109,7 @@ errCode_T TPathEle::getSubObj(int16_t aOffInd, TPathEle* aPathEle)
     if(isEndPoint())
     {
         
-        if(mType == POT_REMREG)
+        if(mType == POT_REMEP)
         {
             if(aOffInd >=  mEp.rem->getParaListLen())
                 return EC_INVALID_PATH;

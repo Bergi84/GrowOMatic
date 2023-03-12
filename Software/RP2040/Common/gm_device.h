@@ -31,6 +31,7 @@ private:
     bool mWaitForName;
     TEpBase* mEpList;
     TEpBase* mLastEp;
+    uint32_t mErrUnkowenEp;
 
     GM_devUsedRec* mDevUsedList;
     

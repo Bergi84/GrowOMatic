@@ -15,6 +15,7 @@ GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
     mNext = 0;
     mStat = DS_LOST;
     mDevUsedList = 0;
+    mErrUnkowenEp = 0;
 }
 
 void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
@@ -80,12 +81,6 @@ void GM_device::startEpScan()
 void GM_device::reqNameCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
 {
     GM_device* pObj = (GM_device*) aArg;
-
-    if(aStatus != EC_SUCCESS)
-    {
-        pObj->checkErr(aStatus);
-        return;
-    }
 
     pObj->mWaitForName = false;
     pObj->startEpScan();
@@ -162,6 +157,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                         }
                         else
                         {
+                            pObj->mErrUnkowenEp++;
                             pObj->startEpScan();
                         }
                     }

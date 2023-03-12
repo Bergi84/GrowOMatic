@@ -120,12 +120,12 @@ protected:
     static constexpr epType_t cType = EPT_SYSTEM;
 
     static constexpr paraDef_t cParaList[] = {
-        [PARA_UID] =        {PARA_FLAG_R,                   "uniqueId"},
-        [PARA_TYPE] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,    "deviceType"},
-        [PARA_FWVERSION] =  {PARA_FLAG_R,                   "fwVersion"},
-        [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,    "savePara"},
-        [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,    "start"},
-        [PARA_FLASHLED] =   {PARA_FLAG_W | PARA_FLAG_FW,    "flashLed"},
+        [PARA_UID] =        {PARA_FLAG_R,                                  "uniqueId"},
+        [PARA_TYPE] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,   "deviceType"},
+        [PARA_FWVERSION] =  {PARA_FLAG_R,                                  "fwVersion"},
+        [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,                   "savePara"},
+        [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,                   "start"},
+        [PARA_FLASHLED] =   {PARA_FLAG_W | PARA_FLAG_FW,                   "flashLed"},
         [PARA_DEVNAME0] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName0"},
         [PARA_DEVNAME1] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName1"},
         [PARA_DEVNAME2] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName2"},
@@ -140,14 +140,46 @@ class TEpBusDefs
 protected:
     typedef enum
     {
-        PARA_MASTEREN 
+        PARA_MASTEREN,
+        PARA_BUS_CNT,
+        PARA_BUS0_ERRCNTCRC,
+        PARA_BUS1_ERRCNTCRC,
+        PARA_BUS2_ERRCNTCRC,
+        PARA_BUS3_ERRCNTCRC,
+        PARA_BUS4_ERRCNTCRC,
+        PARA_BUS0_ERRCNTTIMEOUT,
+        PARA_BUS1_ERRCNTTIMEOUT,
+        PARA_BUS2_ERRCNTTIMEOUT,
+        PARA_BUS3_ERRCNTTIMEOUT,
+        PARA_BUS4_ERRCNTTIMEOUT,
+        PARA_BUS0_ERRCNTNOECHO,
+        PARA_BUS1_ERRCNTNOECHO,
+        PARA_BUS2_ERRCNTNOECHO,
+        PARA_BUS3_ERRCNTNOECHO,
+        PARA_BUS4_ERRCNTNOECHO,
     } paraInd_t; 
 
     static constexpr epType_t cType = EPT_BUS;
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_MASTEREN] =       {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,   "masterEn"},
+        [PARA_MASTEREN] =              {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_FW,   "masterEn"},
+        [PARA_BUS_CNT] =               {PARA_FLAG_R | PARA_FLAG_P,                    "busCnt"},
+        [PARA_BUS0_ERRCNTCRC] =        {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "crcErr0"},
+        [PARA_BUS1_ERRCNTCRC] =        {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "crcErr1"},
+        [PARA_BUS2_ERRCNTCRC] =        {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "crcErr2"},
+        [PARA_BUS3_ERRCNTCRC] =        {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "crcErr3"},
+        [PARA_BUS4_ERRCNTCRC] =        {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "crcErr4"},
+        [PARA_BUS0_ERRCNTTIMEOUT] =    {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "timeOut0"},
+        [PARA_BUS1_ERRCNTTIMEOUT] =    {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "timeOut1"},
+        [PARA_BUS2_ERRCNTTIMEOUT] =    {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "timeOut2"},
+        [PARA_BUS3_ERRCNTTIMEOUT] =    {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "timeOut3"},
+        [PARA_BUS4_ERRCNTTIMEOUT] =    {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "timeOut4"},
+        [PARA_BUS0_ERRCNTNOECHO] =     {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "noEcho0"},
+        [PARA_BUS1_ERRCNTNOECHO] =     {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "noEcho1"},
+        [PARA_BUS2_ERRCNTNOECHO] =     {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "noEcho2"},
+        [PARA_BUS3_ERRCNTNOECHO] =     {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "noEcho3"},
+        [PARA_BUS4_ERRCNTNOECHO] =     {PARA_FLAG_RW | PARA_FLAG_P | PARA_FLAG_S,     "noEcho4"},
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "bus";
