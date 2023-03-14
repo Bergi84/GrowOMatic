@@ -16,6 +16,19 @@ GM_device::GM_device(uint32_t aUid, GM_busMaster* aBusMaster)
     mStat = DS_LOST;
     mDevUsedList = 0;
     mErrUnkowenEp = 0;
+    mFWUpdate = false;
+    mFWChecked = false;
+}
+
+GM_device::~GM_device()
+{
+    TEpBase* tmp = mEpList;
+    while(tmp != 0)
+    {
+        TEpBase* delEp = tmp;
+        tmp = tmp->mNext;
+        delete delEp;
+    }
 }
 
 void GM_device::updateAdr(uint8_t aBus, uint8_t aAdr)
@@ -99,6 +112,28 @@ void GM_device::checkErr(errCode_T aEc)
     }
 }
 
+void GM_device::resetEP()
+{
+    // delete all end points apart the first (system ep)
+    TEpBase* tmp = mEpList->mNext;
+    while(tmp != 0)
+    {
+        TEpBase* delEp = tmp;
+        tmp = tmp->mNext;
+        delete delEp;
+    }
+    mEpList->mNext = 0;
+    mLastEp = mEpList;
+    mEpScanInd = 0;
+
+    // start new endpoint scan
+    mStat = DS_NEW;
+    mWaitForName = false;
+    mFWChecked = false;
+    mFWUpdate = false;
+    startEpScan();
+}
+
 void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
 {
     GM_device* pObj = (GM_device*) aArg;
@@ -138,6 +173,7 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
                         pObj->mEpScanInd = CEpScanIndDone;
                         pObj->mStat = DS_AVAILABLE;
                         pObj->callStatUpCb();
+                        pObj->queueReadReq(CSystemBaseRegAdr + TEpSysDefs::PARA_FWVERSION, pObj->checkFWCb, pObj);
                     }
                     else
                     {
@@ -187,6 +223,17 @@ void GM_device::epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus)
             break;
     
     }
+}
+
+void GM_device::checkFWCb(void* aArg, uint32_t* aVal, errCode_T aStatus)
+{
+    GM_device* pObj = (GM_device*) aArg;
+
+    if(aStatus != EC_SUCCESS)
+        return;
+
+    pObj->mFWChecked = true;
+    pObj->mFWUpdate = pObj->mBusMaster->checkFWVer(*aVal, pObj);
 }
 
 void GM_device::callStatUpCb()
@@ -255,12 +302,12 @@ errCode_T GM_device::queueReadReq(uint16_t aRegAdr, void (*reqCb) (void*, uint32
     return mBusMaster->queueReadReq(&adr, reqCb, aArg);  
 }
 
-errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+errCode_T GM_device::queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCooldDown)
 {   
     reqAdr_t adr;
     getDevAdr(&adr); 
     adr.regAdr = aRegAdr;
-    return mBusMaster->queueWriteReq(&adr, aVal, reqCb, aArg);   
+    return mBusMaster->queueWriteReq(&adr, aVal, reqCb, aArg, aCooldDown);   
 }
 
 errCode_T GM_device::setDevName(char* aName, void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg)

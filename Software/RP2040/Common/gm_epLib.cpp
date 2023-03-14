@@ -141,6 +141,11 @@ TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
     }
 }
 
+TEpBase::~TEpBase()
+{
+    
+}
+
 TEpBase::TEpBase()
 {
     mType = EPT_INVALID;

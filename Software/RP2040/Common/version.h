@@ -4,8 +4,8 @@
 #define VER_MAIN        0
 #define VER_MINOR       1
 #define VER_REV         0
-#define VER_BUILD       0
+#define VER_BUILD       1
 
-#define VER_COMBO       (VER_MAIN << 24 & VER_MINOR << 16 & VER_REV << 8 & VER_BUILD)
+#define VER_COMBO       (VER_MAIN << 24 | VER_MINOR << 16 | VER_REV << 8 | VER_BUILD)
 
 #endif /*VERSION_H_*/

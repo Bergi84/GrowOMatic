@@ -27,12 +27,13 @@ typedef struct {
 } paraDef_t;
 
 static constexpr uint8_t CInvalidAdr = -1;
+static constexpr uint8_t CBroadcastAdr = -2;
 static constexpr uint8_t CInvalidBus = -1;
 static constexpr uint16_t CInvalidReg = -1;
 static constexpr uint32_t CInvalidUid = -1;
 
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
-static constexpr uint32_t CEpListBaseRegAdr = 0x0010;
+static constexpr uint32_t CEpListBaseRegAdr = 0x0020;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
 static constexpr uint32_t CCapLevelBaseRegAdr = 0x0200;
 
@@ -110,6 +111,9 @@ public:
         PARA_SAVE,
         PARA_START,
         PARA_FLASHLED,
+        PARA_FWLEN,
+        PARA_FWDATA,
+        PARA_FWCRC,
         PARA_DEVNAME0,
         PARA_DEVNAME1,
         PARA_DEVNAME2,
@@ -126,6 +130,9 @@ protected:
         [PARA_SAVE] =       {PARA_FLAG_W | PARA_FLAG_FW,                   "savePara"},
         [PARA_START] =      {PARA_FLAG_W | PARA_FLAG_FW,                   "start"},
         [PARA_FLASHLED] =   {PARA_FLAG_W | PARA_FLAG_FW,                   "flashLed"},
+        [PARA_FWLEN] =      {PARA_FLAG_W | PARA_FLAG_FW,                   "fwLen"},        // stores firmware length and starts firmware recieve process
+        [PARA_FWDATA] =     {PARA_FLAG_W | PARA_FLAG_FW,                   "fwData"},       // recieves bit stream
+        [PARA_FWCRC] =      {PARA_FLAG_W | PARA_FLAG_FW,                   "fwCrc"},        // writes data to flash, must written after every flash size with the aktuell crc value
         [PARA_DEVNAME0] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName0"},
         [PARA_DEVNAME1] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName1"},
         [PARA_DEVNAME2] =   {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,    "devName2"},

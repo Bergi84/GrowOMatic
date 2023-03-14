@@ -31,6 +31,7 @@ protected:
 
 public:
     static TEpBase* newEp(epType_t aEpType, GM_device* aDev);
+    virtual ~TEpBase();
 
     void regUsage(GM_devUsedRec* mDevUsedRec);
     void unregUsage(GM_devUsedRec* mDevUsedRec);
@@ -56,7 +57,7 @@ public:
 
     const char* getParaName(uint16_t aInd) {
         if(aInd < mParaListLen) 
-            return mParaList[aInd].paraName;
+            return mParaList[aInd].paraName; 
         else if(aInd < mParaListLen + 4) 
             return CEpNameDefs[aInd - mParaListLen].paraName; 
         else 
@@ -64,8 +65,8 @@ public:
     };
 
     uint32_t getParaListLen() {return mParaListLen + 4; };
-    inline errCode_T setPara(uint16_t aIndOff, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
-        { return mPDev->queueWriteReq(mBaseAdr + aIndOff, aVal, reqCb, aArg); };
+    inline errCode_T setPara(uint16_t aIndOff, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCooldDown = 0)
+        { return mPDev->queueWriteReq(mBaseAdr + aIndOff, aVal, reqCb, aArg, aCooldDown); };
     inline errCode_T reqPara(uint16_t aIndOff, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
         { return mPDev->queueReadReq(mBaseAdr + aIndOff, reqCb, aArg); };
 

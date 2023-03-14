@@ -43,8 +43,8 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
 
     uint32_t status = save_and_disable_interrupts();
     if(mSecCore)
-    // bug in SDK 1.4.0
-    // multicore_lockout_start_blocking();
+        // bug in SDK 1.4.0
+        // multicore_lockout_start_blocking();
         multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
 
     flash_range_erase(mOffset, mSize);
@@ -107,7 +107,7 @@ void TFlash::store(uint32_t aSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aD
     }
 
     if(mSecCore)
-    //    multicore_lockout_end_blocking();
+        // multicore_lockout_end_blocking();
         multicore_lockout_end_timeout_us((uint64_t)356*24*60*60*1000*1000);
     restore_interrupts(status);
 
@@ -179,4 +179,36 @@ bool TFlash::checkCrc()
     {
         return false;
     }
+}
+
+void TFlash::storePage(uint32_t aOffset, uint8_t aData[FLASH_PAGE_SIZE], bool aSecCore)
+{
+    uint32_t status = save_and_disable_interrupts();
+    if(aSecCore)
+    // bug in SDK 1.4.0
+    // multicore_lockout_start_blocking();
+        multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
+
+    flash_range_program(aOffset, aData, FLASH_PAGE_SIZE);
+
+    if(aSecCore)
+    //    multicore_lockout_end_blocking();
+        multicore_lockout_end_timeout_us((uint64_t)356*24*60*60*1000*1000);
+    restore_interrupts(status);
+}
+
+void TFlash::eraseSektors(uint32_t aOffset, uint32_t aLen, bool aSecCore)
+{
+    uint32_t status = save_and_disable_interrupts();
+    if(aSecCore)
+    // bug in SDK 1.4.0
+    // multicore_lockout_start_blocking();
+        multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
+
+    flash_range_erase(aOffset, aLen);
+
+    if(aSecCore)
+    //    multicore_lockout_end_blocking();
+        multicore_lockout_end_timeout_us((uint64_t)356*24*60*60*1000*1000);
+    restore_interrupts(status);
 }

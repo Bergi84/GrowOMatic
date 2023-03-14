@@ -7,14 +7,14 @@ project(growOmatic C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
+set(PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR}/boards)
+set(PICO_BOARD gm_board)
+
 # Initialize the SDK
 pico_sdk_init()
 
-
 # add projects
-add_subdirectory(dualLevelSens)
 add_subdirectory(testSequencer)
-add_subdirectory(testBusPicoBoard)
 add_subdirectory(uniFw)
 
 add_compile_options(-Wall

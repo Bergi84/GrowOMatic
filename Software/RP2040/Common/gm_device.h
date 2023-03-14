@@ -26,6 +26,8 @@ private:
     uint8_t mBus;
     devType_t mType;
     devStat_t mStat;
+    bool mFWUpdate;
+    bool mFWChecked;
 
     uint32_t mEpScanInd;
     bool mWaitForName;
@@ -36,14 +38,17 @@ private:
     GM_devUsedRec* mDevUsedList;
     
     static void epScanCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
+    static void checkFWCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     void callStatUpCb();
     void startEpScan();
     static void reqNameCb (void* aArg, uint32_t* aVal, errCode_T aStatus);
     errCode_T reqDevName(void (*aReqCb) (void*, uint32_t*, errCode_T), void* aArg);
     void checkErr(errCode_T aEc);
+    void resetEP();
 
 public:
     GM_device(uint32_t aUid, GM_busMaster* aBusMaster);
+    ~GM_device();
 
     inline void getDevAdr(reqAdr_t* aAdr) {aAdr->aBus = mBus; aAdr->devAdr = mAdr; aAdr->uid = mUid;};
 
@@ -59,7 +64,7 @@ public:
     void unregUsage(GM_devUsedRec* mDevUsedRec);
 
     errCode_T queueReadReq(uint16_t aRegAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
-    errCode_T queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
+    errCode_T queueWriteReq(uint16_t aRegAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCooldDown = 0);
 
     TEpBase* getEpLL() {return mEpList; };
     TEpBase* findEp(uint16_t baseInd); 

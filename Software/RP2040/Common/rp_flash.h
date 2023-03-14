@@ -26,6 +26,9 @@ public:
     virtual void store(uint32_t mSize, bool (*aStoreDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);
     virtual void load(bool (*aLoadDataCb)(void* aArg, uint32_t* aData, uint32_t aLen), void* aArg);
     virtual void clear();
+
+    static void __not_in_flash_func(storePage)(uint32_t aOffset, uint8_t aData[FLASH_PAGE_SIZE], bool aSecCore = true);
+    static void __not_in_flash_func(eraseSektors)(uint32_t aOffset, uint32_t aLen, bool aSecCore = true);
     
     virtual uint32_t getStoredSize();
     virtual uint32_t getMaxSize();

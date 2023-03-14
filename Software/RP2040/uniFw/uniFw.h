@@ -1,12 +1,15 @@
 
 #include "hardware/flash.h"
-#include "board_uniFwBoard.h"
+#include "gm_board.h"
 
 #define FLASH_TYPE_STORAGE        (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE)
 #define FLASH_TYPE_STORAGE_SIZE   FLASH_SECTOR_SIZE
 
 #define FLASH_PT_STORAGE          (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE*3)
-#define FLASH_PT_STORAGE_SIZE     FLASH_SECTOR_SIZE*2
+#define FLASH_PT_STORAGE_SIZE     (FLASH_SECTOR_SIZE*2)
+
+#define FLASH_FW_BUFFER           (PICO_FLASH_SIZE_BYTES >> 1)
+#define FLASH_FW_BUFFER_SIZE      ((PICO_FLASH_SIZE_BYTES >> 1) - FLASH_SECTOR_SIZE*3)
 
 // pico board defines
 

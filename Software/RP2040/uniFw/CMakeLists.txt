@@ -1,8 +1,5 @@
 add_executable(uniFw)
 
-set(PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR})
-set(PICO_BOARD uniFw)
-
 target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/uniFw.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/sequencer_armm0.cpp
@@ -36,6 +33,7 @@ target_sources(uniFw PUBLIC
 target_include_directories(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../common
+    ${CMAKE_CURRENT_LIST_DIR}/../boards
 )	
 		
 target_link_libraries(uniFw PUBLIC

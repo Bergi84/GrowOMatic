@@ -116,11 +116,13 @@ void THwUart::setIrqHandler(void(*aIrqHandler)())
     if(mUart == uart0)
     {       
         irq_set_exclusive_handler(UART0_IRQ, aIrqHandler);
+        irq_set_priority(UART0_IRQ, PICO_HIGHEST_IRQ_PRIORITY);
         irq_set_enabled(UART0_IRQ, true);
     }
     else
     {
         irq_set_exclusive_handler(UART1_IRQ, aIrqHandler);
+        irq_set_priority(UART0_IRQ, PICO_HIGHEST_IRQ_PRIORITY);
         irq_set_enabled(UART1_IRQ, true);
     }
 }

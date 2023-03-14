@@ -1,6 +1,7 @@
 #include "gm_busMaster.h"
 #include "hardware/sync.h"
 #include "gm_device.h"
+#include "rp_flash.h"
 
 
 TBusCoordinator::TBusCoordinator() : GM_BusDefs()
@@ -125,7 +126,7 @@ void TBusCoordinator::scanCb(void* aArg, uint32_t* UId, errCode_T aStatus)
             // check existing device
             if(pObj->mDeviceList[pObj->mScanIndex] == *UId)
             {
-                // last element is ok so the devices before also hav not changed
+                // last element is ok so the devices before also have not changed
                 pObj->mScanIndex++;
             }
             else
@@ -254,14 +255,14 @@ errCode_T TBusCoordinator::queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*,
     return EC_SUCCESS;
 }
 
-errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
+errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCoolDown)
 {
     if(!mInit)
         return EC_NOT_INIT;
 
     // check uid and if index exists
-    if( (aReqAdr->devAdr >= mDevListLength) ||
-        (aReqAdr->uid != mDeviceList[aReqAdr->devAdr]))
+    if(     (aReqAdr->devAdr != CBroadcastAdr) &&
+            ((aReqAdr->devAdr >= mDevListLength) || (aReqAdr->uid != mDeviceList[aReqAdr->devAdr])))
     {
         return EC_INVALID_DEVADR;
     }
@@ -284,6 +285,7 @@ errCode_T TBusCoordinator::queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void 
     tmp->write = true;
     tmp->data = aVal;
     tmp->paraAdr = aReqAdr->regAdr;
+    tmp->cooldown = aCoolDown;
 
     mReqQueue.wInd = newWInd;
 
@@ -304,107 +306,133 @@ void TBusCoordinator::coorTask(void* aArg)
         if(tmp->write)
         {   
             // write request finsihed
-            if(tmp->reqCb)
-            {
+            if(tmp->reqCb != 0)
                 tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
-            }
-            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-            pObj->mState = S_IDLE;
-        }
-        else
-        {
-            cancel_alarm(pObj->mTimeoutId);
-            // read request finished
-            // check crc
-            if(pObj->mCrcCalc == pObj->mCrc)
+            
+            if(tmp->cooldown > 0 && pObj->mDevListLength > 0)
             {
-                if(tmp->reqCb)
-                {
-                    tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
-                }
-                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-                pObj->mRetryCnt = 0;
+                // during the cooldown period we try to poll the slave until 
+                // it is available again or ther timer timed out
+                add_alarm_in_us(tmp->cooldown, coolDownCb, pObj, true);
+                bool mCoolDown = true;
+                bool mCoolDownTimout = false;
+
+                // in case of a broadcast we try to poll the last slave
+                if(tmp->adr == CBroadcastAdr)
+                    tmp->adr = pObj->mDevListLength-1;
+
+                tmp->uniqueId = pObj->mDeviceList[tmp->adr];
+                tmp->paraAdr = 0;
+                tmp->write = 0;
+                tmp->cooldown = 0;
+                tmp->reqCb = 0;
+
                 pObj->mState = S_IDLE;
             }
             else
             {
-                // wrong crc maybe a unique id request?
-                if(tmp->reqMode == RM_getUid)
+                pObj->mState = S_IDLE;
+                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+            }
+        }
+        else
+        {
+            // read request finished
+            // check crc
+            if(pObj->mCoolDown)
+            {              
+                // cool down done
+                pObj->mCoolDown = false;
+                pObj->mState = S_IDLE;
+                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+            }
+            else
+            {
+                if(pObj->mCrcCalc == pObj->mCrc)
                 {
-                    // we must recalculate the crc with the recieved 
-                    // unique id to detect if there was a transmission error
-                    uint32_t locCrc = pObj->crcCalc(tmp->data, mSdR);   // SD
-                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // devAdr, always 0
-                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[0]
-                    locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[1]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[0]);      // data[0]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[1]);      // data[1]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[2]);      // data[2]
-                    locCrc = pObj->crcCalc(locCrc, tmp->dataB[3]);      // data[3]
-
-                    if(locCrc == pObj->mCrc)
-                    {
-                        // uid recieved without errors
-                        if(tmp->reqCb)
-                        {
-                            tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
-                        }
-                        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-                        pObj->mRetryCnt = 0;
-                        pObj->mState = S_IDLE;
-                    }
-                    else
-                    {
-                        pObj->mErrWrongCrc++;
-
-                        // there was an transmission error, retry to get uid
-                        if(pObj->mRetryCnt < GM_MAXRETRY)
-                        {
-                            pObj->mRetryCnt++;
-                            pObj->mState = S_IDLE;
-                        } else {
-                            if(tmp->reqCb)
-                            {
-                                tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);                
-                            }
-                            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-                            pObj->mState = S_IDLE;
-
-                            pObj->scan();
-                        }
-                    }
+                    if(tmp->reqCb != 0)                    
+                        tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
+                    
+                    pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                    pObj->mRetryCnt = 0;
+                    pObj->mState = S_IDLE;
                 }
                 else
                 {
-                    if(pObj->mCrcCalc == ~pObj->mCrc)
+                    // wrong crc maybe a unique id request?
+                    if(tmp->reqMode == RM_getUid)
                     {
-                        // the slave send an inverted crc if the request belongs to an 
-                        // not existing parameter
-                        if(tmp->reqCb)
+                        // we must recalculate the crc with the recieved 
+                        // unique id to detect if there was a transmission error
+                        uint32_t locCrc = pObj->crcCalc(tmp->data, mSdR);   // SD
+                        locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // devAdr, always 0
+                        locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[0]
+                        locCrc = pObj->crcCalc(locCrc, (uint8_t) 0);        // regAdr[1]
+                        locCrc = pObj->crcCalc(locCrc, tmp->dataB[0]);      // data[0]
+                        locCrc = pObj->crcCalc(locCrc, tmp->dataB[1]);      // data[1]
+                        locCrc = pObj->crcCalc(locCrc, tmp->dataB[2]);      // data[2]
+                        locCrc = pObj->crcCalc(locCrc, tmp->dataB[3]);      // data[3]
+
+                        if(locCrc == pObj->mCrc)
                         {
-                            tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);                
+                            // uid recieved without errors
+                            if(tmp->reqCb != 0)
+                                tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);                
+                            
+                            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                            pObj->mRetryCnt = 0;
+                            pObj->mState = S_IDLE;
                         }
-                        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-                        pObj->mState = S_IDLE;
+                        else
+                        {
+                            pObj->mErrWrongCrc++;
+
+                            // there was an transmission error, retry to get uid
+                            if(pObj->mRetryCnt < GM_MAXRETRY)
+                            {
+                                pObj->mRetryCnt++;
+                                pObj->mState = S_IDLE;
+                            } else {
+                                if(tmp->reqCb != 0)
+                                    tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);                
+                                
+                                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                                pObj->mState = S_IDLE;
+
+                                pObj->scan();
+                            }
+                        }
                     }
                     else
                     {
-                        pObj->mErrWrongCrc++;
-
-                        // transmission error or device order changed
-                        if(pObj->mRetryCnt < GM_MAXRETRY)
+                        if(pObj->mCrcCalc == ~pObj->mCrc)
                         {
-                            pObj->mRetryCnt++;
-                            pObj->mState = S_IDLE;
-                        } else {
-                            if(tmp->reqCb)
-                            {
-                                tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);                
-                            }
+                            // the slave send an inverted crc if the request belongs to an 
+                            // not existing parameter
+                            if(tmp->reqCb != 0)
+                                tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);                
+                            
                             pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                             pObj->mState = S_IDLE;
+                        }
+                        else
+                        {
+                            pObj->mErrWrongCrc++;
 
-                            pObj->scan();
+                            // transmission error or device order changed
+                            if(pObj->mRetryCnt < GM_MAXRETRY)
+                            {
+                                pObj->mRetryCnt++;
+                                pObj->mState = S_IDLE;
+                            } else {
+                                if(tmp->reqCb != 0)
+                                    tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);                
+                                
+                                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                                pObj->mState = S_IDLE;
+
+                                pObj->scan();
+                            }
                         }
                     }
                 }
@@ -416,37 +444,47 @@ void TBusCoordinator::coorTask(void* aArg)
     {  
         reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
 
-        if(tmp->reqMode == RM_getUid)
+        if(pObj->mCoolDown)
         {
-            // if the request was an get UID request we don't try it again
-            // because the scan alart will it retry in fewe seconds again
-            if(tmp->reqCb)
+            if(pObj->mCoolDownTimout)
             {
-                tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
-            }
-            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-            pObj->mState = S_IDLE;
-
+                pObj->mCoolDown = false;
+                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+            }  
+            pObj->mState = S_IDLE;          
         }
         else
         {
-            pObj->mErrTimeout++;
-
-            // transmission error or device order changed
-            if(pObj->mRetryCnt < GM_MAXRETRY)
+            if(tmp->reqMode == RM_getUid)
             {
-                pObj->mRetryCnt++;
-                pObj->mState = S_IDLE;
-            } else {
-                if(tmp->reqCb)
-                {
+                // if the request was an get UID request we don't try it again
+                // because the scan alart will it retry in fewe seconds again
+                if(tmp->reqCb != 0)
                     tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
-                }
+                
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                 pObj->mState = S_IDLE;
 
-                pObj->scan();
-            }            
+            }
+            else
+            {
+                pObj->mErrTimeout++;
+
+                // transmission error or device order changed
+                if(pObj->mRetryCnt < GM_MAXRETRY)
+                {
+                    pObj->mRetryCnt++;
+                    pObj->mState = S_IDLE;
+                } else {
+                    if(tmp->reqCb != 0)
+                        tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
+                    
+                    pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                    pObj->mState = S_IDLE;
+
+                    pObj->scan();
+                }            
+            }
         }
     };
 
@@ -454,13 +492,14 @@ void TBusCoordinator::coorTask(void* aArg)
     { 
         reqRec_t* tmp =  &pObj->mReqQueue.buffer[pObj->mReqQueue.rInd];
 
+        pObj->mCoolDown = false;
+
         pObj->mErrNoecho++;
 
         // bus is blocked or short circuite
-        if(tmp->reqCb)
-        {
+        if(tmp->reqCb != 0)
             tmp->reqCb(tmp->arg, 0, EC_TIMEOUT);                
-        }
+
         pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
         pObj->mState = S_IDLE;
     }
@@ -484,11 +523,10 @@ void TBusCoordinator::coorTask(void* aArg)
                     {
                         // invalid unique id, call callback function without value pointer
                         // to signal an error
-                        if(tmp->reqCb)
-                        {
+                        if(tmp->reqCb != 0)
                             tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);
-                            pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
-                        }
+                        pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                        
                     }
                     else
                     {
@@ -498,10 +536,11 @@ void TBusCoordinator::coorTask(void* aArg)
                 else
                 {
                     // RM_byAdr or RM_getUId
-                    if(tmp->reqMode == RM_byAdr && tmp->uniqueId != pObj->mDeviceList[tmp->adr])
+                    if(tmp->reqMode == RM_byAdr && tmp->uniqueId != pObj->mDeviceList[tmp->adr] && tmp->adr != CBroadcastAdr)
                     {
                         // invalid adress
-                        tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
+                        if(tmp->reqCb != 0)
+                            tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
                         pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
                     }
                     else
@@ -525,7 +564,8 @@ void TBusCoordinator::coorTask(void* aArg)
                     {
                         uint32_t locUid;
                         pObj->mParaTable->getPara(0, &locUid);
-                        tmp->reqCb(tmp->arg, &locUid, EC_SUCCESS);
+                        if(tmp->reqCb != 0)
+                            tmp->reqCb(tmp->arg, &locUid, EC_SUCCESS);
                     }
                     break;
 
@@ -535,24 +575,25 @@ void TBusCoordinator::coorTask(void* aArg)
                             if(tmp->write)
                             {
                                 pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
-                                tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
+                                if(tmp->reqCb != 0)
+                                    tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
                             }
                             else
                             {
                                 uint32_t data;
-                                if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                                if(tmp->reqCb != 0)
                                 {
-                                    tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
-                                }
-                                else
-                                {
-                                    tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
+                                    if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                                        tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
+                                    else
+                                        tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
                                 }
                             }
                         }
                         else
                         {
-                            tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);
+                            if(tmp->reqCb != 0)
+                                tmp->reqCb(tmp->arg, 0, EC_INVALID_UID);
                         }
                     break;
                 
@@ -563,25 +604,27 @@ void TBusCoordinator::coorTask(void* aArg)
                         if(tmp->write)
                         {
                             pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
-                            tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
+                            if(tmp->reqCb != 0)
+                                tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
                         }
                         else
                         {
                             uint32_t data;
                             errCode_T ec = pObj->mParaTable->getPara(tmp->paraAdr, &data);
-                            if(ec == EC_SUCCESS)
+                            if(tmp->reqCb != 0)
                             {
-                                tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
+                                if(ec == EC_SUCCESS)
+                                    tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
+                                else
+                                    tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
                             }
-                            else
-                            {
-                                tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
-                            }
+
                         }
                     }
                     else
                     {
-                        tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
+                        if(tmp->reqCb != 0)
+                            tmp->reqCb(tmp->arg, 0, EC_INVALID_DEVADR);
                     }
                 }
                 pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
@@ -634,6 +677,7 @@ void TBusCoordinator::rxCb(void* aArg)
                     pObj->mCrcB[pObj->mByteCntR-9] = byte;
                     if(pObj->mByteCntR == 12)
                     {
+                        cancel_alarm(pObj->mTimeoutId);
                         pObj->mState = S_READY;
                         pObj->mSeq->queueTask(pObj->mCoorTaskId);
                         pObj->mUart->disableTx(false);
@@ -675,7 +719,10 @@ void TBusCoordinator::sendReq()
                 if(tmp->write)
                 {
                     mUart->txChar(mSdW);
-                    mCrcCalc = crcCalc(mDeviceList[tmp->adr], mSdW);
+                    if(tmp->adr == CBroadcastAdr)
+                        mCrcCalc = crcCalc(0, mSdW);
+                    else
+                        mCrcCalc = crcCalc(mDeviceList[tmp->adr], mSdW);
                 }
                 else
                 {
@@ -694,10 +741,12 @@ void TBusCoordinator::sendReq()
                 mByteCntR = 0;
                 break;
 
-            case S_DEVADR:
-                
+            case S_DEVADR:                
                 mUart->txChar(tmp->adr);
-                mCrcCalc = crcCalc(mCrcCalc, (uint8_t) 0);
+                if(tmp->adr == CBroadcastAdr)
+                    mCrcCalc = crcCalc(mCrcCalc, (uint8_t) CBroadcastAdr);
+                else
+                    mCrcCalc = crcCalc(mCrcCalc, (uint8_t) 0);
 
                 mState = S_REGADR;  
                 mByteCntW++;             
@@ -785,6 +834,15 @@ int64_t TBusCoordinator::echoErrCb(alarm_id_t id, void* aArg)
     return 0;
 }
 
+int64_t TBusCoordinator::coolDownCb(alarm_id_t id, void* aArg)
+{
+    TBusCoordinator* pObj = (TBusCoordinator*) aArg;
+
+    pObj->mCoolDownTimout = true;
+
+    return 0;
+}
+
 bool TBusCoordinator::scanAlert(repeating_timer_t *rt)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) rt->user_data;
@@ -804,11 +862,20 @@ GM_busMaster::GM_busMaster()
     mInit = false;
 }
 
+extern uint32_t __flash_binary_start;
+extern uint32_t __flash_binary_end;
+
 void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
 {
     if(!mInit)
     {
         mSeq = aSeq;
+        mPT = aParaTable;
+        mPT->getPara(CSystemBaseRegAdr + TEpSysDefs::PARA_FWVERSION, &mFWVer);
+        mFWUpdateCnt = false;
+
+        mFWLen = (((uint32_t) &__flash_binary_end) - ((uint32_t) &__flash_binary_start) + 3) >> 2;
+        mFWAktive = false;
 
         mBusNo = aListLen + 1;
 
@@ -891,7 +958,7 @@ void GM_busMaster::mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen
     // add new devices to device list
     for(int i = 0; i < listLen; i++)
     {
-        if(~devFound[i >> 5] & (1 << (i & 0x1F)))
+        if((devFound[i >> 5] & (1 << (i & 0x1F))) == 0)
         {
             // device not found, add a new one
 
@@ -946,6 +1013,111 @@ void GM_busMaster::devLost(uint8_t aBus, uint32_t aUid)
             mBusCoor[aBus].scan();
         }
 
+    }
+}
+
+bool GM_busMaster::checkFWVer(uint32_t aVer, GM_device *aDev)
+{
+    if(!mFWAktive)
+    {
+        if(mFWVer != aVer)
+        {
+            mFWUpdateCnt++;
+            aDev->queueWriteReq(CSystemBaseRegAdr + TEpSysDefs::PARA_FWLEN, mFWLen, 0, 0);  
+        }
+        else
+            aDev->queueWriteReq(CSystemBaseRegAdr + TEpSysDefs::PARA_FWLEN, 0, 0, 0);
+    
+        // check if all devices are available
+        uint32_t aktiveSlaveCnt = 0;
+        for(int i = 0; i < mBusNo; i++)
+            aktiveSlaveCnt += mBusCoor[i].mDevListLength;
+
+        uint32_t deviceListLen = 0;
+        GM_device* tmp = mRootDev;
+
+        while(tmp != 0)
+        {
+            if(tmp->mFWChecked && tmp->mStat == DS_AVAILABLE)
+                deviceListLen++;
+
+            tmp = tmp->mNext;
+        }
+
+        if(deviceListLen == aktiveSlaveCnt && mFWUpdateCnt > 0)
+        {
+            mFWUpdateCnt = 0;
+            mFWAktive = 1;
+
+            // firmware update is broadcasted over all buses
+            mFWBusCnt = 0;
+            mFWPos = 0;
+            uint32_t eraseSize = (((mFWLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
+            for(uint8_t i = 1; i < mBusNo; i ++)
+            {
+                uint32_t *flash = &__flash_binary_start; 
+                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, i};
+                queueWriteReq(&adr, flash[mFWPos], fwUpCb, this, 400000*eraseSize);
+                mFWCrc = TFlash::crcCalc(0, flash[mFWPos]);
+                mFWPos++;
+            }
+        }
+    }
+
+    return mFWVer != aVer;
+}
+
+void GM_busMaster::fwUpCb(void* aArg, uint32_t* UId, errCode_T aStatus)
+{
+    GM_busMaster* pObj = (GM_busMaster*) aArg;
+    
+    pObj->mFWBusCnt++;
+    if(pObj->mFWBusCnt == pObj->mBusNo-1)
+    {
+        pObj->mFWBusCnt == 0;
+
+        // write CRC if needed
+        if((pObj->mFWPos + 1)%(FLASH_PAGE_SIZE >> 2) == 0 || pObj->mFWPos == pObj->mFWLen)
+        {
+            for(uint8_t i = 1; i < pObj->mBusNo; i++)
+            {
+                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWCRC, CBroadcastAdr, i};
+                if(pObj->mFWPos == pObj->mFWLen)
+                {
+                    // fw update done, after this last write the device programms the firmware and reboot
+                    uint32_t eraseSize = (((pObj->mFWLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
+                    pObj->queueWriteReq(&adr, pObj->mFWCrc, 0, 0, eraseSize*448000);
+
+                    // start EP rescan of updated devices and check if there are more devices which need an update
+                    GM_device* tmp = pObj->mRootDev;
+                    while(tmp)
+                    {
+                        if(tmp->mFWUpdate)
+                        {
+                            tmp->resetEP();
+                        }
+                        tmp = tmp->mNext;
+                    }
+                }
+                else
+                {
+                    pObj->queueWriteReq(&adr, pObj->mFWCrc, 0, 0, 3000);
+                }
+            }
+        }
+
+        if(pObj->mFWPos < pObj->mFWLen)
+        {
+            // send next word
+            for(uint8_t i = 1; i < pObj->mBusNo; i++)
+            {
+                uint32_t *flash = &__flash_binary_start; 
+                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, i};
+                pObj->queueWriteReq(&adr, flash[pObj->mFWPos], fwUpCb, pObj);
+                pObj->mFWCrc = TFlash::crcCalc(0, flash[pObj->mFWPos]);
+                pObj->mFWPos++;
+            }
+        }
     }
 }
 

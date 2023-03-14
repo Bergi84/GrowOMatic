@@ -67,7 +67,7 @@ public:
   uint32_t getAktivTask();
   bool delTask(uint8_t aSeqID);
   bool killTask(uint8_t aSeqID);
-  bool queueTask(uint8_t aSeqID);
+  bool __time_critical_func(queueTask)(uint8_t aSeqID);
 
   // puase calling Task until given bool becomes true
   void waitForEvent(bool* aEvt);
@@ -79,9 +79,9 @@ public:
   void startIdle() { scheduler(); };
 
 private:
-  void startTask(uint8_t stackInd, uint8_t taskInd);
-  void switchTask(void **sp, bool pause);
-  void scheduler();
+  void __time_critical_func(startTask)(uint8_t stackInd, uint8_t taskInd);
+  void __time_critical_func(switchTask)(void **sp, bool pause);
+  void __time_critical_func(scheduler)();
 
 /*
   __attribute__((naked)) void storeTask(void **sp);

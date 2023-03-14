@@ -34,7 +34,7 @@ gm_termMonitor gTermMonitor;
 GM_dualCapSense* gDualCapSens;
 
 
-// interrupt wrappers
+// interrupt wrappers vor inline interrupt handlers
 void __time_critical_func(uartTermIrqHandler)()
 {
     gUartTerm.irqHandler();

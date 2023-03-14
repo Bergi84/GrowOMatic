@@ -73,6 +73,7 @@ private:
         uint8_t adr;
         void* arg;
         void (*reqCb) (void* aArg, uint32_t* aVal, errCode_T aStatus);
+        uint32_t cooldown;
     } reqRec_t;
 
     struct {
@@ -122,9 +123,13 @@ private:
     uint8_t mByteCntR;
     uint8_t mRetryCnt;
 
+    bool mCoolDown;
+    bool mCoolDownTimout;
+
     alarm_id_t mTimeoutId;
     static int64_t timeOutCb(alarm_id_t id, void* aArg);
     static int64_t echoErrCb(alarm_id_t id, void* aArg);
+    static int64_t coolDownCb(alarm_id_t id, void* aArg);
 
     repeating_timer_t mScanAlertTimer;
     static bool scanAlert(repeating_timer_t *rt);
@@ -147,7 +152,7 @@ public:
     uint8_t getAdr(uint32_t aUid);
 
     errCode_T queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
-    errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg);
+    errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCoolDown = 0);
     void installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg);
 };
 
@@ -161,6 +166,15 @@ private:
 
     TBusCoordinator mBusCoor[GM_MAXUARTS + 1];  // bus 0 is the lokal device
     TSequencer* mSeq;
+    TParaTable* mPT;
+
+    uint32_t mFWVer;        // Firmware version for version check of slaves
+    uint32_t mFWUpdateCnt;
+    uint32_t mFWBusCnt;
+    uint32_t mFWPos;
+    uint32_t mFWLen;
+    uint32_t mFWCrc;
+    bool mFWAktive =  true;
 
     typedef struct {
         GM_busMaster* pObj;
@@ -169,9 +183,11 @@ private:
     cbData_t mCbData[GM_MAXUARTS + 1];   // bus 0 is the lokal device
 
     static void mDevListUpCb(void* aArg, uint32_t* aUidList, uint32_t listLen);
+    static void fwUpCb(void* aArg, uint32_t* UId, errCode_T aStatus);
 
     void delDev(GM_device* aDev);
     void devLost(uint8_t aBus, uint32_t aUid);
+    bool checkFWVer(uint32_t aVer, GM_device *aDev);
 
     GM_device* mRootDev;
 
@@ -189,8 +205,8 @@ public:
     inline errCode_T queueReadReq(reqAdr_t* aReqAdr, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
     {   return mBusCoor[aReqAdr->aBus].queueReadReq(aReqAdr, reqCb, aArg);  }
 
-    inline errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg)
-    {   return mBusCoor[aReqAdr->aBus].queueWriteReq(aReqAdr, aVal, reqCb, aArg);   }
+    inline errCode_T queueWriteReq(reqAdr_t* aReqAdr, uint32_t aVal, void (*reqCb) (void*, uint32_t*, errCode_T aStatus), void* aArg, uint32_t aCooldDown = 0)
+    {   return mBusCoor[aReqAdr->aBus].queueWriteReq(aReqAdr, aVal, reqCb, aArg, aCooldDown);   }
 
     // returns written length, also when aList is null or aLen is 0
     // aLen ist the maximum length of aList, if aEpType == EPT_INVALID

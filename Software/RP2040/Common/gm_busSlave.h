@@ -24,10 +24,13 @@ private:
     static void rx0CbWrapper(void* aPObj);
     static void rx1CbWrapper(void* aPObj);
     static int64_t timeOutCb(alarm_id_t id, void* aPObj);
+    static int64_t regTimeOutCb(alarm_id_t id, void* aPObj);
 
     void __time_critical_func(rxCb)(com_t* aCom);
 
-    uint32_t mCrcInitVal;
+    uint32_t mCrcInitValW;
+    uint32_t mCrcInitValR;
+    uint32_t mCrcInitValB;
     union {
         uint32_t dw;
         uint8_t b[4];
@@ -46,6 +49,7 @@ private:
     } mRegAdr;
     bool mInvalidRegAdr;
     bool mWrite;
+    bool mBroadCast;
 
     typedef enum 
     {
@@ -76,6 +80,7 @@ private:
     bool mRegTimeOutFlag;
 
     static void paraRW(void* aArg);
+    void resetSlave();
 
     bool mInit;
 
@@ -84,8 +89,6 @@ public:
     void init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq);
     bool isInit(){ return mInit; };
     void deinit();
-
-    void setCrcInit(uint32_t aCrcInit) {mCrcInitVal = aCrcInit; };
 };
 
 #endif /*GM_BUSSLAVE_H_*/
