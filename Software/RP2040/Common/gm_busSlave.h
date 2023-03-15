@@ -79,7 +79,7 @@ private:
     uint8_t mParaRWTaskId;
     bool mRegTimeOutFlag;
 
-    static void paraRW(void* aArg);
+    static void __time_critical_func(paraRW)(void* aArg);
     void resetSlave();
 
     bool mInit;

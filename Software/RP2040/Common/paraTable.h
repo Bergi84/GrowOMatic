@@ -38,8 +38,8 @@ public:
     void addEndpoint(endpoint_t* aEndpoint_t);
     endpoint_t* findEp(uint16_t baseInd);
     endpoint_t* getEpLL() {return mRootEp;};
-    errCode_T setPara(uint16_t aRegAdr, uint32_t aData);
-    errCode_T getPara(uint16_t aRegAdr, uint32_t *aData);
+    errCode_T __time_critical_func(setPara)(uint16_t aRegAdr, uint32_t aData);
+    errCode_T __time_critical_func(getPara)(uint16_t aRegAdr, uint32_t *aData);
     errCode_T getParaName(uint16_t aRegAdr, const char **aData);
     errCode_T getParaPer(uint16_t aRegAdr, uint32_t *aData);
     bool getParaAdr(uint16_t aRegAdr, uint32_t** aPraRec);
@@ -54,7 +54,7 @@ public:
 private:
     TStorage* mStorage;
 
-    paraRec_t* findPara(uint16_t index);
+    paraRec_t* __time_critical_func(findPara)(uint16_t index);
 
     endpoint_t* mRootEp;
 

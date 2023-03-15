@@ -314,8 +314,8 @@ void TBusCoordinator::coorTask(void* aArg)
                 // during the cooldown period we try to poll the slave until 
                 // it is available again or ther timer timed out
                 add_alarm_in_us(tmp->cooldown, coolDownCb, pObj, true);
-                bool mCoolDown = true;
-                bool mCoolDownTimout = false;
+                pObj->mCoolDown = true;
+                pObj->mCoolDownTimout = false;
 
                 // in case of a broadcast we try to poll the last slave
                 if(tmp->adr == CBroadcastAdr)
@@ -338,16 +338,19 @@ void TBusCoordinator::coorTask(void* aArg)
         else
         {
             // read request finished
-            // check crc
             if(pObj->mCoolDown)
-            {              
-                // cool down done
-                pObj->mCoolDown = false;
-                pObj->mState = S_IDLE;
-                pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+            {  
+                pObj->mState = S_IDLE;   
+                if(pObj->mCrcCalc == pObj->mCrc)
+                {           
+                    // cool down done
+                    pObj->mCoolDown = false;
+                    pObj->mReqQueue.rInd = pObj->mReqQueue.rInd == GM_QUEUELEN - 1 ? 0 : pObj->mReqQueue.rInd + 1;
+                }
             }
             else
             {
+                // check crc
                 if(pObj->mCrcCalc == pObj->mCrc)
                 {
                     if(tmp->reqCb != 0)                    
@@ -1047,20 +1050,20 @@ bool GM_busMaster::checkFWVer(uint32_t aVer, GM_device *aDev)
         if(deviceListLen == aktiveSlaveCnt && mFWUpdateCnt > 0)
         {
             mFWUpdateCnt = 0;
-            mFWAktive = 1;
+            mFWAktive = true;
 
             // firmware update is broadcasted over all buses
             mFWBusCnt = 0;
             mFWPos = 0;
             uint32_t eraseSize = (((mFWLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
+            uint32_t *flash = &__flash_binary_start;
+            uint32_t data = flash[mFWPos];
+            reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, 0};
             for(uint8_t i = 1; i < mBusNo; i ++)
-            {
-                uint32_t *flash = &__flash_binary_start; 
-                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, i};
-                queueWriteReq(&adr, flash[mFWPos], fwUpCb, this, 400000*eraseSize);
-                mFWCrc = TFlash::crcCalc(0, flash[mFWPos]);
-                mFWPos++;
-            }
+                mBusCoor[i].queueWriteReq(&adr, data, fwUpCb, this, 400000*eraseSize);
+
+            mFWCrc = TFlash::crcCalc((uint32_t) 0, data);
+            mFWPos++;
         }
     }
 
@@ -1074,49 +1077,51 @@ void GM_busMaster::fwUpCb(void* aArg, uint32_t* UId, errCode_T aStatus)
     pObj->mFWBusCnt++;
     if(pObj->mFWBusCnt == pObj->mBusNo-1)
     {
-        pObj->mFWBusCnt == 0;
+        pObj->mFWBusCnt = 0;
 
         // write CRC if needed
-        if((pObj->mFWPos + 1)%(FLASH_PAGE_SIZE >> 2) == 0 || pObj->mFWPos == pObj->mFWLen)
+        if((pObj->mFWPos)%(FLASH_PAGE_SIZE >> 2) == 0 || pObj->mFWPos == pObj->mFWLen)
         {
-            for(uint8_t i = 1; i < pObj->mBusNo; i++)
+            reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWCRC, CBroadcastAdr, 0};
+            uint32_t eraseSize = (((pObj->mFWLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;  
+            
+            if(pObj->mFWPos == pObj->mFWLen)
             {
-                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWCRC, CBroadcastAdr, i};
-                if(pObj->mFWPos == pObj->mFWLen)
-                {
-                    // fw update done, after this last write the device programms the firmware and reboot
-                    uint32_t eraseSize = (((pObj->mFWLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
-                    pObj->queueWriteReq(&adr, pObj->mFWCrc, 0, 0, eraseSize*448000);
+                // fw update done, after this last write the device programms the firmware and reboot
+                for(uint8_t i = 1; i < pObj->mBusNo; i++)
+                    pObj->mBusCoor[i].queueWriteReq(&adr, pObj->mFWCrc, 0, 0, eraseSize*448000);
 
-                    // start EP rescan of updated devices and check if there are more devices which need an update
-                    GM_device* tmp = pObj->mRootDev;
-                    while(tmp)
-                    {
-                        if(tmp->mFWUpdate)
-                        {
-                            tmp->resetEP();
-                        }
-                        tmp = tmp->mNext;
-                    }
-                }
-                else
+                // start EP rescan of updated devices and check if there are more devices which need an update
+                pObj->mFWAktive = false;
+                GM_device* tmp = pObj->mRootDev;
+                while(tmp)
                 {
-                    pObj->queueWriteReq(&adr, pObj->mFWCrc, 0, 0, 3000);
+                    if(tmp->mFWUpdate)
+                    {
+                        tmp->resetEP();
+                    }
+                    tmp = tmp->mNext;
                 }
             }
+            else
+            {
+                for(uint8_t i = 1; i < pObj->mBusNo; i++)
+                    pObj->mBusCoor[i].queueWriteReq(&adr, pObj->mFWCrc, 0, 0, 10000);
+            }
+            
         }
 
         if(pObj->mFWPos < pObj->mFWLen)
         {
             // send next word
+            uint32_t *flash = &__flash_binary_start; 
+            uint32_t data = flash[pObj->mFWPos];
+            reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, 0};
             for(uint8_t i = 1; i < pObj->mBusNo; i++)
-            {
-                uint32_t *flash = &__flash_binary_start; 
-                reqAdr_t adr = {0, CSystemBaseRegAdr + TEpSysDefs::PARA_FWDATA, CBroadcastAdr, i};
-                pObj->queueWriteReq(&adr, flash[pObj->mFWPos], fwUpCb, pObj);
-                pObj->mFWCrc = TFlash::crcCalc(0, flash[pObj->mFWPos]);
-                pObj->mFWPos++;
-            }
+                pObj->mBusCoor[i].queueWriteReq(&adr, data, fwUpCb, pObj);
+
+            pObj->mFWCrc = TFlash::crcCalc(pObj->mFWCrc, data);
+            pObj->mFWPos++;
         }
     }
 }

@@ -221,11 +221,11 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
 
     if((pObj->mFwDataBufInd == (FLASH_PAGE_SIZE >> 2) || lastPage) && pObj->mFwLen > 0)
     {
+        pObj->mFwDataBufInd = 0;
         if(pObj->mFwCrc == aPParaRec->para)
         {
             TFlash::storePage(FLASH_FW_BUFFER + (pObj->mFwFlashOff << 2), (uint8_t*) pObj->mFwDataBuf);
             pObj->mFwFlashOff += (FLASH_PAGE_SIZE >> 2);
-            pObj->mFwDataBufInd = 0;
 
             if(lastPage)
             {
@@ -260,12 +260,17 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
             }
             return;
         }
-
+        else
+        {
+            pObj->mFwLen = 0;
+            pObj->mFwCrc = -2;  
+        }
     }
-
-    pObj->mFwLen = 0;
-    pObj->mFwCrc = -1;           
-    
+    else
+    {
+        pObj->mFwLen = 0;
+        pObj->mFwCrc = -1;  
+    }
 }
 
 void TSystem::sysReset()

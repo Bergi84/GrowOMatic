@@ -32,10 +32,10 @@ public:
     void init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio);
     virtual void config(uint32_t aBaudRate, uartPar_t aParity);
     virtual uint32_t rxBlock(uint8_t* aBuf, uint32_t aMaxLen);
-    virtual void rxChar(uint8_t *aC);
+    virtual void __time_critical_func(rxChar)(uint8_t *aC);
     virtual bool rxPending();
     virtual void rxGetWait(void* &aAdr, uint32_t &aMsk);
-    virtual void txChar(uint8_t aC);
+    virtual void __time_critical_func(txChar)(uint8_t aC);
     virtual uint32_t txBlock(uint8_t* aBuf, uint32_t aLen);
     virtual bool txFree();
     virtual void txGetWaitFree(void* &aAdr, uint32_t &aMsk);
