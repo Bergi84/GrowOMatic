@@ -8,10 +8,12 @@ GM_busSlave::GM_busSlave() : GM_BusDefs()
     mInit = false;
 }
 
-void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq)
+void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq, TTimerServer* aTimerServer)
 {
     if(!mInit)
     {
+        gDebug.resetPin(2);
+
         mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
         mByteTimeoutUs = (mByteTimeUs*19) >> 4;     // 118,75% of byte time
         mCom[0].errCnt = 0;
@@ -54,6 +56,10 @@ void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSe
         mSeq = aSeq;
         aSeq->addTask(mParaRWTaskId, paraRW, (void*)this);
 
+        mTS = aTimerServer;
+        mTimeoutTimer = mTS->getTimer(timeOutCb, this);
+        mRegTimeoutTimer = mTS->getTimer(regTimeOutCb, this);
+
         mInit = true;
 
         mRegTimeOutFlag = false;
@@ -69,6 +75,8 @@ void GM_busSlave::deinit()
         mCom[1].uart->installRxCb(0, 0);    
 
         mSeq->delTask(mParaRWTaskId);
+        mTimeoutTimer->delTimer();
+        mRegTimeoutTimer->delTimer();
 
         mInit = false;
     }
@@ -88,7 +96,7 @@ void GM_busSlave::rxCb (com_t* aCom)
 
     if(!aCom->sec)
     {
-        gDebug.setPin(0); 
+        gDebug.setPin(1); 
             
         switch (mState)
         {
@@ -97,8 +105,7 @@ void GM_busSlave::rxCb (com_t* aCom)
             // both ports are in read mode, if we find a start deliminater
             // we can set the direction an start relaying
             if(byte == mSdW || byte == mSdR)
-            {
-                gDebug.setPin(1);
+            {           
                 mState = S_DEVADR;
                 mWrite = (byte == mSdW);
                 aCom->otherCom->sec = true;
@@ -106,9 +113,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                 aCom->otherCom->uart->disableTx(false);
                 aCom->otherCom->uart->txChar(byte);
                 
-                               
-                mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
-                gDebug.resetPin(1);
+                mTimeoutTimer->setTimer(mByteTimeoutUs);
             }
             else
             {
@@ -117,7 +122,7 @@ void GM_busSlave::rxCb (com_t* aCom)
             break;
 
         case S_DEVADR:
-            cancel_alarm(mTimeoutId);
+            mTimeoutTimer->stopTimer();
             
             if(byte == 0 || byte == CBroadcastAdr)
             {
@@ -141,7 +146,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                 }
                 mCrcCalc.dw = crcCalc(mCrcCalc.dw, byte);
 
-                mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                mTimeoutTimer->setTimer(mByteTimeoutUs);
             }
             else
             {
@@ -160,7 +165,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                     mState = S_FWD;
                     aCom->otherCom->uart->txChar(byte - 1);
 
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
 
                     // calculate turnaround timout = transfaretime + 50% * bytetime
                     mTurnAroundTimeout = mByteTimeoutUs * 2 * (byte - 1) + ((mByteTimeUs * 3) >> 1);
@@ -169,7 +174,7 @@ void GM_busSlave::rxCb (com_t* aCom)
             break;
 
         case S_REGADR:
-            cancel_alarm(mTimeoutId);
+            mTimeoutTimer->stopTimer();
             mCrcCalc.dw = crcCalc(mCrcCalc.dw, byte);
 
             if(mBroadCast)
@@ -182,30 +187,29 @@ void GM_busSlave::rxCb (com_t* aCom)
 
                 if(mWrite)
                 {
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
                 }
                 else
                 {
                     // in read case we must turnaround the direction
                     // this is done in idle task
-                    mTimeoutId = 0;
                     mRegTimeOutFlag = false;
                     aCom->reqR = true;
                     aCom->uart->disableTx(false);
                     mSeq->queueTask(mParaRWTaskId);
-                    mRegTimeoutId = add_alarm_in_us(mByteTimeUs >> 2, regTimeOutCb, (void*) this, true);
+                    mRegTimeoutTimer->setTimer(mByteTimeUs>>2);
                 }                    
             }
             else
             {
                 mRegAdr.b[0] = byte;  
 
-                mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                mTimeoutTimer->setTimer(mByteTimeoutUs);
             }
             break;
 
         case S_DATA:
-            cancel_alarm(mTimeoutId);
+            mTimeoutTimer->stopTimer();
 
             if(aCom->byteCnt == 8)
             {
@@ -219,7 +223,7 @@ void GM_busSlave::rxCb (com_t* aCom)
 
                 mData.b[aCom->byteCnt - 5] = byte;
                 mCrcCalc.dw = crcCalc(mCrcCalc.dw, byte);
-                mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                mTimeoutTimer->setTimer(mByteTimeoutUs);
             } 
             else
             {
@@ -227,7 +231,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                 {
                     // send byte 1, 2 ,3 
                     aCom->uart->txChar(mData.b[aCom->byteCnt - 4]);
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
                     mCrcCalc.dw = crcCalc(mCrcCalc.dw, mData.b[aCom->byteCnt - 4]);
                 }
                 else
@@ -239,13 +243,13 @@ void GM_busSlave::rxCb (com_t* aCom)
                     else
                         aCom->uart->txChar(mCrcCalc.b[aCom->byteCnt - 8]);
 
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
                 }
             }
             break;
 
-        case S_CRC:
-            cancel_alarm(mTimeoutId);
+        case S_CRC:           
+            mTimeoutTimer->stopTimer();
 
             if(!mBroadCast && aCom->byteCnt == 12)
             {
@@ -256,6 +260,7 @@ void GM_busSlave::rxCb (com_t* aCom)
 
             if(mWrite)
             {
+                
                 if(mBroadCast)
                     aCom->otherCom->uart->txChar(byte);
 
@@ -267,17 +272,20 @@ void GM_busSlave::rxCb (com_t* aCom)
                     aCom->byteCnt = 0;
                     if(mCrc.dw == mCrcCalc.dw)
                     {
+                        gDebug.setPin(7);
                         mRegTimeOutFlag = false;
                         mSeq->queueTask(mParaRWTaskId);
+                        
 
                         // if the request is not written fast enougth the following
                         // datagramm can overwrite data
-                        mRegTimeoutId = add_alarm_in_us(mByteTimeUs>>2, regTimeOutCb, (void*) this, true);
+                        mRegTimeoutTimer->setTimer(mByteTimeUs>>2);
+                        gDebug.resetPin(7);
                     }
                 }
                 else
                 {
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
                 }
             } 
             else
@@ -299,7 +307,7 @@ void GM_busSlave::rxCb (com_t* aCom)
                         else
                             aCom->uart->txChar(mCrcCalc.b[aCom->byteCnt - 8]);
 
-                        mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                        mTimeoutTimer->setTimer(mByteTimeoutUs);
                     } 
                 }
             }
@@ -308,24 +316,23 @@ void GM_busSlave::rxCb (com_t* aCom)
         case S_FWD:
             if(mWrite)
             {
-                cancel_alarm(mTimeoutId);
+                mTimeoutTimer->stopTimer();
                 aCom->otherCom->uart->txChar(byte);
                 if(aCom->byteCnt == 12)
                 {
-                    mTimeoutId = 0;
                     mState = S_IDLE;
                     aCom->byteCnt = 0;
                 }
                 else
                 {
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                    mTimeoutTimer->setTimer(mByteTimeoutUs);
                 }
             }
             else
             {
                 if(aCom->byteCnt == 12)
                 {
-                    cancel_alarm(mTimeoutId);
+                    mTimeoutTimer->stopTimer();
                     mState = S_IDLE;
                     aCom->uart->disableTx(true);
                     aCom->byteCnt = 0;
@@ -337,17 +344,17 @@ void GM_busSlave::rxCb (com_t* aCom)
                     // forword data until turnaround
                     if(aCom->byteCnt < 4)
                     {
-                        cancel_alarm(mTimeoutId);
+                        mTimeoutTimer->stopTimer();
                         aCom->otherCom->uart->txChar(byte);
-                        mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                        mTimeoutTimer->setTimer(mByteTimeoutUs);
                     }
 
                     if(aCom->byteCnt == 4)
                     {
-                        cancel_alarm(mTimeoutId);
+                        mTimeoutTimer->stopTimer();
                         aCom->otherCom->uart->txChar(byte);
                         aCom->uart->disableTx(false);
-                        mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+                        mTimeoutTimer->setTimer(mByteTimeoutUs);
                     }
                 }
             }
@@ -358,10 +365,11 @@ void GM_busSlave::rxCb (com_t* aCom)
             break;
         }
 
-        gDebug.resetPin(0);
+        gDebug.resetPin(1);
     }
     else
     {
+        gDebug.setPin(2);
         // we musst disable the uart after propagation of an recieved invalid address
         if(aCom->byteCnt == 2 && byte == CInvalidAdr && mState == S_IDLE)
         {
@@ -373,18 +381,18 @@ void GM_busSlave::rxCb (com_t* aCom)
         if(aCom->byteCnt == 4 && !mWrite && mState == S_FWD)
         {
             // turn around for read request needed
-            cancel_alarm(mTimeoutId);
+            mTimeoutTimer->stopTimer();
             aCom->uart->disableTx(true);
-            mTimeoutId = add_alarm_in_us(mTurnAroundTimeout, timeOutCb, (void*) this, true);
+            mTimeoutTimer->setTimer(mTurnAroundTimeout);
         }
 
         if(aCom->byteCnt > 4 && !mWrite && mState == S_FWD)
         {
-            cancel_alarm(mTimeoutId);
+            mTimeoutTimer->stopTimer();
             // forwarding data from readrequest to primary uart
             aCom->otherCom->uart->txChar(byte);
 
-            mTimeoutId = add_alarm_in_us(mByteTimeoutUs, timeOutCb, (void*) this, true);
+            mTimeoutTimer->setTimer(mByteTimeoutUs);
         }
 
         if(aCom->byteCnt == 12)
@@ -398,7 +406,8 @@ void GM_busSlave::rxCb (com_t* aCom)
                 aCom->uart->disableTx(true);
                 aCom->sec = false;
             };
-        }
+        } 
+        gDebug.resetPin(2); 
     }  
     restore_interrupts(status);
 }
@@ -418,7 +427,7 @@ void GM_busSlave::rx1CbWrapper(void* aPObj)
     pObj->rxCb(&pObj->mCom[1]);
 }
 
-int64_t GM_busSlave::timeOutCb(alarm_id_t id, void* aPObj)
+uint32_t GM_busSlave::timeOutCb(void* aPObj)
 {
     GM_busSlave* pObj = (GM_busSlave*) aPObj;
 
@@ -443,8 +452,6 @@ int64_t GM_busSlave::timeOutCb(alarm_id_t id, void* aPObj)
 
 void GM_busSlave::resetSlave()
 {
-    if(mBroadCast)
-        while(1);
 
     mCom[0].reqR = false;
     mCom[1].reqR = false;
@@ -458,19 +465,22 @@ void GM_busSlave::resetSlave()
     mState = S_IDLE;
 }
 
-int64_t GM_busSlave::regTimeOutCb(alarm_id_t id, void* aPObj)
+uint32_t GM_busSlave::regTimeOutCb(void* aPObj)
 {
+    gDebug.setPin(4);
+
     GM_busSlave* pObj = (GM_busSlave*) aPObj;
 
     pObj->mRegTimeOutFlag = true;
-    pObj->mRegTimeoutId = 0;
+
+    gDebug.resetPin(4);
 
     return 0;
 }
 
 void GM_busSlave::paraRW(void* aArg)
 {
-    gDebug.setPin(2);
+    gDebug.setPin(6);
 
     GM_busSlave* pObj = (GM_busSlave*) aArg;
 
@@ -479,8 +489,7 @@ void GM_busSlave::paraRW(void* aArg)
         uint32_t status = save_and_disable_interrupts();
         if(!pObj->mRegTimeOutFlag)
         {
-            cancel_alarm(pObj->mRegTimeoutId);
-            pObj->mRegTimeoutId = 0;
+            pObj->mRegTimeoutTimer->stopTimer();
         }
         restore_interrupts(status);
 
@@ -502,8 +511,7 @@ void GM_busSlave::paraRW(void* aArg)
         uint32_t status = save_and_disable_interrupts();
         if(!pObj->mRegTimeOutFlag)
         {
-            cancel_alarm(pObj->mRegTimeoutId);
-            pObj->mRegTimeoutId = 0;
+            pObj->mRegTimeoutTimer->stopTimer();
         }
         restore_interrupts(status);
 
@@ -525,7 +533,7 @@ void GM_busSlave::paraRW(void* aArg)
                 pObj->mCom[1].uart->txChar(pObj->mData.b[0]);
             }
 
-            pObj->mTimeoutId = add_alarm_in_us(pObj->mByteTimeoutUs, timeOutCb, (void*) pObj, true);
+            pObj->mTimeoutTimer->setTimer(pObj->mByteTimeoutUs);
         }
         else
         {
@@ -534,5 +542,5 @@ void GM_busSlave::paraRW(void* aArg)
         }
     }
 
-    gDebug.resetPin(2);
+    gDebug.resetPin(6);
 }

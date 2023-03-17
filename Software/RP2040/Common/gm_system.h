@@ -6,6 +6,7 @@
 #include "gm_busDefs.h"
 #include "paraTable.h"
 #include "rp_flash.h"
+#include "rp_timerServer.h"
 
 #include "pico/platform.h"
 #include "pico/stdlib.h"
@@ -15,7 +16,7 @@ class TSystem : private TEpSysDefs
 public:
     TSystem();
 
-    void init(uint32_t aUniqueId, TParaTable* aParaTable);
+    void init(uint32_t aUniqueId, TParaTable* aParaTable, TTimerServer* aTimerServer);
     void setSysLed(uint32_t aGpioNo);
     void sysLedFastFlash(uint32_t aSeconds);
     void setDevType(devType_t aDevType);
@@ -26,11 +27,12 @@ private:
     TParaTable::paraRec_t mSysPara[cParaListLength];
     TParaTable::endpoint_t mSysEndpoint;
     TParaTable* mPT;
+    TTimerServer* mTS;
 
     char mDevName[DEVICE_NAME_LEN + 1];
 
     uint32_t mSysLed;
-    alarm_id_t mSysLedTimerId;
+    TTimer* mLedTimer;
     uint32_t mFastFlashCnt;
     devType_t mDevType;
 
@@ -46,12 +48,12 @@ private:
     static void paraTypeCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraFwLenCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraFwDataCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
-    static void __not_in_flash_func(paraFwCrc)(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
+    static void __no_inline_not_in_flash_func(paraFwCrc)(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
 
     static void sysLedSignalAktivty(void* aPObj);
-    static int64_t sysLedCb(alarm_id_t id, void* aPObj);
+    static uint32_t sysLedCb(void* aPObj);
 
-    static void __not_in_flash_func(sysReset)();
+    static void __no_inline_not_in_flash_func(sysReset)();
 };
 
 #endif 

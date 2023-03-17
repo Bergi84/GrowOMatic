@@ -38,7 +38,7 @@ mBusEp( (TParaTable::endpoint_t) {
     strcpy(mBusEp.epName, mBusEp.typeName);
 }
 
-void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable, bool masterEn)
+void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TTimerServer* aTimerServer, TParaTable* aParaTable, bool masterEn)
 {
     for(int i = 0; i < aListLen; i++)
     {
@@ -47,6 +47,7 @@ void GM_bus::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaT
     mListLen = aListLen;
     mSeq = aSeq;
     mParaTable = aParaTable;
+    mTimerServer = aTimerServer;
 
     aParaTable->addEndpoint(&mBusEp);
     setBusMode(masterEn);
@@ -67,7 +68,7 @@ void GM_bus::setBusMode(bool masterEn)
             mSlave.deinit();
 
         if(!mMaster.isInit())
-            mMaster.init(mUartList, mListLen, mSeq, mParaTable);
+            mMaster.init(mUartList, mListLen, mSeq, mTimerServer, mParaTable);
     }
     else
     {
@@ -75,6 +76,6 @@ void GM_bus::setBusMode(bool masterEn)
             mMaster.deinit();
 
         if(!mSlave.isInit())
-            mSlave.init(mUartList[0], mUartList[1], mParaTable, mSeq);
+            mSlave.init(mUartList[0], mUartList[1], mParaTable, mSeq, mTimerServer);
     }
 }

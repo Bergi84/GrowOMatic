@@ -16,6 +16,7 @@
 #include "rp_debug.h"
 #include "gm_dualCapSens.h"
 #include "gm_termMonitor.h"
+#include "rp_timerServer.h"
 
 // objekts used for each configutation
 TSequencer gSeq, gSeq_c1;
@@ -29,6 +30,7 @@ TTerminal gTerm;
 GM_termPathMng gPathMng;
 TFlash gTableStorage;
 gm_termMonitor gTermMonitor;
+TTimerServer gTimeServer;
 
 // configutation depended objects
 GM_dualCapSense* gDualCapSens;
@@ -53,6 +55,11 @@ void __time_critical_func(uart1IrqHandler)()
 void __time_critical_func(dualCapSensIrqHandler)()
 {
     gDualCapSens->irqHandler();
+}
+
+void __time_critical_func(timeServerIrqHandler)()
+{
+    gTimeServer.irqHandler();
 }
 
 typedef struct {
@@ -116,13 +123,16 @@ int main()
     gSeq.init(&__StackTop, PICO_STACK_SIZE);
     gSeq.setIdleFunc(idle, NULL);
 
+    gTimeServer.init();
+    gTimeServer.setIrqHandler(timeServerIrqHandler);
+
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
     
     gTableStorage.init(FLASH_TYPE_STORAGE, FLASH_TYPE_STORAGE_SIZE);
 
     gParaTable.init(&gTableStorage);
-    gSystem.init(*((uint32_t*) &uId.id[4]), &gParaTable);
+    gSystem.init(*((uint32_t*) &uId.id[4]), &gParaTable, &gTimeServer);
 
     gParaTable.loadPara();
 
@@ -147,7 +157,7 @@ int main()
                 gSystem.setSysLed(gpio_dls_systemLed);
 
                 TUart* uartList[] = {&gUart0,  &gUart1};
-                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gParaTable);
+                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
                 gDualCapSens = new GM_dualCapSense();
                 gDualCapSens->init(&gParaTable);
                 installIrqOnC1(dualCapSensIrqHandler, gDualCapSens->setIrqHandler, gDualCapSens);
@@ -158,7 +168,7 @@ int main()
 
         case DT_PICO_BOARD:
             {
-                gDebug.init((1 << gpio_pb_dbg1) | (1 << gpio_pb_dbg2) | (1 << gpio_pb_dbg3) | (1 << gpio_pb_dbg4));
+                gDebug.init((1 << gpio_pb_dbg1) | (1 << gpio_pb_dbg2) | (1 << gpio_pb_dbg3) | (1 << gpio_pb_dbg4) | (1 << gpio_pb_dbg5) | (1 << gpio_pb_dbg6) | (1 << gpio_pb_dbg7) | (1 << gpio_pb_dbg8));
 
                 gUart0.init(uart0, gpio_pb_uart0_tx, gpio_pb_uart0_rx);
                 gUart0.setIrqHandler(uart0IrqHandler);
@@ -169,7 +179,7 @@ int main()
                 gSystem.setSysLed(gpio_pb_systemLed);
 
                 TUart* uartList[] = {&gUart0,  &gUart1};
-                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gParaTable);
+                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
                 gPathMng.init(&gBus, &gParaTable);
             }

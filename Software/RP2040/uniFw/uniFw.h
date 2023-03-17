@@ -15,8 +15,8 @@
 
 #define gpio_pb_usbPresent         24
 #define gpio_pb_systemLed          25
-#define gpio_pb_uart0_rx           1
-#define gpio_pb_uart0_tx           0
+#define gpio_pb_uart0_rx           13
+#define gpio_pb_uart0_tx           12
 #define gpio_pb_uart1_rx           5
 #define gpio_pb_uart1_tx           4
 
@@ -24,6 +24,10 @@
 #define gpio_pb_dbg2                7
 #define gpio_pb_dbg3                8
 #define gpio_pb_dbg4                9
+#define gpio_pb_dbg5                10
+#define gpio_pb_dbg6                11
+#define gpio_pb_dbg7                14
+#define gpio_pb_dbg8                15
 
 // dual level sensor defines
 

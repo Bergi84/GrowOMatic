@@ -5,6 +5,7 @@
 #include "hardware/structs/psm.h"
 #include "pico/multicore.h"
 #include "uniFw.h"
+#include "rp_debug.h"
 #include <string.h>
 
 TSystem::TSystem() : 
@@ -38,10 +39,9 @@ mSysEndpoint( (TParaTable::endpoint_t) {
 {
     strncpy(mSysEndpoint.epName, mSysEndpoint.typeName, sizeof(mSysEndpoint.epName));
     mSysLed = 0;
-    mSysLedTimerId = -1;
 }
 
-void TSystem::init(uint32_t aUniqueId, TParaTable* aParaTable)
+void TSystem::init(uint32_t aUniqueId, TParaTable* aParaTable, TTimerServer* aTimerServer)
 {
     while(CInvalidUid == aUniqueId);
 
@@ -50,6 +50,8 @@ void TSystem::init(uint32_t aUniqueId, TParaTable* aParaTable)
     mPT = aParaTable;
     mPT->addEndpoint(&mSysEndpoint);
     mPT->setActiveCb(sysLedSignalAktivty, this);
+    mTS = aTimerServer;
+    mLedTimer = mTS->getTimer(sysLedCb, this);
 }
 
 void TSystem::setSysLed(uint32_t aGpioNo)
@@ -65,22 +67,22 @@ void TSystem::setSysLed(uint32_t aGpioNo)
 void TSystem::sysLedFastFlash(uint32_t aSeconds)
 {
     mFastFlashCnt = aSeconds * (1000000U / CFlashTimeUs) - 1;
-    if(mSysLedTimerId == -1)
-        mSysLedTimerId = add_alarm_in_us(CFlashTimeUs, sysLedCb, this, true);
+    if(!mLedTimer->isAktive())
+        mLedTimer->setTimer(CFlashTimeUs);
 }
 
 void TSystem::sysLedSignalAktivty(void* aPObj)
 {
     TSystem* pObj = (TSystem*) aPObj;
 
-    if(pObj != 0 && pObj->mSysLedTimerId == -1)
+    if(pObj != 0 && !pObj->mLedTimer->isAktive())
     {
         pObj->mFastFlashCnt = 1;
-        pObj->mSysLedTimerId = add_alarm_in_us(pObj->CFlashTimeUs, sysLedCb, aPObj, true);
+        pObj->mLedTimer->setTimer(CFlashTimeUs);
     }
 }
 
-int64_t TSystem::sysLedCb(alarm_id_t id, void* aPObj)
+uint32_t TSystem::sysLedCb(void* aPObj)
 {
     TSystem* pObj = (TSystem*) aPObj;
 
@@ -92,11 +94,10 @@ int64_t TSystem::sysLedCb(alarm_id_t id, void* aPObj)
     if(pObj->mFastFlashCnt > 0)
     {
         pObj->mFastFlashCnt--;
-        return (int64_t)pObj->CFlashTimeUs * -1LL;
+        return pObj->CFlashTimeUs;
     }
     else
     {
-        pObj->mSysLedTimerId = -1;
         return 0;
     }
 }
@@ -197,6 +198,7 @@ void TSystem::paraFwLenCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool a
 
 void TSystem::paraFwDataCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
+    gDebug.setPin(5);
     TSystem* pObj = (TSystem*) aCbArg;
 
     if(pObj->mFwDataBufInd == 0 && pObj->mFwFlashOff == 0 && pObj->mFwLen > 0)
@@ -211,7 +213,10 @@ void TSystem::paraFwDataCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool 
         pObj->mFwCrc = TFlash::crcCalc(pObj->mFwCrc, aPParaRec->para);
     }
     pObj->mFwDataBufInd++;
+    gDebug.resetPin(5);
 }
+
+extern uint32_t __flash_binary_start;
 
 void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
@@ -227,6 +232,9 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
             TFlash::storePage(FLASH_FW_BUFFER + (pObj->mFwFlashOff << 2), (uint8_t*) pObj->mFwDataBuf);
             pObj->mFwFlashOff += (FLASH_PAGE_SIZE >> 2);
 
+            if(pObj->mFwFlashOff == FLASH_PAGE_SIZE >> 1)
+                while(1);
+
             if(lastPage)
             {
                 // update firmware
@@ -236,21 +244,19 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
                 // multicore_lockout_start_blocking();
                 multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
 
-                // second step: erase firmware
-                // after this step no acces to flash is allowed
+                // thired step: erase firmware
+                // after this step no execution from to flash is allowed
                 uint32_t eraseSize = (((pObj->mFwLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
                 flash_range_erase(0, eraseSize);
 
-                // third step: copy page wise the firmware from buffer to firmware location
+                // fifth step: copy page wise the firmware from buffer to firmware location
                 uint32_t cpyPos = 0;
+                uint32_t* flashBuffer = (uint32_t*) (((uint32_t) &__flash_binary_start) + FLASH_FW_BUFFER);
                 while(cpyPos < pObj->mFwFlashOff)
                 {
-                    uint32_t* buffer = (uint32_t*) (FLASH_FW_BUFFER + (cpyPos << 2));
                     for(int i = 0; i < (FLASH_PAGE_SIZE >> 2); i++)
-                    {
-                        pObj->mFwDataBuf[i] = *buffer;
-                        buffer++;
-                    }
+                        pObj->mFwDataBuf[i] = flashBuffer[cpyPos + i];
+                    
                     flash_range_program(cpyPos << 2, (uint8_t*) pObj->mFwDataBuf, FLASH_PAGE_SIZE);
                     cpyPos += (FLASH_PAGE_SIZE >> 2);
                 }
@@ -268,6 +274,7 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
     }
     else
     {
+        gDebug.setPin(0);
         pObj->mFwLen = 0;
         pObj->mFwCrc = -1;  
     }

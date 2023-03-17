@@ -16,6 +16,7 @@ void TDebug::init(uint32_t pinMsk)
         {
             mPinMap[mHighestPin] = 1 << i;
             mHighestPin++;
+            gpio_clr_mask(1 << i);
             gpio_set_function(i, GPIO_FUNC_SIO);
             gpio_set_dir(i, true);
         } 

@@ -164,10 +164,10 @@ bool TFlash::checkCrc()
     uint32_t* data = (uint32_t*) (XIP_BASE + mOffset);
 
     uint32_t size = data[0];
-    uint32_t storedCrc = data[size+1];
 
     if(size != 0 && size < mSize)
     {
+        uint32_t storedCrc = data[size+1];
         // without DMB and with enabled optimization the compiler 
         // try to access the location data[size+1] also if size is an invalid value  
         __dmb();    

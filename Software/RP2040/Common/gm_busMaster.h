@@ -6,6 +6,7 @@
 #include "sequencer_armm0.h"
 #include "gm_busDefs.h"
 #include "gm_epLib.h"
+#include "rp_timerServer.h"
 
 #ifndef GM_MAXSLAVES
 #define GM_MAXSLAVES    64
@@ -34,7 +35,8 @@ private:
     TBusCoordinator();
 
     TUart* mUart;
-    TParaTable* mParaTable;
+    TParaTable* mPT;
+    TTimerServer* mTS;
     TSequencer* mSeq;
 
     bool mInit;
@@ -126,13 +128,15 @@ private:
     bool mCoolDown;
     bool mCoolDownTimout;
 
-    alarm_id_t mTimeoutId;
-    static int64_t timeOutCb(alarm_id_t id, void* aArg);
-    static int64_t echoErrCb(alarm_id_t id, void* aArg);
-    static int64_t coolDownCb(alarm_id_t id, void* aArg);
+    TTimer* mScanTimer;
+    TTimer* mTimeoutTimer;
+    TTimer* mEchoTimer;
+    TTimer* mCooldownTimer;
 
-    repeating_timer_t mScanAlertTimer;
-    static bool scanAlert(repeating_timer_t *rt);
+    static uint32_t timeOutCb(void* aArg);
+    static uint32_t echoErrCb(void* aArg);
+    static uint32_t coolDownCb(void* aArg);
+    static uint32_t scanAlert(void* aArg);
 
     static void coorTask(void* aArg);
     uint8_t mCoorTaskId;
@@ -142,7 +146,7 @@ private:
     uint32_t mErrWrongCrc;
 
 public:
-    void init(TUart* aUart, TSequencer* aSeq);
+    void init(TUart* aUart, TSequencer* aSeq, TTimerServer* aTimerServer);
     void deinit();
     bool isInit() { return mInit;   };
 
@@ -167,6 +171,7 @@ private:
     TBusCoordinator mBusCoor[GM_MAXUARTS + 1];  // bus 0 is the lokal device
     TSequencer* mSeq;
     TParaTable* mPT;
+    TTimerServer* mTS;
 
     uint32_t mFWVer;        // Firmware version for version check of slaves
     uint32_t mFWUpdateCnt;
@@ -198,7 +203,7 @@ private:
 public:
     GM_busMaster();
 
-    void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable);
+    void init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TTimerServer* aTimerServer, TParaTable* aParaTable);
     void deinit();
     bool isInit() { return mInit;};
 

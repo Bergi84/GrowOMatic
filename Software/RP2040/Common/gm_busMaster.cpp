@@ -10,12 +10,13 @@ TBusCoordinator::TBusCoordinator() : GM_BusDefs()
     mDevListUpCb = 0;
 }
 
-void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
+void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq, TTimerServer* aTimerServer)
 {
     if(!mInit && mDevListUpCb)
     {
         mUart = aUart;
-        mParaTable = 0;
+        mPT = 0;
+        mTS = aTimerServer;
         mSeq = aSeq;
 
         mErrTimeout = 0;
@@ -47,7 +48,11 @@ void TBusCoordinator::init(TUart* aUart, TSequencer* aSeq)
         mScanIntervallUs = 1000000;
 
         mSeq->addTask(mCoorTaskId, coorTask, this);
-        add_repeating_timer_us(mScanIntervallUs, scanAlert, this, &mScanAlertTimer);
+        mScanTimer = mTS->getTimer(scanAlert, this);
+        mTimeoutTimer = mTS->getTimer(timeOutCb, this);
+        mEchoTimer = mTS->getTimer(echoErrCb, this);
+        mCooldownTimer = mTS->getTimer(coolDownCb, this);
+        mScanTimer->setTimer(mScanIntervallUs);
 
         mInit = true;
     }
@@ -58,11 +63,11 @@ void TBusCoordinator::init(TParaTable* aParaTable, TSequencer* aSeq)
     if(!mInit && mDevListUpCb)
     {
         mUart = 0;
-        mParaTable = aParaTable;
+        mPT = aParaTable;
         mSeq = aSeq;
 
         mDevListLength = 1;
-        mParaTable->getPara(0, &mDeviceList[0]);
+        mPT->getPara(0, &mDeviceList[0]);
 
         mReqQueue.rInd = 0;
         mReqQueue.wInd = 0;
@@ -85,12 +90,15 @@ void TBusCoordinator::deinit()
         if(mUart)
         {
             // todo: wait until S_IDLE before disable bus
-            cancel_repeating_timer(&mScanAlertTimer);
+            mScanTimer->delTimer();
+            mTimeoutTimer->delTimer();
+            mEchoTimer->delTimer();
+            mCooldownTimer->delTimer();
             mUart->installRxCb(0, 0);
         }
 
         mUart = 0;
-        mParaTable = 0;
+        mPT = 0;
         
         mSeq->delTask(mCoorTaskId);
 
@@ -313,7 +321,7 @@ void TBusCoordinator::coorTask(void* aArg)
             {
                 // during the cooldown period we try to poll the slave until 
                 // it is available again or ther timer timed out
-                add_alarm_in_us(tmp->cooldown, coolDownCb, pObj, true);
+                pObj->mCooldownTimer->setTimer(tmp->cooldown);
                 pObj->mCoolDown = true;
                 pObj->mCoolDownTimout = false;
 
@@ -566,7 +574,7 @@ void TBusCoordinator::coorTask(void* aArg)
                     case RM_getUid:
                     {
                         uint32_t locUid;
-                        pObj->mParaTable->getPara(0, &locUid);
+                        pObj->mPT->getPara(0, &locUid);
                         if(tmp->reqCb != 0)
                             tmp->reqCb(tmp->arg, &locUid, EC_SUCCESS);
                     }
@@ -577,7 +585,7 @@ void TBusCoordinator::coorTask(void* aArg)
                         {
                             if(tmp->write)
                             {
-                                pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
+                                pObj->mPT->setPara(tmp->paraAdr, tmp->data);
                                 if(tmp->reqCb != 0)
                                     tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
                             }
@@ -586,7 +594,7 @@ void TBusCoordinator::coorTask(void* aArg)
                                 uint32_t data;
                                 if(tmp->reqCb != 0)
                                 {
-                                    if(pObj->mParaTable->getPara(tmp->paraAdr, &data))
+                                    if(pObj->mPT->getPara(tmp->paraAdr, &data))
                                         tmp->reqCb(tmp->arg, &data, EC_SUCCESS);
                                     else
                                         tmp->reqCb(tmp->arg, 0, EC_INVALID_REGADR);
@@ -606,14 +614,14 @@ void TBusCoordinator::coorTask(void* aArg)
                     {
                         if(tmp->write)
                         {
-                            pObj->mParaTable->setPara(tmp->paraAdr, tmp->data);
+                            pObj->mPT->setPara(tmp->paraAdr, tmp->data);
                             if(tmp->reqCb != 0)
                                 tmp->reqCb(tmp->arg, &tmp->data, EC_SUCCESS);
                         }
                         else
                         {
                             uint32_t data;
-                            errCode_T ec = pObj->mParaTable->getPara(tmp->paraAdr, &data);
+                            errCode_T ec = pObj->mPT->getPara(tmp->paraAdr, &data);
                             if(tmp->reqCb != 0)
                             {
                                 if(ec == EC_SUCCESS)
@@ -653,11 +661,11 @@ void TBusCoordinator::rxCb(void* aArg)
         if(!tmp->write && pObj->mByteCntR == 4)
         {
             // cancle timeout for echo reception
-            cancel_alarm(pObj->mTimeoutId);
+            pObj->mEchoTimer->stopTimer();
             pObj->mUart->disableTx(true);
 
             // start timout for answare
-            pObj->mTimeoutId = add_alarm_in_us(pObj->mReqTimeoutUs, pObj->timeOutCb, (void*) pObj, true);
+            pObj->mTimeoutTimer->setTimer(pObj->mReqTimeoutUs);
         }
 
         if(!tmp->write && pObj->mByteCntR > 4)
@@ -680,7 +688,7 @@ void TBusCoordinator::rxCb(void* aArg)
                     pObj->mCrcB[pObj->mByteCntR-9] = byte;
                     if(pObj->mByteCntR == 12)
                     {
-                        cancel_alarm(pObj->mTimeoutId);
+                        pObj->mTimeoutTimer->stopTimer();
                         pObj->mState = S_READY;
                         pObj->mSeq->queueTask(pObj->mCoorTaskId);
                         pObj->mUart->disableTx(false);
@@ -700,7 +708,7 @@ void TBusCoordinator::rxCb(void* aArg)
     {
         // cancle timeout for echo reception
         pObj->mState = S_READY;
-        cancel_alarm(pObj->mTimeoutId);
+        pObj->mEchoTimer->stopTimer();
 
         pObj->mSeq->queueTask(pObj->mCoorTaskId);
     }
@@ -735,9 +743,9 @@ void TBusCoordinator::sendReq()
                 }
 
                 if(tmp->write)
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs * 12, echoErrCb, (void*) this, true);
+                    mEchoTimer->setTimer(mByteTimeoutUs * 12);
                 else
-                    mTimeoutId = add_alarm_in_us(mByteTimeoutUs * 4, echoErrCb, (void*) this, true);
+                    mEchoTimer->setTimer(mByteTimeoutUs * 4);
 
                 mState = S_DEVADR;
                 mByteCntW = 1;
@@ -809,7 +817,7 @@ void TBusCoordinator::sendReq()
     }
 }
 
-int64_t TBusCoordinator::timeOutCb(alarm_id_t id, void* aArg)
+uint32_t TBusCoordinator::timeOutCb(void* aArg)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) aArg;
 
@@ -823,7 +831,7 @@ int64_t TBusCoordinator::timeOutCb(alarm_id_t id, void* aArg)
     return 0;
 }
 
-int64_t TBusCoordinator::echoErrCb(alarm_id_t id, void* aArg)
+uint32_t TBusCoordinator::echoErrCb(void* aArg)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) aArg;
 
@@ -837,7 +845,7 @@ int64_t TBusCoordinator::echoErrCb(alarm_id_t id, void* aArg)
     return 0;
 }
 
-int64_t TBusCoordinator::coolDownCb(alarm_id_t id, void* aArg)
+uint32_t TBusCoordinator::coolDownCb(void* aArg)
 {
     TBusCoordinator* pObj = (TBusCoordinator*) aArg;
 
@@ -846,12 +854,12 @@ int64_t TBusCoordinator::coolDownCb(alarm_id_t id, void* aArg)
     return 0;
 }
 
-bool TBusCoordinator::scanAlert(repeating_timer_t *rt)
+uint32_t TBusCoordinator::scanAlert(void* aArg)
 {
-    TBusCoordinator* pObj = (TBusCoordinator*) rt->user_data;
+    TBusCoordinator* pObj = (TBusCoordinator*) aArg;
     pObj->scan();
 
-    return true;
+    return pObj->mScanIntervallUs;
 }
 
 void TBusCoordinator::installDeviceListUpdateCb(void (*mDeviceListChangedCb)(void* aArg, uint32_t* aUidList, uint32_t listLen), void* mDeviceListChangedCbArg)
@@ -868,12 +876,13 @@ GM_busMaster::GM_busMaster()
 extern uint32_t __flash_binary_start;
 extern uint32_t __flash_binary_end;
 
-void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TParaTable* aParaTable)
+void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, TTimerServer* aTimerServer, TParaTable* aParaTable)
 {
     if(!mInit)
     {
         mSeq = aSeq;
         mPT = aParaTable;
+        mTS = aTimerServer;
         mPT->getPara(CSystemBaseRegAdr + TEpSysDefs::PARA_FWVERSION, &mFWVer);
         mFWUpdateCnt = false;
 
@@ -895,7 +904,7 @@ void GM_busMaster::init(TUart** aUartList, uint32_t aListLen, TSequencer* aSeq, 
             mCbData[i].pObj = this;
             mCbData[i].busIndex = i;
             mBusCoor[i].installDeviceListUpdateCb(mDevListUpCb, &mCbData[i]);
-            mBusCoor[i].init(aUartList[i - 1], aSeq);
+            mBusCoor[i].init(aUartList[i - 1], aSeq, aTimerServer);
         }
 
         for(int i = aListLen + 1; i < GM_MAXUARTS + 1; i++)

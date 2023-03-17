@@ -7,6 +7,7 @@
 #include "sequencer_armm0.h"
 #include "gm_busDefs.h"
 #include "pico/platform.h"
+#include "rp_timerServer.h"
 
 class GM_busSlave : public GM_BusDefs
 {
@@ -21,10 +22,10 @@ private:
     } com_t;
     com_t mCom[2];
 
-    static void rx0CbWrapper(void* aPObj);
-    static void rx1CbWrapper(void* aPObj);
-    static int64_t timeOutCb(alarm_id_t id, void* aPObj);
-    static int64_t regTimeOutCb(alarm_id_t id, void* aPObj);
+    static void __time_critical_func(rx0CbWrapper)(void* aPObj);
+    static void __time_critical_func(rx1CbWrapper)(void* aPObj);
+    static uint32_t timeOutCb(void* aPObj);
+    static uint32_t regTimeOutCb(void* aPObj);
 
     void __time_critical_func(rxCb)(com_t* aCom);
 
@@ -70,11 +71,12 @@ private:
     uint32_t mByteTimeoutUs;
     uint32_t mTurnAroundTimeout;
 
-    alarm_id_t mTimeoutId;
-    alarm_id_t mRegTimeoutId;
+    TTimer* mTimeoutTimer;
+    TTimer* mRegTimeoutTimer;
 
     TParaTable* mParaTable;
     TSequencer* mSeq;
+    TTimerServer* mTS;
 
     uint8_t mParaRWTaskId;
     bool mRegTimeOutFlag;
@@ -86,7 +88,7 @@ private:
 
 public:
     GM_busSlave();
-    void init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq);
+    void init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSequencer* aSeq, TTimerServer* aTimerServer);
     bool isInit(){ return mInit; };
     void deinit();
 };

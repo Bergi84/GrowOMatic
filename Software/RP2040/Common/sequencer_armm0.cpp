@@ -60,8 +60,10 @@ bool TSequencer::addTask(uint8_t &aSeqID, void (*aPFunc)(void*) , void* aPArg)
 
           uint32_t status = spin_lock_blocking(mSpinLock);
 
+          __dmb();
           mQueuedTask[i] &= ~mask;
           mUsedId[i] |= mask;
+          __dmb();
 
           spin_unlock(mSpinLock, status);
 
@@ -135,9 +137,9 @@ bool TSequencer::queueTask(uint8_t aSeqID)
   if(mUsedId[i] & mask)
   {
     uint32_t status = spin_lock_blocking(mSpinLock);
-
+    __dmb();
     mQueuedTask[i] |= mask;
-
+    __dmb();
     spin_unlock(mSpinLock, status);
 
     return true;
@@ -223,9 +225,9 @@ inline void TSequencer::startTask(uint8_t stackInd, uint8_t taskInd)
   // can be modified from interrupt context
   // and is not a atomic instruction
   uint32_t status = spin_lock_blocking(mSpinLock);
-
+  __dmb();
   mQueuedTask[i] &= ~mask;
-
+  __dmb();
   spin_unlock(mSpinLock, status);
 
   taskCbRec_t* task = &tasks[taskInd];
