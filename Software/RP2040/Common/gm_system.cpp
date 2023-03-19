@@ -198,7 +198,6 @@ void TSystem::paraFwLenCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool a
 
 void TSystem::paraFwDataCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gDebug.setPin(5);
     TSystem* pObj = (TSystem*) aCbArg;
 
     if(pObj->mFwDataBufInd == 0 && pObj->mFwFlashOff == 0 && pObj->mFwLen > 0)
@@ -213,7 +212,6 @@ void TSystem::paraFwDataCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool 
         pObj->mFwCrc = TFlash::crcCalc(pObj->mFwCrc, aPParaRec->para);
     }
     pObj->mFwDataBufInd++;
-    gDebug.resetPin(5);
 }
 
 extern uint32_t __flash_binary_start;
@@ -232,9 +230,6 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
             TFlash::storePage(FLASH_FW_BUFFER + (pObj->mFwFlashOff << 2), (uint8_t*) pObj->mFwDataBuf);
             pObj->mFwFlashOff += (FLASH_PAGE_SIZE >> 2);
 
-            if(pObj->mFwFlashOff == FLASH_PAGE_SIZE >> 1)
-                while(1);
-
             if(lastPage)
             {
                 // update firmware
@@ -244,12 +239,12 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
                 // multicore_lockout_start_blocking();
                 multicore_lockout_start_timeout_us((uint64_t)356*24*60*60*1000*1000);
 
-                // thired step: erase firmware
+                // second step: erase firmware
                 // after this step no execution from to flash is allowed
                 uint32_t eraseSize = (((pObj->mFwLen << 2) + FLASH_SECTOR_SIZE - 1)/FLASH_SECTOR_SIZE)*FLASH_SECTOR_SIZE;
                 flash_range_erase(0, eraseSize);
 
-                // fifth step: copy page wise the firmware from buffer to firmware location
+                // thrith step: copy page wise the firmware from buffer to firmware location
                 uint32_t cpyPos = 0;
                 uint32_t* flashBuffer = (uint32_t*) (((uint32_t) &__flash_binary_start) + FLASH_FW_BUFFER);
                 while(cpyPos < pObj->mFwFlashOff)
@@ -261,13 +256,21 @@ void TSystem::paraFwCrc(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWr
                     cpyPos += (FLASH_PAGE_SIZE >> 2);
                 }
 
-                // fourth step reboot
+                uint32_t* flash = (uint32_t*) ((uint32_t) &__flash_binary_start);
+                for(int i = 0; i < pObj->mFwLen; i++)
+                {
+                    if(flash[i] != flashBuffer[i])
+                        while(1);
+                }
+
+                // fourth step
                 sysReset();
             }
             return;
         }
         else
         {
+            gDebug.setPin(0);
             pObj->mFwLen = 0;
             pObj->mFwCrc = -2;  
         }

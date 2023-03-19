@@ -12,8 +12,6 @@ void GM_busSlave::init(TUart *aUart0, TUart *aUart1, TParaTable *aParaTable, TSe
 {
     if(!mInit)
     {
-        gDebug.resetPin(2);
-
         mByteTimeUs = (9999999 + mBaudRate)/mBaudRate;
         mByteTimeoutUs = (mByteTimeUs*19) >> 4;     // 118,75% of byte time
         mCom[0].errCnt = 0;
@@ -272,7 +270,6 @@ void GM_busSlave::rxCb (com_t* aCom)
                     aCom->byteCnt = 0;
                     if(mCrc.dw == mCrcCalc.dw)
                     {
-                        gDebug.setPin(7);
                         mRegTimeOutFlag = false;
                         mSeq->queueTask(mParaRWTaskId);
                         
@@ -280,7 +277,6 @@ void GM_busSlave::rxCb (com_t* aCom)
                         // if the request is not written fast enougth the following
                         // datagramm can overwrite data
                         mRegTimeoutTimer->setTimer(mByteTimeUs>>2);
-                        gDebug.resetPin(7);
                     }
                 }
                 else
@@ -431,8 +427,6 @@ uint32_t GM_busSlave::timeOutCb(void* aPObj)
 {
     GM_busSlave* pObj = (GM_busSlave*) aPObj;
 
-    gDebug.setPin(3);
-
     if(pObj->mState != S_DATA || pObj->mRegAdr.w != 0)
     {
         if(pObj->mCom[0].reqR || pObj->mCom[1].sec)
@@ -444,8 +438,6 @@ uint32_t GM_busSlave::timeOutCb(void* aPObj)
     }
 
     pObj->resetSlave();
-
-    gDebug.resetPin(3);
 
     return 0;
 }
@@ -467,21 +459,16 @@ void GM_busSlave::resetSlave()
 
 uint32_t GM_busSlave::regTimeOutCb(void* aPObj)
 {
-    gDebug.setPin(4);
 
     GM_busSlave* pObj = (GM_busSlave*) aPObj;
 
     pObj->mRegTimeOutFlag = true;
-
-    gDebug.resetPin(4);
 
     return 0;
 }
 
 void GM_busSlave::paraRW(void* aArg)
 {
-    gDebug.setPin(6);
-
     GM_busSlave* pObj = (GM_busSlave*) aArg;
 
     if(pObj->mWrite)
@@ -541,6 +528,4 @@ void GM_busSlave::paraRW(void* aArg)
             pObj->resetSlave();
         }
     }
-
-    gDebug.resetPin(6);
 }
