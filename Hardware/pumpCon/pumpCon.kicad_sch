@@ -3448,7 +3448,7 @@
     (property "Reference" "R1" (id 0) (at 36.83 58.42 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "20R" (id 1) (at 38.1 60.96 90)
+    (property "Value" "10R" (id 1) (at 38.1 60.96 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 36.83 59.182 90)
@@ -3486,7 +3486,7 @@
     (property "Reference" "R24" (id 0) (at 233.68 138.43 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (id 1) (at 234.95 140.97 90)
+    (property "Value" "100R" (id 1) (at 236.22 140.97 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 233.68 139.192 90)
@@ -3993,7 +3993,7 @@
     (property "Reference" "R2" (id 0) (at 36.83 63.5 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "20R" (id 1) (at 38.1 66.04 90)
+    (property "Value" "10R" (id 1) (at 38.1 66.04 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 36.83 64.262 90)
@@ -4517,7 +4517,7 @@
     (property "Reference" "R25" (id 0) (at 233.68 148.59 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (id 1) (at 234.95 151.13 90)
+    (property "Value" "100R" (id 1) (at 236.22 151.13 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 233.68 149.352 90)
@@ -4642,7 +4642,7 @@
     (property "Reference" "L1" (id 0) (at 88.9 43.1799 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "600R" (id 1) (at 88.9 45.7199 0)
+    (property "Value" "22uH" (id 1) (at 88.9 45.7199 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Inductor_SMD:L_0603_1608Metric" (id 2) (at 87.63 44.45 0)
@@ -6385,7 +6385,7 @@
       (reference "J19") (unit 1) (value "Conn_01x05") (footprint "Connector_JST:JST_EH_B5B-EH-A_1x05_P2.50mm_Vertical")
     )
     (path "/b61ec1ed-0168-4f25-9f19-921cc4714e44"
-      (reference "L1") (unit 1) (value "600R") (footprint "Inductor_SMD:L_0603_1608Metric")
+      (reference "L1") (unit 1) (value "22uH") (footprint "Inductor_SMD:L_0603_1608Metric")
     )
     (path "/71e2a85c-5bc4-4103-8314-a44234d2543f"
       (reference "L2") (unit 1) (value "6.8u") (footprint "Inductor_SMD:L_Taiyo-Yuden_NR-30xx")
@@ -6406,10 +6406,10 @@
       (reference "L7") (unit 1) (value "33µ") (footprint "Inductor_SMD:L_12x12mm_H8mm")
     )
     (path "/63900c90-3411-4f47-a561-1b9315c23a54"
-      (reference "R1") (unit 1) (value "20R") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R1") (unit 1) (value "10R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/87e568d4-5cea-49a3-bb17-5754ec4c853c"
-      (reference "R2") (unit 1) (value "20R") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R2") (unit 1) (value "10R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/9f1ffac8-47b9-4555-9727-f60425405e62"
       (reference "R3") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
@@ -6475,10 +6475,10 @@
       (reference "R23") (unit 1) (value "38k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/64e4c45e-2790-461b-8350-3a4b913f4f00"
-      (reference "R24") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R24") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/ab4bff62-ea6d-41b4-b863-5a9115e520d1"
-      (reference "R25") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R25") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/ef3fe419-54ef-4cc2-a084-79bf7e3147f8"
       (reference "R26") (unit 1) (value "157k") (footprint "Resistor_SMD:R_0603_1608Metric")

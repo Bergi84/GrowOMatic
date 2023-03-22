@@ -2178,7 +2178,7 @@
     (property "Reference" "L1" (id 0) (at 90.17 40.6399 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "600R" (id 1) (at 90.17 43.1799 0)
+    (property "Value" "22uH" (id 1) (at 90.17 43.1799 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Inductor_SMD:L_0603_1608Metric" (id 2) (at 88.9 41.91 0)
@@ -2361,7 +2361,7 @@
     (property "Reference" "R14" (id 0) (at 157.48 148.59 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (id 1) (at 158.75 151.13 90)
+    (property "Value" "100R" (id 1) (at 160.02 151.13 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 157.48 149.352 90)
@@ -2646,7 +2646,7 @@
     (property "Reference" "R2" (id 0) (at 38.1 60.96 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "20R" (id 1) (at 39.37 63.5 90)
+    (property "Value" "10R" (id 1) (at 39.37 63.5 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 38.1 61.722 90)
@@ -2779,7 +2779,7 @@
     (property "Reference" "R1" (id 0) (at 38.1 55.88 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "20R" (id 1) (at 39.37 58.42 90)
+    (property "Value" "10R" (id 1) (at 39.37 58.42 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 38.1 56.642 90)
@@ -3399,7 +3399,7 @@
     (in_bom yes) (on_board yes)
     (uuid 71927b46-ada4-4e15-b493-b800e53cc089)
     (property "Reference" "D5" (id 0) (at 162.56 59.69 0))
-    (property "Value" "Green" (id 1) (at 161.29 54.61 0))
+    (property "Value" "red" (id 1) (at 161.29 54.61 0))
     (property "Footprint" "LED_SMD:LED_0603_1608Metric" (id 2) (at 165.1 57.15 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -3546,7 +3546,7 @@
     (in_bom yes) (on_board yes)
     (uuid 92ebece5-f029-40b4-9292-c2dc77e6dabc)
     (property "Reference" "D2" (id 0) (at 146.05 59.69 0))
-    (property "Value" "Green" (id 1) (at 144.78 54.61 0))
+    (property "Value" "red" (id 1) (at 144.78 54.61 0))
     (property "Footprint" "LED_SMD:LED_0603_1608Metric" (id 2) (at 148.59 57.15 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -4525,7 +4525,7 @@
     (property "Reference" "R15" (id 0) (at 157.48 138.43 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (id 1) (at 158.75 140.97 90)
+    (property "Value" "100R" (id 1) (at 160.02 140.97 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 157.48 139.192 90)
@@ -4985,7 +4985,7 @@
       (reference "D1") (unit 1) (value "BAT54W") (footprint "Diode_SMD:D_SOD-323")
     )
     (path "/92ebece5-f029-40b4-9292-c2dc77e6dabc"
-      (reference "D2") (unit 1) (value "Green") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D2") (unit 1) (value "red") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/f8f10886-3b6c-4e22-a63f-f0a82f09200d"
       (reference "D3") (unit 1) (value "Green") (footprint "LED_SMD:LED_0603_1608Metric")
@@ -4994,7 +4994,7 @@
       (reference "D4") (unit 1) (value "Yellow") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/71927b46-ada4-4e15-b493-b800e53cc089"
-      (reference "D5") (unit 1) (value "Green") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D5") (unit 1) (value "red") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/6a009069-99bb-4809-b57a-c8285f00205b"
       (reference "D6") (unit 1) (value "Yellow") (footprint "LED_SMD:LED_0603_1608Metric")
@@ -5033,7 +5033,7 @@
       (reference "J7") (unit 1) (value "Conn_01x02") (footprint "Connector_JST:JST_EH_S2B-EH_1x02_P2.50mm_Horizontal")
     )
     (path "/01443907-a10f-48eb-84b8-03c86efac89b"
-      (reference "L1") (unit 1) (value "600R") (footprint "Inductor_SMD:L_0603_1608Metric")
+      (reference "L1") (unit 1) (value "22uH") (footprint "Inductor_SMD:L_0603_1608Metric")
     )
     (path "/232d1454-bc9c-4835-a6b7-e8e9071904ee"
       (reference "L2") (unit 1) (value "10µ") (footprint "Inductor_SMD:L_0805_2012Metric")
@@ -5045,10 +5045,10 @@
       (reference "L4") (unit 1) (value "33µ") (footprint "Inductor_SMD:L_12x12mm_H8mm")
     )
     (path "/2d0f0fc5-8692-4d86-92a2-27280a3b39ee"
-      (reference "R1") (unit 1) (value "20R") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R1") (unit 1) (value "10R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/20f6488f-7f82-48f9-a32e-a63c9f8ffe3c"
-      (reference "R2") (unit 1) (value "20R") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R2") (unit 1) (value "10R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/1d87027e-5601-4c9a-9961-59bcc8def247"
       (reference "R3") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
@@ -5084,10 +5084,10 @@
       (reference "R13") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/11e7c2fc-97ea-4b1c-9dac-b6a19fe2b44f"
-      (reference "R14") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R14") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/fd4aa458-da66-4856-ab10-ff957768e780"
-      (reference "R15") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R15") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/e6afa010-749a-4975-bf50-cf6ca677fcf7"
       (reference "R16") (unit 1) (value "27k") (footprint "Resistor_SMD:R_0603_1608Metric")
