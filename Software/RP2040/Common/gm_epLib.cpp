@@ -123,6 +123,17 @@ TEpCapLevel::TEpCapLevel(GM_device* aDev)
     mNext = 0;
 }
 
+TEpPeriPump::TEpPeriPump(GM_device* aDev)
+{
+    mType = cType;
+    mParaList = cParaList;
+    mParaListLen = cParaListLength;
+    mTypeName = cTypeName;
+    mPDev = aDev;
+    mName[0] = 0;
+    mNext = 0;
+}
+
 TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
 {
     switch(aEpType)
@@ -135,6 +146,9 @@ TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
 
         case EPT_CAPLEVEL:
             return new TEpCapLevel(aDev);
+
+        case EPT_PERIPUMP:
+            return new TEpPeriPump(aDev);
 
         default:
             return 0;

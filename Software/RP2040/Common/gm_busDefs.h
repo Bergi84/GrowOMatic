@@ -36,6 +36,7 @@ static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0020;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
 static constexpr uint32_t CCapLevelBaseRegAdr = 0x0200;
+static constexpr uint32_t CPeriPumpBaseRegAdr = 0x0200;
 
 static constexpr paraDef_t CEpNameDefs[] = {
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
@@ -58,14 +59,16 @@ typedef enum {
     DT_INVALID,
     DT_DUAL_LEVEL_SENSOR = 1,
     DT_DUAL_VALVE_CON = 2,
-    DT_PICO_BOARD = 3
+    DT_PICO_BOARD = 3,
+    DT_PUMP_CON = 4,
 } devType_t;
 
 constexpr const char* cDevTypeName[] = {
     [DT_INVALID] =              "unknowen",
     [DT_DUAL_LEVEL_SENSOR] =    "DualLevelSensor",
     [DT_DUAL_VALVE_CON] =       "DualValveSensor",
-    [DT_PICO_BOARD] =           "PicoBoard"
+    [DT_PICO_BOARD] =           "PicoBoard",
+    [DT_PUMP_CON] =             "PumpController"
 };
 
 typedef enum
@@ -97,7 +100,8 @@ typedef enum {
     EPT_SYSTEM = 1,
     EPT_EPLIST = 2,
     EPT_BUS = 3,
-    EPT_CAPLEVEL = 4
+    EPT_CAPLEVEL = 4,
+    EPT_PERIPUMP = 5
 } epType_t; 
 
 class TEpSysDefs
@@ -258,6 +262,31 @@ protected:
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "capLevel";
+};
+
+class TEpPeriPumpDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_SPEED,
+        PARA_POS,
+        PARA_MAXSPEED,
+        PARA_ACCEL
+    } paraInd_t; 
+
+    static constexpr epType_t cType = EPT_CAPLEVEL;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_SPEED] =       {PARA_FLAG_W | PARA_FLAG_FW,   "speed"},                 // steps/s
+        [PARA_POS] =         {PARA_FLAG_R | PARA_FLAG_S,    "pos"},                   // steps
+        [PARA_MAXSPEED] =    {PARA_FLAG_RW,                 "maxSpeed"},              // steps/s
+        [PARA_ACCEL] =       {PARA_FLAG_FW | PARA_FLAG_R,   "accel"}                  // steps/s^2
+
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "periPump";   
 };
 
 #endif /* GM_BUSDEFS_H_*/

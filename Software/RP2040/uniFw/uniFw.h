@@ -45,10 +45,6 @@
 #define gpio_pc_uart1_tx            4
 #define gpio_pc_uart1_rx            5    
 #define gpio_pc_systemLed           6
-#define gpio_pc_spiEn               8
-#define gpio_pc_spiCs               9
-#define gpio_pc_spiClk              10
-#define gpio_pc_spiD                11
 #define gpio_pc_pwmP0               12
 #define gpio_pc_enP0                13
 #define gpio_pc_pwmP1               14
@@ -58,7 +54,7 @@
 #define gpio_pc_usbPresent          18
 #define gpio_pc_flowPuls1           21
 #define gpio_pc_flowPuls0           23
-#define gpio_pc_ledDim              24
+#define gpio_pc_ledPwm              24
 #define gpio_pc_iSens0              26
 #define gpio_pc_iSens1              27
 #define gpio_pc_leakSens            29   

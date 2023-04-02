@@ -17,6 +17,7 @@
 #include "gm_dualCapSens.h"
 #include "gm_termMonitor.h"
 #include "rp_timerServer.h"
+#include "gm_peristalticPumpCon.h"
 
 // objekts used for each configutation
 TSequencer gSeq, gSeq_c1;
@@ -34,6 +35,7 @@ TTimerServer gTimeServer;
 
 // configutation depended objects
 GM_dualCapSense* gDualCapSens;
+gm_perestalticPumpCon* gPerPumpCon;
 
 
 // interrupt wrappers vor inline interrupt handlers
@@ -184,6 +186,25 @@ int main()
                 gPathMng.init(&gBus, &gParaTable);
             }
             break;
+
+        case DT_PUMP_CON:
+            {
+                gUart0.init(uart0, gpio_pc_uart0_tx, gpio_pc_uart0_rx);
+                gUart0.setIrqHandler(uart0IrqHandler);
+
+                gUart1.init(uart1, gpio_pc_uart1_tx, gpio_pc_uart1_rx);
+                gUart1.setIrqHandler(uart1IrqHandler);
+
+                gSystem.setSysLed(gpio_pc_systemLed);
+
+                TUart* uartList[] = {&gUart0,  &gUart1};
+                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
+
+                gPerPumpCon = new gm_perestalticPumpCon();
+                gPerPumpCon->init(&gParaTable, &gTimeServer);
+
+                gPathMng.init(&gBus, &gParaTable);
+            }
 
         default:
             gPathMng.init(0, &gParaTable);

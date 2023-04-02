@@ -117,4 +117,15 @@ public:
     // EP helper functions
 };
 
+class TEpPeriPump : public TEpBase, private TEpPeriPumpDefs
+{
+private:
+    TEpPeriPump();
+
+public:
+    TEpPeriPump(GM_device* aDev);
+    
+    // EP helper functions
+};
+
 #endif /*GM_LIB_H*/

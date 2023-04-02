@@ -1,0 +1,50 @@
+// X is the working register
+// Y holds the bits shifted out at each frame
+// sideset 0 = CS, sidest 1 = CLK
+.Program ioExpander
+    .origin 0
+    .side_set 2
+
+    .wrap_target
+    // stall until data are avialable and set clk and cs
+    pull                side 3
+
+    // load bit count from y to x
+    mov x, y            side 2
+
+    // shift out data until bit count is 0
+bitLoop:
+    out pins, 1         side 0
+    jmp x-- bitLoop     side 2
+    .wrap
+
+
+% c-sdk {
+
+static inline void ioExpander_init(PIO aPio, uint aSmNo, uint csGpio, uint dataGpio, uint bitCnt, uint aClkdDiv)
+{
+    pio_gpio_init(aPio, csGpio);
+    pio_gpio_init(aPio, csGpio + 1);
+    pio_gpio_init(aPio, dataGpio);
+
+    gpio_set_slew_rate (csGpio, GPIO_SLEW_RATE_FAST);
+    gpio_set_slew_rate (csGpio + 1, GPIO_SLEW_RATE_FAST);
+    gpio_set_slew_rate (dataGpio, GPIO_SLEW_RATE_FAST);
+
+    uint offsteIoExpander = pio_add_program(aPio, &ioExpander_program);
+    pio_sm_config cIoExpander = ioExpander_program_get_default_config(offsteIoExpander);
+    sm_config_set_clkdiv_int_frac(&cIoExpander, aClkdDiv, 0);
+    sm_config_set_sideset_pins(&cIoExpander, csGpio);
+    sm_config_set_out_pins(&cIoExpander, dataGpio, 1);
+    sm_config_set_out_shift(&cIoExpander, false, false, 32);
+
+    pio_sm_init(aPio, aSmNo, offsteIoExpander, &cIoExpander);
+    pio_sm_put(aPio, aSmNo, bitCnt);
+    pio_sm_exec(aPio, aSmNo, pio_encode_pull(false, false));
+    pio_sm_exec(aPio, aSmNo, pio_encode_mov(pio_y, pio_osr));
+    uint gpioMsk = (3 << csGpio) | (1 << dataGpio);
+    pio_sm_set_pindirs_with_mask(aPio, aSmNo, gpioMsk, gpioMsk);
+    pio_set_sm_mask_enabled (aPio, 1 << aSmNo, true); 
+}
+
+%}
