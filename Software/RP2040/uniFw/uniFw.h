@@ -29,6 +29,11 @@
 #define gpio_pb_dbg7                14
 #define gpio_pb_dbg8                15
 
+#define gpio_pb_stepper0            18
+#define gpio_pb_stepper1            19
+#define gpio_pb_stepper2            20
+#define gpio_pb_stepper3            21
+
 // dual level sensor defines
 
 #define gpio_dls_usbPresent         27

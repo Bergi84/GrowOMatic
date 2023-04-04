@@ -35,7 +35,6 @@ TTimerServer gTimeServer;
 
 // configutation depended objects
 GM_dualCapSense* gDualCapSens;
-gm_perestalticPumpCon* gPerPumpCon;
 
 
 // interrupt wrappers vor inline interrupt handlers
@@ -95,6 +94,12 @@ void installIrqOnC1(void (*aIrqHandler)(), void (*aIrqInstaller)(void* aArg, voi
 
     while(irqInstallPara.done == false);
     gSeq_c1.delTask(seqId);
+}
+
+void stepperTest(void* aArg, uint32_t aOut, uint32_t aMsk)
+{
+    sio_hw->gpio_clr = aMsk;
+    sio_hw->gpio_set = aOut & aMsk;
 }
 
 void idle(void* aArg)
@@ -160,6 +165,7 @@ int main()
 
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
+
                 gDualCapSens = new GM_dualCapSense();
                 gDualCapSens->init(&gParaTable);
                 installIrqOnC1(dualCapSensIrqHandler, gDualCapSens->setIrqHandler, gDualCapSens);
@@ -183,6 +189,13 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
+                // stepper test
+                gpio_init_mask((1<<gpio_pb_stepper0) | (1<<gpio_pb_stepper1) | (1<<gpio_pb_stepper2) | (1<<gpio_pb_stepper3));
+                gpio_set_dir_out_masked((1<<gpio_pb_stepper0) | (1<<gpio_pb_stepper1) | (1<<gpio_pb_stepper2) | (1<<gpio_pb_stepper3));
+                TStepperCon* stepperCon = new TStepperCon();
+                stepperCon->init(&gParaTable, &gTimeServer, 0x400, 0);
+                stepperCon->setOutCb(gpio_pb_stepper0, stepperTest, 0);                
+
                 gPathMng.init(&gBus, &gParaTable);
             }
             break;
@@ -200,8 +213,9 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gPerPumpCon = new gm_perestalticPumpCon();
-                gPerPumpCon->init(&gParaTable, &gTimeServer);
+                gm_perestalticPumpCon* perPumpCon;
+                perPumpCon = new gm_perestalticPumpCon();
+                perPumpCon->init(&gParaTable, &gTimeServer);
 
                 gPathMng.init(&gBus, &gParaTable);
             }

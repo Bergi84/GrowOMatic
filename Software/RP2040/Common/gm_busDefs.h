@@ -279,10 +279,10 @@ protected:
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_SPEED] =       {PARA_FLAG_W | PARA_FLAG_FW,   "speed"},                 // steps/s
-        [PARA_POS] =         {PARA_FLAG_R | PARA_FLAG_S,    "pos"},                   // steps
-        [PARA_MAXSPEED] =    {PARA_FLAG_RW,                 "maxSpeed"},              // steps/s
-        [PARA_ACCEL] =       {PARA_FLAG_FW | PARA_FLAG_R,   "accel"}                  // steps/s^2
+        [PARA_SPEED] =       {PARA_FLAG_W | PARA_FLAG_FW,               "speed"},                 // steps/s
+        [PARA_POS] =         {PARA_FLAG_R | PARA_FLAG_S,                "pos"},                   // steps
+        [PARA_MAXSPEED] =    {PARA_FLAG_RW | PARA_FLAG_NV,                 "maxSpeed"},              // steps/s
+        [PARA_ACCEL] =       {PARA_FLAG_FW | PARA_FLAG_R | PARA_FLAG_NV,   "accel"}                  // steps/s^2
 
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
