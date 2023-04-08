@@ -3,7 +3,6 @@
 #include "pico/multicore.h"
 #include "hardware/sync.h"
 #include "uniFw.h"
-#include "capSens.h"
 #include "sequencer_armm0.h"
 #include "rp_uart.h"
 #include "paraTable.h"
@@ -17,7 +16,7 @@
 #include "gm_dualCapSens.h"
 #include "gm_termMonitor.h"
 #include "rp_timerServer.h"
-#include "gm_peristalticPumpCon.h"
+#include "gm_pumpCon.h"
 
 // objekts used for each configutation
 TSequencer gSeq, gSeq_c1;
@@ -94,12 +93,6 @@ void installIrqOnC1(void (*aIrqHandler)(), void (*aIrqInstaller)(void* aArg, voi
 
     while(irqInstallPara.done == false);
     gSeq_c1.delTask(seqId);
-}
-
-void stepperTest(void* aArg, uint32_t aOut, uint32_t aMsk)
-{
-    sio_hw->gpio_clr = aMsk;
-    sio_hw->gpio_set = aOut & aMsk;
 }
 
 void idle(void* aArg)
@@ -187,14 +180,7 @@ int main()
                 gSystem.setSysLed(gpio_pb_systemLed);
 
                 TUart* uartList[] = {&gUart0,  &gUart1};
-                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
-
-                // stepper test
-                gpio_init_mask((1<<gpio_pb_stepper0) | (1<<gpio_pb_stepper1) | (1<<gpio_pb_stepper2) | (1<<gpio_pb_stepper3));
-                gpio_set_dir_out_masked((1<<gpio_pb_stepper0) | (1<<gpio_pb_stepper1) | (1<<gpio_pb_stepper2) | (1<<gpio_pb_stepper3));
-                TStepperCon* stepperCon = new TStepperCon();
-                stepperCon->init(&gParaTable, &gTimeServer, 0x400, 0);
-                stepperCon->setOutCb(gpio_pb_stepper0, stepperTest, 0);                
+                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);           
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -213,8 +199,8 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gm_perestalticPumpCon* perPumpCon;
-                perPumpCon = new gm_perestalticPumpCon();
+                gm_pumpCon* perPumpCon;
+                perPumpCon = new gm_pumpCon();
                 perPumpCon->init(&gParaTable, &gTimeServer);
 
                 gPathMng.init(&gBus, &gParaTable);

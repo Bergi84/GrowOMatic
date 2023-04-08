@@ -9,11 +9,11 @@ typedef struct
     uint16_t inst1;
     uint16_t inst2;
     uint16_t rsvd;
-    
+
     void* arg;
     void (*handler)(void* aArg);
 
-    typedef void (*irqHandler_t)(void*);
+    typedef void (*irqHandler_t)();
     irqHandler_t getFunc() {
         return (irqHandler_t) (((uint32_t) this) | 0x1);
     }

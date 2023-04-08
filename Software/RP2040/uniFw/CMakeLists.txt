@@ -29,8 +29,12 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dualCapSens.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_termMonitor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_timerServer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_peristalticPumpCon.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_stepperCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_pumpCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_stepperPhCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_adc.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_dmaIrqMng.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dcMotorCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/irqVeneer.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC
@@ -45,6 +49,10 @@ target_link_libraries(uniFw PUBLIC
     hardware_irq
     hardware_flash 
     hardware_watchdog
+    hardware_adc
+    hardware_dma
+    hardware_pwm
+    hardware_clocks
     pico_multicore 
     pico_unique_id 
     tinyusb_device 
@@ -55,8 +63,8 @@ target_compile_definitions(uniFw PUBLIC
     PICO_STACK_SIZE=0x1000
 )
 
-pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/capSens.pio)
-pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/ioExpander.pio)
+pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/rp_capSens.pio)
+pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/rp_ioExpander.pio)
 
 # exectue from ram
 # pico_set_binary_type(uniFw copy_to_ram)
