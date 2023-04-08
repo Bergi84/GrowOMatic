@@ -37,6 +37,7 @@ static constexpr uint32_t CEpListBaseRegAdr = 0x0020;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
 static constexpr uint32_t CCapLevelBaseRegAdr = 0x0200;
 static constexpr uint32_t CPeriPumpBaseRegAdr = 0x0200;
+static constexpr uint32_t CPumpBaseRegAdr = 0x400;
 
 static constexpr paraDef_t CEpNameDefs[] = {
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
@@ -101,7 +102,8 @@ typedef enum {
     EPT_EPLIST = 2,
     EPT_BUS = 3,
     EPT_CAPLEVEL = 4,
-    EPT_PERIPUMP = 5
+    EPT_STEPPERCON = 5,
+    EPT_DCMOTORCON = 6
 } epType_t; 
 
 class TEpSysDefs
@@ -264,7 +266,7 @@ protected:
     static constexpr char cTypeName[] = "capLevel";
 };
 
-class TEpPeriPumpDefs
+class TEpStepperConDefs
 {
 protected:
     typedef enum
@@ -272,21 +274,52 @@ protected:
         PARA_SPEED,
         PARA_POS,
         PARA_MAXSPEED,
-        PARA_ACCEL
+        PARA_ACCEL,
+        PARA_STEPS_PER_REV
     } paraInd_t; 
 
-    static constexpr epType_t cType = EPT_CAPLEVEL;
+    static constexpr epType_t cType = EPT_STEPPERCON;
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_SPEED] =       {PARA_FLAG_W | PARA_FLAG_FW,               "speed"},                 // steps/s
-        [PARA_POS] =         {PARA_FLAG_R | PARA_FLAG_S,                "pos"},                   // steps
-        [PARA_MAXSPEED] =    {PARA_FLAG_RW | PARA_FLAG_NV,                 "maxSpeed"},              // steps/s
-        [PARA_ACCEL] =       {PARA_FLAG_FW | PARA_FLAG_R | PARA_FLAG_NV,   "accel"}                  // steps/s^2
+        [PARA_SPEED] =          {PARA_FLAG_W | PARA_FLAG_FW,                  "speed"},              // milli Rev/s
+        [PARA_POS] =            {PARA_FLAG_R | PARA_FLAG_S,                   "pos"},                // milli Rev
+        [PARA_MAXSPEED] =       {PARA_FLAG_RW | PARA_FLAG_NV,                 "maxSpeed"},           // milli Rev/s
+        [PARA_ACCEL] =          {PARA_FLAG_FW | PARA_FLAG_R | PARA_FLAG_NV,   "accel"},              // milli Rev/s^2
+        [PARA_STEPS_PER_REV] =  {PARA_FLAG_RW | PARA_FLAG_NV,                 "stepsPeeRev"}         // steps/Rev
 
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
-    static constexpr char cTypeName[] = "periPump";   
+    static constexpr char cTypeName[] = "stepper";   
+};
+
+class TEpDcMotorConDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_PWMDUTY,
+        PARA_MAXPWMDUTY,
+        PARA_FRQU,
+        PARA_PWMRAMP,
+        PARA_CURRENT,
+        PARA_CUR_LIM
+    } paraInd_t; 
+
+    static constexpr epType_t cType = EPT_DCMOTORCON;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_PWMDUTY] =      {PARA_FLAG_W | PARA_FLAG_FW,                 "pwmDuty"},            // ‰
+        [PARA_MAXPWMDUTY] =   {PARA_FLAG_W | PARA_FLAG_NV,                 "pwmMaxDuty"},         // ‰
+        [PARA_FRQU] =         {PARA_FLAG_W | PARA_FLAG_FW | PARA_FLAG_NV,  "frquencie"},          // kHz
+        [PARA_PWMRAMP] =      {PARA_FLAG_W | PARA_FLAG_NV,                 "ramp"},               // ‰/s
+        [PARA_CURRENT] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "current"},            // mA
+        [PARA_CUR_LIM] =      {PARA_FLAG_W | PARA_FLAG_FW |PARA_FLAG_NV,   "currLim"}            // mA
+
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "dcMotor";   
 };
 
 #endif /* GM_BUSDEFS_H_*/

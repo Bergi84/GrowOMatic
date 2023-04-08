@@ -1,18 +1,19 @@
-#include "gm_stepperCon.h"
+#include "gm_stepperPhCon.h"
 #include <string.h>
 #include "pico/float.h"
 
-TStepperCon::TStepperCon() :
+TStepperPhCon::TStepperPhCon() :
 mPara( (TParaTable::paraRec_t[cParaListLength]) {
-    [PARA_SPEED] =      {.para = 0,   .pFAccessCb = paraSpeedCb,  .cbArg = this,  .defs = &cParaList[PARA_SPEED]},
-    [PARA_POS] =        {.para = 0,   .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_POS]},
-    [PARA_MAXSPEED] =   {.para = 100, .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_MAXSPEED]},
-    [PARA_ACCEL]  =     {.para = 20,  .pFAccessCb = paraAccCb,    .cbArg = this,     .defs = &cParaList[PARA_ACCEL]}
+    [PARA_SPEED] =          {.para = 0,     .pFAccessCb = paraSpeedCb,  .cbArg = this,  .defs = &cParaList[PARA_SPEED]},
+    [PARA_POS] =            {.para = 0,     .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_POS]},
+    [PARA_MAXSPEED] =       {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_MAXSPEED]},
+    [PARA_ACCEL]  =         {.para = 200,   .pFAccessCb = paraAccCb,    .cbArg = this,  .defs = &cParaList[PARA_ACCEL]},
+    [PARA_STEPS_PER_REV] =  {.para = 4096,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_STEPS_PER_REV]},
 }),
 mEp( (TParaTable::endpoint_t) {  
     { { 
         .baseInd = CPeriPumpBaseRegAdr,
-        .type = (uint16_t)EPT_PERIPUMP    
+        .type = (uint16_t)EPT_STEPPERCON    
     } }, 
     .length = cParaListLength, 
     .para = mPara,
@@ -23,7 +24,7 @@ mEp( (TParaTable::endpoint_t) {
     strncpy(mEp.epName, cTypeName, sizeof(mEp.epName));
 }
 
-void TStepperCon::init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr, uint32_t mIndex)
+void TStepperPhCon::init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr, uint32_t mIndex)
 {
     mPT = aPT;
     mTS = aTS;
@@ -41,7 +42,7 @@ void TStepperCon::init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr,
     mTimer = mTS->getTimer(timerCb, this);
 }
 
-void TStepperCon::setOutCb(uint32_t aOutShift, void (*aOutFunc)(void*, uint32_t, uint32_t), void* aArg)
+void TStepperPhCon::setOutCb(uint32_t aOutShift, void (*aOutFunc)(void*, uint32_t, uint32_t), void* aArg)
 {
     mOutShift = aOutShift;
     mOutMsk = 0x0000000F << aOutShift; 
@@ -51,9 +52,9 @@ void TStepperCon::setOutCb(uint32_t aOutShift, void (*aOutFunc)(void*, uint32_t,
     mSetOut(mSetOutArg, 0, mOutMsk);
 }
 
-void TStepperCon::paraSpeedCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void TStepperPhCon::paraSpeedCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    TStepperCon* pObj = (TStepperCon*) aCbArg;
+    TStepperPhCon* pObj = (TStepperPhCon*) aCbArg;
 
     int32_t vLoc = (int32_t)pObj->mPara[PARA_SPEED].para;
 
@@ -82,13 +83,13 @@ void TStepperCon::paraSpeedCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bo
         else
             pObj->mAktSpeed = -1*pObj->mInitSpeed;
 
-        pObj->mTimer->setTimer(1000000/pObj->mInitSpeed);
+        pObj->mTimer->setTimer((1000000*1000)/(pObj->mInitSpeed*pObj->mPara[PARA_STEPS_PER_REV].para));
     }
 }
 
-void TStepperCon::paraAccCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void TStepperPhCon::paraAccCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    TStepperCon* pObj = (TStepperCon*) aCbArg;
+    TStepperPhCon* pObj = (TStepperPhCon*) aCbArg;
 
     if(pObj->mPara[PARA_ACCEL].para == 0)
         pObj->mPara[PARA_ACCEL].para = 20;
@@ -96,9 +97,9 @@ void TStepperCon::paraAccCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool
     pObj->mInitSpeed = float2int(sqrtf(2*pObj->mPara[PARA_ACCEL].para));
 }
 
-uint32_t TStepperCon::timerCb(void *aArg)
+uint32_t TStepperPhCon::timerCb(void *aArg)
 {
-    TStepperCon* pObj = (TStepperCon*) aArg;
+    TStepperPhCon* pObj = (TStepperPhCon*) aArg;
 
     
     int32_t vLoc = (int32_t)pObj->mPara[PARA_SPEED].para;
@@ -142,8 +143,8 @@ uint32_t TStepperCon::timerCb(void *aArg)
         pObj->mAktSpeed = newSpeed;
 
         if(pObj->mAktSpeed == 0 && vLoc == 0)
-            return 1000000/pObj->mInitSpeed;
+            return (1000*1000000)/(pObj->mInitSpeed*pObj->mPara[PARA_STEPS_PER_REV].para);
         else
-            return time;
+            return (1000*time)/(pObj->mPara[PARA_STEPS_PER_REV].para);
     }
 }

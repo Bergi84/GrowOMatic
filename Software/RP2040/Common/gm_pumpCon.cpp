@@ -1,11 +1,11 @@
-#include "gm_peristalticPumpCon.h"
+#include "gm_pumpCon.h"
 
-gm_perestalticPumpCon::gm_perestalticPumpCon()
+gm_pumpCon::gm_pumpCon()
 {
 
 }
 
-void gm_perestalticPumpCon::init(TParaTable *aPT, TTimerServer *aTS)
+void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS)
 {
     mPT = aPT;
     mTS = aTS;

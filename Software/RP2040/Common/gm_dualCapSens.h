@@ -3,7 +3,7 @@
 
 #include "stdint.h"
 #include "gm_busDefs.h"
-#include "capSens.h"
+#include "rp_capSens.h"
 #include "paraTable.h"
 
 #define gpio_dls_capSensExc_base    0

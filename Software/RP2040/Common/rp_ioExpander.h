@@ -4,7 +4,7 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
-#include "ioExpander.pio.h"
+#include "rp_ioExpander.pio.h"
 
 class TIoExpander {
 private:

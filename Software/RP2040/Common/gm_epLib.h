@@ -117,7 +117,7 @@ public:
     // EP helper functions
 };
 
-class TEpPeriPump : public TEpBase, private TEpPeriPumpDefs
+class TEpPeriPump : public TEpBase, private TEpStepperConDefs
 {
 private:
     TEpPeriPump();

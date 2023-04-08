@@ -6,7 +6,7 @@
 #include "rp_timerServer.h"
 #include "gm_busDefs.h"
 
-class TStepperCon : public TEpPeriPumpDefs {
+class TStepperPhCon : public TEpStepperConDefs {
 private:
     static constexpr uint32_t cStepTable[] = {
         0x00000001,
@@ -35,7 +35,7 @@ private:
     static void paraAccCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
 
 public:
-    TStepperCon();
+    TStepperPhCon();
     void init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr, uint32_t mIndex);
     void setOutCb(uint32_t aOutShift, void (*aOutFunc)(void*, uint32_t, uint32_t), void* aArg);
 };

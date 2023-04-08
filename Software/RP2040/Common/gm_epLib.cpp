@@ -147,7 +147,7 @@ TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
         case EPT_CAPLEVEL:
             return new TEpCapLevel(aDev);
 
-        case EPT_PERIPUMP:
+        case EPT_STEPPERCON:
             return new TEpPeriPump(aDev);
 
         default:

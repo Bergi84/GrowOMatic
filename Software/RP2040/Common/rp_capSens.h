@@ -4,7 +4,7 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
-#include "capSens.pio.h"
+#include "rp_capSens.pio.h"
 #include "hardware/irq.h"
 
 #define MAX_SENSE_PIN_CNT   32
