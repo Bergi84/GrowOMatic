@@ -27,7 +27,7 @@ private:
     }
 
     // interrupt handler
-    static void irqHandler(void* aArg);
+    static void __time_critical_func(irqHandler)(void* aArg);
     void setIrqHandler(void(*aIrqHandler)());
 
     irqVeneer_t mIrqVeneer;
@@ -71,7 +71,7 @@ private:
     irq_handler_t mTusbIrq;
     bool mTxCbEn;
 
-    static void irqHandler(void* aArg);
+    static void __time_critical_func(irqHandler)(void* aArg);
     void setIrqHandler(void (*pFunc)());
 
     irqVeneer_t mIrqVeneer;
