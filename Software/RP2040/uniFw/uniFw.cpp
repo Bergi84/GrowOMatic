@@ -17,6 +17,7 @@
 #include "gm_termMonitor.h"
 #include "rp_timerServer.h"
 #include "gm_pumpCon.h"
+#include "irqVeneer.h"
 
 // objekts used for each configutation
 TSequencer gSeq, gSeq_c1;
@@ -36,30 +37,9 @@ TTimerServer gTimeServer;
 GM_dualCapSense* gDualCapSens;
 
 
-// interrupt wrappers vor inline interrupt handlers
-void __time_critical_func(uartTermIrqHandler)()
-{
-    gUartTerm.irqHandler();
-}
-
-void __time_critical_func(uart0IrqHandler)()
-{
-    gUart0.irqHandler();
-}
-
-void __time_critical_func(uart1IrqHandler)()
-{
-    gUart1.irqHandler();
-}
-
 void __time_critical_func(dualCapSensIrqHandler)()
 {
     gDualCapSens->irqHandler();
-}
-
-void __time_critical_func(timeServerIrqHandler)()
-{
-    gTimeServer.irqHandler();
 }
 
 typedef struct {
@@ -124,7 +104,6 @@ int main()
     gSeq.setIdleFunc(idle, NULL);
 
     gTimeServer.init();
-    gTimeServer.setIrqHandler(timeServerIrqHandler);
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
@@ -149,10 +128,7 @@ int main()
         case DT_DUAL_LEVEL_SENSOR:
             {
                 gUart0.init(uart0, gpio_dls_uart0_tx, gpio_dls_uart0_rx);
-                gUart0.setIrqHandler(uart0IrqHandler);
-
                 gUart1.init(uart1, gpio_dls_uart1_tx, gpio_dls_uart1_rx);
-                gUart1.setIrqHandler(uart1IrqHandler);
 
                 gSystem.setSysLed(gpio_dls_systemLed);
 
@@ -172,15 +148,12 @@ int main()
                 gDebug.init((1 << gpio_pb_dbg1) | (1 << gpio_pb_dbg2) | (1 << gpio_pb_dbg3) | (1 << gpio_pb_dbg4) | (1 << gpio_pb_dbg5) | (1 << gpio_pb_dbg6) | (1 << gpio_pb_dbg7) | (1 << gpio_pb_dbg8));
 
                 gUart0.init(uart0, gpio_pb_uart0_tx, gpio_pb_uart0_rx);
-                gUart0.setIrqHandler(uart0IrqHandler);
-
                 gUart1.init(uart1, gpio_pb_uart1_tx, gpio_pb_uart1_rx);
-                gUart1.setIrqHandler(uart1IrqHandler);
 
                 gSystem.setSysLed(gpio_pb_systemLed);
 
                 TUart* uartList[] = {&gUart0,  &gUart1};
-                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);           
+                gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);   
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -189,10 +162,7 @@ int main()
         case DT_PUMP_CON:
             {
                 gUart0.init(uart0, gpio_pc_uart0_tx, gpio_pc_uart0_rx);
-                gUart0.setIrqHandler(uart0IrqHandler);
-
                 gUart1.init(uart1, gpio_pc_uart1_tx, gpio_pc_uart1_rx);
-                gUart1.setIrqHandler(uart1IrqHandler);
 
                 gSystem.setSysLed(gpio_pc_systemLed);
 
@@ -217,7 +187,6 @@ int main()
     }
 
     gUartTerm.init(&gSeq);
-    gUartTerm.setIrqHandler(uartTermIrqHandler);
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 

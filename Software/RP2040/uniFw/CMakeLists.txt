@@ -34,7 +34,6 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_adc.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_dmaIrqMng.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dcMotorCon.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../common/irqVeneer.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC

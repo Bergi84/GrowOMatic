@@ -8,6 +8,7 @@
 #include "hardware/gpio.h"
 #include "tusb.h"
 #include "sequencer_armm0.h"
+#include "irqVeneer.h"
 
 class THwUart : public TUart
 {
@@ -24,6 +25,12 @@ private:
                                     (bool_to_bit(mRxCb != 0) << UART_UARTIMSC_RXIM_LSB) |
                                     (bool_to_bit(mRxCb != 0) << UART_UARTIMSC_RTIM_LSB);
     }
+
+    // interrupt handler
+    static void irqHandler(void* aArg);
+    void setIrqHandler(void(*aIrqHandler)());
+
+    irqVeneer_t mIrqVeneer;
 
 public:
     THwUart();
@@ -45,35 +52,7 @@ public:
     virtual void installTxCb(bool (*pFunc)(void*), void* aArg);
     virtual void disableFifo(bool aDis);
 
-    // interrupt handler
-    inline void irqHandler()
-    {
-        if( uart_get_hw(mUart)->imsc & UART_UARTIMSC_TXIM_BITS && 
-            uart_get_hw(mUart)->ris & UART_UARTRIS_TXRIS_BITS)
-        {
-            // debug trap, this should never occure:
-            if(!mTxCbEn)
-                while(1);
-
-            if(!mTxCb(mTxCbArg))
-            {
-                enIrqCb(false);
-            }
-        }
-
-        if( (uart_get_hw(mUart)->imsc & UART_UARTIMSC_RXIM_BITS  && 
-            uart_get_hw(mUart)->ris & UART_UARTRIS_RXRIS_BITS) ||
-            (uart_get_hw(mUart)->imsc & UART_UARTIMSC_RTIM_BITS  && 
-            uart_get_hw(mUart)->ris & UART_UARTRIS_RTRIS_BITS))
-        {
-            mRxCb(mRxCbArg);
-        }
-    }
-
-    // this function installs the irq handler and only accepts "C" functions
-    // or static memeber function. So we must provide an IRQ Handler wrapper function
-    // for our uart->irqHandler member function
-    void setIrqHandler(void(*aIrqHandler)());
+    
 };
 
 
@@ -91,6 +70,11 @@ private:
 
     irq_handler_t mTusbIrq;
     bool mTxCbEn;
+
+    static void irqHandler(void* aArg);
+    void setIrqHandler(void (*pFunc)());
+
+    irqVeneer_t mIrqVeneer;
 
 public:
     TUsbUart();
@@ -115,27 +99,6 @@ public:
     virtual void rxGetWait(void* &aAdr, uint32_t &aMsk) {};
     virtual void txGetWaitFree(void* &aAdr, uint32_t &aMsk) {};
     virtual void txGetWaitIdle(void* &aAdr, uint32_t &aMsk) {};
-
-    // must called inside the the usb irq Handler
-    inline void irqHandler()
-    {
-        mTusbIrq();
-        mSeq->queueTask(mTaskIdWorker);
-    }
-
-    // this function installs the irq handler and only accepts "C" functions
-    // or static memeber function. So we must provide an IRQ Handler wrapper function
-    // for our uart->irqHandler member function
-    void setIrqHandler(void (*pFunc)())
-    {
-        // tinyUSB has already installed an USB handler so we override this handler with ower own
-        // and call the tiny USB handler insider ower handler
-        mTusbIrq = irq_get_exclusive_handler(USBCTRL_IRQ);
-        irq_remove_handler(USBCTRL_IRQ, mTusbIrq);
-        irq_set_exclusive_handler(USBCTRL_IRQ, pFunc);
-        irq_set_enabled (USBCTRL_IRQ, true);
-        mSeq->queueTask(mTaskIdWorker);
-    }
 };
 
 #endif /* RP_UART_h_ */

@@ -31,9 +31,36 @@ void THwUart::init(uart_inst_t *aUart, uint8_t aTxGpio, uint8_t aRxGpio)
     uart_set_format(aUart, 8, 1, UART_PARITY_NONE);
 
     uart_set_fifo_enabled(aUart, true);
+
+    mIrqVeneer.init(this, irqHandler);
+    setIrqHandler(mIrqVeneer.getFunc());
 } 
 
+void THwUart::irqHandler(void* aArg)
+{
+    THwUart*pObj = (THwUart*) aArg;
 
+    if( uart_get_hw(pObj->mUart)->imsc & UART_UARTIMSC_TXIM_BITS && 
+        uart_get_hw(pObj->mUart)->ris & UART_UARTRIS_TXRIS_BITS)
+    {
+        // debug trap, this should never occure:
+        if(!pObj->mTxCbEn)
+            while(1);
+
+        if(!pObj->mTxCb(pObj->mTxCbArg))
+        {
+            pObj->enIrqCb(false);
+        }
+    }
+
+    if( (uart_get_hw(pObj->mUart)->imsc & UART_UARTIMSC_RXIM_BITS  && 
+        uart_get_hw(pObj->mUart)->ris & UART_UARTRIS_RXRIS_BITS) ||
+        (uart_get_hw(pObj->mUart)->imsc & UART_UARTIMSC_RTIM_BITS  && 
+        uart_get_hw(pObj->mUart)->ris & UART_UARTRIS_RTRIS_BITS))
+    {
+        pObj->mRxCb(pObj->mRxCbArg);
+    }
+}
 
 void THwUart::config(uint32_t aBaudRate, uartPar_t aParity)
 {
@@ -205,6 +232,27 @@ void TUsbUart::init(TSequencer *aSeq)
     mSeq->addTask(mTaskIdWorker, tusbWorker, this);
 
     tusb_init();
+    mIrqVeneer.init(this, irqHandler);
+    setIrqHandler(mIrqVeneer.getFunc());
+}
+
+void TUsbUart::irqHandler(void* aArg)
+{
+    TUsbUart* pObj = (TUsbUart*) aArg;
+
+    pObj->mTusbIrq();
+    pObj->mSeq->queueTask(pObj->mTaskIdWorker);
+}
+
+void TUsbUart::setIrqHandler(void (*pFunc)())
+{
+    // tinyUSB has already installed an USB handler so we override this handler with ower own
+    // and call the tiny USB handler insider ower handler
+    mTusbIrq = irq_get_exclusive_handler(USBCTRL_IRQ);
+    irq_remove_handler(USBCTRL_IRQ, mTusbIrq);
+    irq_set_exclusive_handler(USBCTRL_IRQ, pFunc);
+    irq_set_enabled (USBCTRL_IRQ, true);
+    mSeq->queueTask(mTaskIdWorker);
 }
 
 void TUsbUart::rxChar(uint8_t *aC)

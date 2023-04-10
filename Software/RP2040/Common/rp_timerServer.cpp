@@ -53,6 +53,62 @@ void TTimerServer::init()
 {
     mAlarmNum = hardware_alarm_claim_unused(true);
     mTimerList = 0;
+    mIrqVeneer.init(this, irqHandler);
+    setIrqHandler(mIrqVeneer.getFunc());
+}
+
+void TTimerServer::irqHandler(void* aArg)
+{
+    TTimerServer* pObj = (TTimerServer*) aArg;
+
+    uint32_t status = save_and_disable_interrupts();
+
+    timer_hw->intf &= ~(1u << pObj->mAlarmNum);
+
+    pObj->mAktTime = time_us_32();
+
+    gDebug.setPin(7);
+
+    bool timerDisarmed = false;
+    while(pObj->mTimerList != 0 && ((pObj->mTimerList->mTimerAlarmTic - pObj->mLastTime) <= (pObj->mAktTime - pObj->mLastTime)))
+    {
+        timerDisarmed = true;
+
+        TTimer* tmp = pObj->mTimerList;
+
+        // unqueue timer
+        pObj->unqueueTimer(pObj->mTimerList, false);
+
+        // excute call back
+        uint32_t retVal = tmp->mCbFunc(tmp->mCbArg);
+
+        // requeue timer
+        if(retVal > 0)
+        {
+            tmp->mTimerAlarmTic += retVal;
+            pObj->queueTimer(tmp, false);
+        }
+    }
+
+    if(pObj->mTimerList != 0 && timerDisarmed)
+    {
+        // start timer
+        timer_hw->alarm[pObj->mAlarmNum] = (uint32_t) pObj->mTimerList->mTimerAlarmTic;     // start timer
+
+        // check missing timer
+        uint32_t newTime = time_us_32();
+        if((pObj->mTimerList->mTimerAlarmTic - pObj->mAktTime) <= (newTime - pObj->mAktTime))
+        {
+            // new Time is past the aktive alarm
+            timer_hw->intf |= 1u << pObj->mAlarmNum;   // force interrupt
+        }
+    }
+
+    gDebug.resetPin(7);
+
+    pObj->mLastTime = pObj->mAktTime;
+
+    restore_interrupts(status);
 }
 
 void TTimerServer::setIrqHandler(void (*aIrqHandler)())
