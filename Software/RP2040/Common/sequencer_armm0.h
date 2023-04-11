@@ -68,6 +68,7 @@ public:
   bool delTask(uint8_t aSeqID);
   bool killTask(uint8_t aSeqID);
   bool __time_critical_func(queueTask)(uint8_t aSeqID);
+  bool taskDone(uint8_t aSeqID);
 
   // puase calling Task until given bool becomes true
   void waitForEvent(bool* aEvt);

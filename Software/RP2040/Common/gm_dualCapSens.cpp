@@ -93,11 +93,11 @@ mEndpoint( (TParaTable::endpoint_t[2]) {
     mEndpoint[2].epName[len+1] = 0;
 }
 
-void GM_dualCapSense::init(TParaTable* aParaTable)
+void GM_dualCapSense::init(TParaTable* aParaTable, TSequencer* aSeq_c1)
 {
     mPT = aParaTable;
 
-    mCapSens.init(pio0, gpio_dls_capSensExc_base, gpio_dls_capSens_base, gpio_dls_capSens_chNo, 0x000007FF, 62500, 125);
+    mCapSens.init(pio0, gpio_dls_capSensExc_base, gpio_dls_capSens_base, gpio_dls_capSens_chNo, 0x000007FF, 62500, 125, aSeq_c1);
 
     mPT->addEndpoint(&mEndpoint[0]);
     mPT->addEndpoint(&mEndpoint[1]);

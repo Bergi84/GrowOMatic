@@ -148,6 +148,15 @@ bool TSequencer::queueTask(uint8_t aSeqID)
   return false;
 }
 
+bool TSequencer::taskDone(uint8_t aSeqID)
+{
+  uint32_t i = aSeqID >> 5;
+  uint32_t j = aSeqID & 0x1F;
+  uint32_t mask = 1U << j;
+
+  return ((mQueuedTask[i] | mAktivTask[i]) & mask) == 0;
+}
+
 void TSequencer::waitForEvent(bool* aEvt)
 {
   if(aEvt == 0)

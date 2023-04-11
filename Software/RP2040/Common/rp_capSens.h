@@ -6,10 +6,13 @@
 #include "hardware/pio.h"
 #include "rp_capSens.pio.h"
 #include "hardware/irq.h"
+#include "irqVeneer.h"
+#include "sequencer_armm0.h"
 
 #define MAX_SENSE_PIN_CNT   32
 
 class TCapSens {
+private:
     PIO mPio;
     uint mExcPinBase;
     uint mSensPinBase;
@@ -25,166 +28,20 @@ class TCapSens {
 
     uint mMaxChgCnt;
 
-    inline void setSensCh(uint sm, uint gpio)
-    {
-        uint32_t tmp = mPio->sm[sm].execctrl;
-        tmp &= ~PIO_SM0_EXECCTRL_JMP_PIN_BITS;
-        tmp |= gpio << PIO_SM0_EXECCTRL_JMP_PIN_LSB;
-        mPio->sm[sm].execctrl = tmp;
-    }
+    irqVeneer_t mIrqVeneer;
 
-    inline void setNextSensPins()
-    {
-        uint tmp = mAktivPin;
-        for(int i = 0; i < 4; i++)
-        {
-            setSensCh(i, tmp + mSensPinBase);
-            if(tmp == mSensPinCount - 1)
-            {
-                tmp = 0;
-            }
-            else
-            {
-                tmp++;
-            }
-        }
-    }
+    inline void setSensCh(uint sm, uint gpio);
+    inline void setNextSensPins();
+    static void setIrqHandler(void* aArg);
+    static void __time_critical_func(irqHandler)(void *aArg);
 
 public:
     uint mCapVal[MAX_SENSE_PIN_CNT];
-    void init(PIO aPio, uint aExcPinBase, uint aSensPinBase, uint aSensPinCnt, uint aSensPinPolMsk, uint aMaxChgCnt, uint aDchgCnt)
-    {
-        mPio = aPio;
-        mExcPinBase = aExcPinBase;
-        mSensPinBase = aSensPinBase;
-        mSensPinCount = aSensPinCnt;
-        mSensPinPolMsk = aSensPinPolMsk;
-        mMaxChgCnt = aMaxChgCnt;
-
-        capSens_init(aPio, aExcPinBase, aSensPinBase, aSensPinCnt, aSensPinPolMsk, aMaxChgCnt, aDchgCnt);
-
-        for(uint i = 0; i < 4; i++)
-        {
-            mSumBuf[i] = 0;
-        }
-        for(uint i = 0; i < MAX_SENSE_PIN_CNT; i++)
-        {
-            mCapVal[i] = 0;
-        }
-        setOverSampling(256);
-        mSumCnt = 0;
-        mAktivPin = 0;
-
-        setNextSensPins();
-
-        mDebEmptyCall = 0;
-    }
-
-    void enable()
-    {
-        pio_set_sm_mask_enabled (mPio, 0xF, true); 
-    };
-
-    void setOverSampling(uint aSampleCnt)
-    {
-        uint tmp = aSampleCnt - 1;
-        uint cnt = 0;
-        while(tmp)
-        {
-            tmp >>= 1;
-            cnt++;
-        }
-
-        if(cnt < 4)
-            cnt = 4;
-
-
-        mSumShift = cnt - 4;
-        mMaxShift = 4;
-        mSampleCnt = 1 << cnt;
-    }
-
-    // this function installs the irq handler and only accepts "C" functions
-    // or static memeber function. So we must provide an IRQ Handler wrapper function
-    // for our capSens->irqHandler memeber function
-
-    void setIrqHandler(void (*aIrqHandler)(void))
-    {
-        pio_set_irq0_source_enabled(mPio, pis_interrupt0 , true);
-        if(mPio == pio0)
-        {       
-            irq_set_exclusive_handler(PIO0_IRQ_0, aIrqHandler);
-            irq_set_enabled(PIO0_IRQ_0, true);
-        }
-        else
-        {
-            irq_set_exclusive_handler(PIO1_IRQ_0, aIrqHandler);
-            irq_set_enabled(PIO1_IRQ_0, true);
-        }
-    }
-
     uint32_t mDebEmptyCall;
 
-    inline void irqHandler()
-    {
-        pio_interrupt_clear(mPio, 0);
+    void init(PIO aPio, uint aExcPinBase, uint aSensPinBase, uint aSensPinCnt, uint aSensPinPolMsk, uint aMaxChgCnt, uint aDchgCnt, TSequencer* aSeq_c1 = 0);
 
-        // for debugging, should never occure
-        // rx fifo has no Values
-
-        if((mPio->fstat & 0x00000F00) != 0)
-        {
-            mDebEmptyCall++;
-            return;
-        }
-
-        for(int i = 0; i < 4; i++)
-        {
-            mSumBuf[i] += mPio->rxf[i];
-        }
-
-        if(mSumCnt == mSampleCnt - 1)
-        {
-            // stop aquisition
-            mPio->irq_force = 0x02;
-
-            // clear fifo
-            while(!(mPio->fstat & 0x00000100))
-                volatile uint32_t dump = mPio->rxf[0];
-            while(!(mPio->fstat & 0x00000200))
-                volatile uint32_t dump = mPio->rxf[1];
-            while(!(mPio->fstat & 0x00000400))
-                volatile uint32_t dump = mPio->rxf[2];
-            while(!(mPio->fstat & 0x00000800))
-                volatile uint32_t dump = mPio->rxf[3];    
-
-            while(mPio->sm[0].addr != 20); // should be the wait instruction of master (wait 0 irq 1)
-
-            for(int i = 0; i < 4; i++)
-            {
-                mCapVal[mAktivPin] = (mMaxChgCnt << mMaxShift) - (mSumBuf[i] >> mSumShift);
-                mSumBuf[i] = 0;
-                if(mAktivPin == mSensPinCount - 1)
-                {
-                    mAktivPin = 0;
-                }
-                else
-                {
-                    mAktivPin++;
-                }
-            }
-            mSumCnt = 0;  
-
-            setNextSensPins();
-
-            // start pio
-            mPio->irq = 0x02;
-        }
-        else
-        {
-            mSumCnt++;
-        }
-    }
+    void setOverSampling(uint aSampleCnt);
 };
 
 #endif /* CAPSENS_H_ */

@@ -33,47 +33,7 @@ TFlash gTableStorage;
 gm_termMonitor gTermMonitor;
 TTimerServer gTimeServer;
 
-// configutation depended objects
-GM_dualCapSense* gDualCapSens;
 
-
-void __time_critical_func(dualCapSensIrqHandler)()
-{
-    gDualCapSens->irqHandler();
-}
-
-typedef struct {
-    void (*irqHandler)();
-    void (*irqInstaller)(void* aArg, void (*aIrqHandler)());
-    void* installerArg;
-    volatile bool done;
-} irqInstallPara_t;
-
-void irqInstaller(void* aArg)
-{
-    irqInstallPara_t* para = (irqInstallPara_t*) aArg;
-
-    para->irqInstaller(para->installerArg, para->irqHandler);
-
-    para->done = true;
-}
-
-void installIrqOnC1(void (*aIrqHandler)(), void (*aIrqInstaller)(void* aArg, void (*aIrqHandler)()), void* aArg )
-{
-    irqInstallPara_t irqInstallPara;
-
-    irqInstallPara.done = false;
-    irqInstallPara.irqHandler = aIrqHandler;
-    irqInstallPara.irqInstaller = aIrqInstaller;
-    irqInstallPara.installerArg = aArg;
-
-    uint8_t seqId;
-    gSeq_c1.addTask(seqId, irqInstaller, &irqInstallPara);
-    gSeq_c1.queueTask(seqId);
-
-    while(irqInstallPara.done == false);
-    gSeq_c1.delTask(seqId);
-}
 
 void idle(void* aArg)
 {
@@ -135,9 +95,8 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gDualCapSens = new GM_dualCapSense();
-                gDualCapSens->init(&gParaTable);
-                installIrqOnC1(dualCapSensIrqHandler, gDualCapSens->setIrqHandler, gDualCapSens);
+                GM_dualCapSense* dualCapSens = new GM_dualCapSense();
+                dualCapSens->init(&gParaTable, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -169,9 +128,8 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gm_pumpCon* perPumpCon;
-                perPumpCon = new gm_pumpCon();
-                perPumpCon->init(&gParaTable, &gTimeServer);
+                gm_pumpCon* perPumpCon = new gm_pumpCon();
+                perPumpCon->init(&gParaTable, &gTimeServer, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }

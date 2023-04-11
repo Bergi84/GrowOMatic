@@ -5,7 +5,7 @@ gm_pumpCon::gm_pumpCon()
 
 }
 
-void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS)
+void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1)
 {
     mPT = aPT;
     mTS = aTS;

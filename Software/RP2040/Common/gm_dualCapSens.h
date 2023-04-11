@@ -5,6 +5,7 @@
 #include "gm_busDefs.h"
 #include "rp_capSens.h"
 #include "paraTable.h"
+#include "sequencer_armm0.h"
 
 #define gpio_dls_capSensExc_base    0
 #define gpio_dls_capSens_base       2
@@ -20,17 +21,7 @@ class GM_dualCapSense : public TEpCapLevelDefs
 public:
     GM_dualCapSense();
 
-    void init (TParaTable* aParaTable);
-    static void setIrqHandler(void* aArg, void (*aIrqHandler)(void))
-    {
-        ((GM_dualCapSense*)aArg)->mCapSens.setIrqHandler(aIrqHandler);
-        ((GM_dualCapSense*)aArg)->mCapSens.enable();
-    }
-
-    inline void irqHandler(void)
-    {
-        mCapSens.irqHandler();
-    }
+    void init (TParaTable* aParaTable, TSequencer* aSeq_c1 = 0);
 
 private:
     TCapSens mCapSens;

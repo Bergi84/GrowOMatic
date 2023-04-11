@@ -53,7 +53,7 @@ void TAdc::init(uint32_t aGpioMsk, TDmaIrqMng* aIrqMng)
         4,
         false
     );
-    aIrqMng->setIrq(mDataDmaCh, irqCb, this);
+    aIrqMng->setDmaHandler(mDataDmaCh, irqCb, this);
     dma_start_channel_mask(1u << mConfDmaCh);
 
     adc_run(true);
