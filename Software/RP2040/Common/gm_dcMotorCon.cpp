@@ -9,9 +9,9 @@ mPara( (TParaTable::paraRec_t[cParaListLength]) {
     [PARA_PWMDUTY] =    {.para = 0,     .pFAccessCb = paraPwmDutyCb,.cbArg = this,  .defs = &cParaList[PARA_PWMDUTY]},
     [PARA_MAXPWMDUTY] = {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_MAXPWMDUTY]},
     [PARA_FRQU] =       {.para = 32,    .pFAccessCb = paraFreq,     .cbArg = this,  .defs = &cParaList[PARA_FRQU]},
-    [PARA_PWMRAMP]  =   {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,  .defs = &cParaList[PARA_PWMRAMP]},
-    [PARA_CURRENT] =    {.para = 0,     .pFAccessCb = paraCurCb,    .cbArg = this,     .defs = &cParaList[PARA_CURRENT]},
-    [PARA_CUR_LIM] =    {.para = 500,   .pFAccessCb = paraCurLimCb, .cbArg = this,     .defs = &cParaList[PARA_CUR_LIM]},
+    [PARA_PWMRAMP]  =   {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_PWMRAMP]},
+    [PARA_CURRENT] =    {.para = 0,     .pFAccessCb = paraCurCb,    .cbArg = this,  .defs = &cParaList[PARA_CURRENT]},
+    [PARA_CUR_LIM] =    {.para = 500,   .pFAccessCb = paraCurLimCb, .cbArg = this,  .defs = &cParaList[PARA_CUR_LIM]},
 }),
 mEp( (TParaTable::endpoint_t) {  
     { { 
