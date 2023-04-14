@@ -18,19 +18,28 @@ public:
     void setCurAdc(TAdc* aAdc, uint32_t aCh, uint32_t aFullScale);
     void setGpioCurLim(uint32_t aGpio, uint32_t aFullScale);
 
+    char* getEpName() {return mEp.epName;};
+
 private:
     bool mUni;
     uint32_t mPwmSlice;
     uint32_t mPwmCh1;
     uint32_t mPwmCh2;
     uint32_t mGpioEn;
+    uint32_t mGpioPwm;
+
     uint16_t mPeriod;
+    int16_t mPwmComp;
+    int32_t mPwmAkt;
+    uint32_t mPwmRampInc;
 
     TParaTable::paraRec_t mPara[cParaListLength];
     TParaTable::endpoint_t mEp;
     TParaTable* mPT;
     TTimerServer* mTS;
     TAdc* mAdc;
+
+    TTimer* aRampTimer;
 
     uint32_t mCurAdcCh;
     uint32_t mCurAdcScale;
@@ -44,6 +53,9 @@ private:
     static void paraCurCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraCurLimCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
     static void paraFreq(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
+    static void paraRampCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite);
+
+    static uint32_t rampTimerCb(void* aArg);
 };
 
 #endif

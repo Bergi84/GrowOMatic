@@ -49,20 +49,7 @@
 #define gpio_pc_uart0_rx            1
 #define gpio_pc_uart1_tx            4
 #define gpio_pc_uart1_rx            5    
-#define gpio_pc_systemLed           6
-#define gpio_pc_pwmP0               12
-#define gpio_pc_enP0                13
-#define gpio_pc_pwmP1               14
-#define gpio_pc_enP1                15
-#define gpio_pc_iRefP0              16
-#define gpio_pc_iRefP1              17
-#define gpio_pc_usbPresent          18
-#define gpio_pc_flowPuls1           21
-#define gpio_pc_flowPuls0           23
-#define gpio_pc_ledPwm              24
-#define gpio_pc_iSens0              26
-#define gpio_pc_iSens1              27
-#define gpio_pc_leakSens            29   
+#define gpio_pc_systemLed           6 
 
 // sensor node
 

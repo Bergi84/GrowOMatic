@@ -36,8 +36,9 @@ private:
 
 public:
     TStepperPhCon();
-    void init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr, uint32_t mIndex);
+    void init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr);
     void setOutCb(uint32_t aOutShift, void (*aOutFunc)(void*, uint32_t, uint32_t), void* aArg);
+    char* getEpName() {return mEp.epName;};
 };
 
 #endif

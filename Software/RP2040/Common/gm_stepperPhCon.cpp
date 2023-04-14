@@ -24,17 +24,13 @@ mEp( (TParaTable::endpoint_t) {
     strncpy(mEp.epName, cTypeName, sizeof(mEp.epName));
 }
 
-void TStepperPhCon::init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr, uint32_t mIndex)
+void TStepperPhCon::init(TParaTable *aPT, TTimerServer *aTS, uint16_t aBaseRegAdr)
 {
     mPT = aPT;
     mTS = aTS;
 
     mEp.epId.baseInd = aBaseRegAdr;
 
-    uint32_t len = strlen(mEp.epName);
-
-    mEp.epName[len] = mIndex + '0';
-    mEp.epName[len + 1] = 0; 
     mPT->addEndpoint(&mEp);
 
     mInitSpeed = float2int(sqrtf(2*mPara[PARA_ACCEL].para));

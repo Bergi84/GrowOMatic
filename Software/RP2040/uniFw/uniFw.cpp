@@ -33,6 +33,9 @@ TFlash gTableStorage;
 gm_termMonitor gTermMonitor;
 TTimerServer gTimeServer;
 
+gm_pumpCon* gPumpCon;
+GM_dualCapSense* gDualCapSens;
+
 
 
 void idle(void* aArg)
@@ -95,8 +98,8 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                GM_dualCapSense* dualCapSens = new GM_dualCapSense();
-                dualCapSens->init(&gParaTable, &gSeq_c1);
+                gDualCapSens = new GM_dualCapSense();
+                gDualCapSens->init(&gParaTable, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -128,8 +131,8 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gm_pumpCon* perPumpCon = new gm_pumpCon();
-                perPumpCon->init(&gParaTable, &gTimeServer, &gSeq_c1);
+                gPumpCon = new gm_pumpCon();
+                gPumpCon->init(&gParaTable, &gTimeServer, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }

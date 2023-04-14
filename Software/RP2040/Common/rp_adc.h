@@ -34,6 +34,8 @@ public:
     }
 
     static void irqCb(void* aArg);
+
+    static constexpr uint32_t gpio_adc_ch0 = 26;
 };
 
 #endif

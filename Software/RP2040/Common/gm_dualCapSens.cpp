@@ -1,5 +1,6 @@
 #include "gm_dualCapSens.h"
 #include <string.h>
+#include <stdio.h>
 
 GM_dualCapSense::GM_dualCapSense() :
 mPara( (TParaTable::paraRec_t[2][cParaListLength]) {
@@ -83,14 +84,8 @@ mEndpoint( (TParaTable::endpoint_t[2]) {
     }    
 })
 {
-    strncpy(mEndpoint[0].epName, cTypeName, sizeof(mEndpoint[0].epName));
-    strncpy(mEndpoint[1].epName, cTypeName, sizeof(mEndpoint[1].epName));
-
-    uint32_t len = strlen(cTypeName);
-    mEndpoint[0].epName[len] = '0';
-    mEndpoint[0].epName[len+1] = 0;
-    mEndpoint[1].epName[len] = '1';
-    mEndpoint[2].epName[len+1] = 0;
+    snprintf(mEndpoint[0].epName, EP_NAME_LEN + 1, "%s%i", cTypeName, 0);
+    snprintf(mEndpoint[1].epName, EP_NAME_LEN + 1, "%s%i", cTypeName, 1);
 }
 
 void GM_dualCapSense::init(TParaTable* aParaTable, TSequencer* aSeq_c1)

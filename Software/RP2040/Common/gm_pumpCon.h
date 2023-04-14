@@ -13,6 +13,19 @@
 #define gpio_pc_spiCs               9
 #define gpio_pc_spiClk              10
 #define gpio_pc_spiD                11
+#define gpio_pc_pwmP0               12
+#define gpio_pc_enP0                13
+#define gpio_pc_pwmP1               14
+#define gpio_pc_enP1                15
+#define gpio_pc_iRefP0              16
+#define gpio_pc_iRefP1              17
+#define gpio_pc_usbPresent          18
+#define gpio_pc_flowPuls1           21
+#define gpio_pc_flowPuls0           23
+#define gpio_pc_ledPwm              24
+#define gpio_pc_iSens0              26
+#define gpio_pc_iSens1              27
+#define gpio_pc_leakSens            29  
 
 #define PPC_MAX_STEPPER             8
 #define PPC_DCMOTORS                2

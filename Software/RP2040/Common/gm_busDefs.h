@@ -313,7 +313,7 @@ protected:
         [PARA_PWMDUTY] =      {PARA_FLAG_W | PARA_FLAG_FW,                 "pwmDuty"},            // ‰
         [PARA_MAXPWMDUTY] =   {PARA_FLAG_W | PARA_FLAG_NV,                 "pwmMaxDuty"},         // ‰
         [PARA_FRQU] =         {PARA_FLAG_W | PARA_FLAG_FW | PARA_FLAG_NV,  "frquencie"},          // kHz
-        [PARA_PWMRAMP] =      {PARA_FLAG_W | PARA_FLAG_NV,                 "ramp"},               // ‰/s
+        [PARA_PWMRAMP] =      {PARA_FLAG_W | PARA_FLAG_FW | PARA_FLAG_NV,  "ramp"},               // ‰/s
         [PARA_CURRENT] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "current"},            // mA
         [PARA_CUR_LIM] =      {PARA_FLAG_W | PARA_FLAG_FW |PARA_FLAG_NV,   "currLim"}            // mA
 
