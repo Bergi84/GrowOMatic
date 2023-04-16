@@ -2353,6 +2353,11 @@
     (uuid ff555267-7342-4993-a079-6355fb55a035)
   )
 
+  (text "Notiz für V2.0:\n-) Spannunsgmessung 24V sinvvol\n-) Richtige Stepper driver"
+    (at 106.68 149.86 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 0b7a7252-2f96-4b04-b3da-6a674bd55fad)
+  )
   (text "PWM3A\nPWM3B" (at 87.63 121.92 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 1905fa06-0a0f-4de7-8906-2c4442094894)

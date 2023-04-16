@@ -121,19 +121,21 @@ void gm_dcMotorCon::paraPwmDutyCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec
 
     int32_t locDuty = (int32_t) aPParaRec->para;
 
+    uint32_t maxDuty = pObj->mPara[PARA_MAXPWMDUTY].para;
+
     if(pObj->mUni)
     {
         if(locDuty < 0)
             locDuty = 0;
-        if(locDuty > 1000)
-            locDuty = 1000;
+        if(locDuty > maxDuty)
+            locDuty = maxDuty;
     }
     else
     {
-        if(locDuty > 1000)
-            locDuty = 1000;
-        if(locDuty < -1000)
-            locDuty = -1000;
+        if(locDuty > maxDuty)
+            locDuty = maxDuty;
+        if(locDuty < -maxDuty)
+            locDuty = -maxDuty;
     }
     aPParaRec->para = locDuty;
 

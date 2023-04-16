@@ -2201,6 +2201,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid caf533dc-ea8f-4e2f-b84d-607b0a7b1bf7)
   )
+  (text "Notiz für V2.0:\n-) Spannunsgmessung 24V sinvvol" (at 92.71 152.4 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid f7ca0318-2ac8-4c1f-8976-6b85d88a2b5c)
+  )
 
   (label "LeakSens" (at 163.83 129.54 180)
     (effects (font (size 1.27 1.27)) (justify right bottom))

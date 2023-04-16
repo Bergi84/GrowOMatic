@@ -282,7 +282,7 @@ protected:
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_SPEED] =          {PARA_FLAG_W | PARA_FLAG_FW,                  "speed"},              // milli Rev/s
+        [PARA_SPEED] =          {PARA_FLAG_RW | PARA_FLAG_FW,                  "speed"},              // milli Rev/s
         [PARA_POS] =            {PARA_FLAG_R | PARA_FLAG_S,                   "pos"},                // milli Rev
         [PARA_MAXSPEED] =       {PARA_FLAG_RW | PARA_FLAG_NV,                 "maxSpeed"},           // milli Rev/s
         [PARA_ACCEL] =          {PARA_FLAG_FW | PARA_FLAG_R | PARA_FLAG_NV,   "accel"},              // milli Rev/s^2
@@ -310,13 +310,12 @@ protected:
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_PWMDUTY] =      {PARA_FLAG_W | PARA_FLAG_FW,                 "pwmDuty"},            // ‰
-        [PARA_MAXPWMDUTY] =   {PARA_FLAG_W | PARA_FLAG_NV,                 "pwmMaxDuty"},         // ‰
-        [PARA_FRQU] =         {PARA_FLAG_W | PARA_FLAG_FW | PARA_FLAG_NV,  "frquencie"},          // kHz
-        [PARA_PWMRAMP] =      {PARA_FLAG_W | PARA_FLAG_FW | PARA_FLAG_NV,  "ramp"},               // ‰/s
+        [PARA_PWMDUTY] =      {PARA_FLAG_RW | PARA_FLAG_FW,                 "pwmDuty"},            // ‰
+        [PARA_MAXPWMDUTY] =   {PARA_FLAG_RW | PARA_FLAG_NV,                 "pwmMaxDuty"},         // ‰
+        [PARA_FRQU] =         {PARA_FLAG_RW | PARA_FLAG_FW | PARA_FLAG_NV,  "frquencie"},          // kHz
+        [PARA_PWMRAMP] =      {PARA_FLAG_RW | PARA_FLAG_FW | PARA_FLAG_NV,  "ramp"},               // ‰/s
         [PARA_CURRENT] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "current"},            // mA
-        [PARA_CUR_LIM] =      {PARA_FLAG_W | PARA_FLAG_FW |PARA_FLAG_NV,   "currLim"}            // mA
-
+        [PARA_CUR_LIM] =      {PARA_FLAG_RW | PARA_FLAG_FW |PARA_FLAG_NV,   "currLim"}            // mA
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "dcMotor";   
