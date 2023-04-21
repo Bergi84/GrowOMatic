@@ -103,7 +103,9 @@ typedef enum {
     EPT_BUS = 3,
     EPT_CAPLEVEL = 4,
     EPT_STEPPERCON = 5,
-    EPT_DCMOTORCON = 6
+    EPT_DCMOTORCON = 6,
+    EPT_LEAKSENSOR = 7,
+    EPT_PULSSENSOR = 8,
 } epType_t; 
 
 class TEpSysDefs
@@ -319,6 +321,40 @@ protected:
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "dcMotor";   
+};
+
+class TEpLeakSensorDefs
+{
+    typedef enum
+    {
+        PARA_RESISTENCE
+    } paraInd_t;  
+
+    static constexpr epType_t cType = EPT_LEAKSENSOR;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_RESISTENCE] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "resistance"},            // Ohm
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "leakSensor";       
+};
+
+class TEpPulsSensorDefs
+{
+    typedef enum
+    {
+        PARA_PULSPERSEC
+    } paraInd_t;  
+
+    static constexpr epType_t cType = EPT_PULSSENSOR;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_PULSPERSEC] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "pulsPerSec"},            
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "pulsSensor";       
 };
 
 #endif /* GM_BUSDEFS_H_*/

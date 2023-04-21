@@ -35,6 +35,7 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_adc.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_dmaIrqMng.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dcMotorCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_pwmCapture.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC
@@ -65,6 +66,7 @@ target_compile_definitions(uniFw PUBLIC
 
 pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/rp_capSens.pio)
 pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/rp_ioExpander.pio)
+pico_generate_pio_header(uniFw ${CMAKE_CURRENT_LIST_DIR}/../common/rp_pwmCapture.pio)
 
 # exectue from ram
 # pico_set_binary_type(uniFw copy_to_ram)

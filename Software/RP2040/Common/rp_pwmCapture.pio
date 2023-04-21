@@ -1,0 +1,46 @@
+.Program pwmCapture
+    .origin 4
+
+    .wrap_target
+
+    // init counter
+    mov x, !NULL
+
+    // high count loop
+highCntLoop:
+    jmp x-- nextLine
+nextLine:
+    jmp pin highCntLoop
+
+    // move transition to output
+    // push is done with autopush
+    mov isr, x
+
+lowCntLoop:    
+    jmp pin endLowCntLoop
+    jmp x-- lowCntLoop
+endLowCntLoop:
+
+    // move transition to output
+    // push is done with autopush
+    mov isr, x
+
+    .wrap
+
+
+% c-sdk {
+
+static inline void pwmCaptureInit(PIO aPio, uint aSmNo, uint aGpio)
+{
+    pio_gpio_init(aPio, aGpio);
+
+    uint offsteProg = pio_add_program(aPio, &pwmCapture_program);
+    pio_sm_config c = pwmCapture_program_get_default_config(offsteProg);
+    sm_config_set_clkdiv_int_frac(&c, aClkdDiv, 0);
+    sm_config_set_in_shift(&c, false, true, 32);
+    sm_config_set_jmp_pin(&c, aGpio);
+
+    pio_sm_init(aPio, aSmNo, offsteProg, &c);
+}
+
+%}
