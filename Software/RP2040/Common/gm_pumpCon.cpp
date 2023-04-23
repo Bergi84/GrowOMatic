@@ -3,12 +3,12 @@
 #include "string.h"
 #include <stdio.h>
 
-gm_pumpCon::gm_pumpCon()
+GM_pumpCon::GM_pumpCon()
 {
 
 }
 
-void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1)
+void GM_pumpCon::init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1)
 {
     mPT = aPT;
     mTS = aTS_c1;
@@ -56,4 +56,6 @@ void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1
     mPulsSensor[1].init(aPT, CDefaultBaseRegAdr + 1024, mTS, &mIrqMng, gpio_pc_flowPuls1, pio0, 2);
     snprintf(mPulsSensor[1].getEpName(), EP_NAME_LEN + 1, "%s%i", pulsName, 1);
     mLeakSensor.init(aPT, CDefaultBaseRegAdr + 1280, &mAdc, gpio_pc_leakSens - TAdc::gpio_adc_ch0);
+
+    mLedCon.init(aPT, CDefaultBaseRegAdr + 1536, gpio_pc_ledPwm);
 }

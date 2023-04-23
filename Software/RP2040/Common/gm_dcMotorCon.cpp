@@ -4,7 +4,7 @@
 #include <string.h>
 #include "math.h"
 
-gm_dcMotorCon::gm_dcMotorCon() :
+GM_dcMotorCon::GM_dcMotorCon() :
 mPara( (TParaTable::paraRec_t[cParaListLength]) {
     [PARA_PWMDUTY] =    {.para = 0,     .pFAccessCb = paraPwmDutyCb,.cbArg = this,  .defs = &cParaList[PARA_PWMDUTY]},
     [PARA_MAXPWMDUTY] = {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_MAXPWMDUTY]},
@@ -16,7 +16,7 @@ mPara( (TParaTable::paraRec_t[cParaListLength]) {
 mEp( (TParaTable::endpoint_t) {  
     { { 
         .baseInd = CDefaultBaseRegAdr,
-        .type = (uint16_t)EPT_DCMOTORCON    
+        .type = (uint16_t)cType    
     } }, 
     .length = cParaListLength, 
     .para = mPara,
@@ -27,7 +27,7 @@ mEp( (TParaTable::endpoint_t) {
     strncpy(mEp.epName, cTypeName, sizeof(mEp.epName));
 }
 
-void gm_dcMotorCon::init(TParaTable* aPT, uint32_t aBaseRegAdr, TTimerServer* aTS)
+void GM_dcMotorCon::init(TParaTable* aPT, uint32_t aBaseRegAdr, TTimerServer* aTS)
 {
     mPT = aPT;
     mTS = aTS;
@@ -41,7 +41,7 @@ void gm_dcMotorCon::init(TParaTable* aPT, uint32_t aBaseRegAdr, TTimerServer* aT
     mPwmRampInc = ((((uint64_t)mPara[PARA_PWMRAMP].para) * ((uint64_t)mPeriod)) << 16)/1000000ULL;
 }
 
-void gm_dcMotorCon::setGpioPwmEn(uint32_t aGpioPwm, uint32_t aGpioEn)
+void GM_dcMotorCon::setGpioPwmEn(uint32_t aGpioPwm, uint32_t aGpioEn)
 {
     mPwmComp = 0;
     mPwmAkt = 0;
@@ -69,7 +69,7 @@ void gm_dcMotorCon::setGpioPwmEn(uint32_t aGpioPwm, uint32_t aGpioEn)
     pwm_set_enabled(mPwmSlice, true);
 }
 
-void gm_dcMotorCon::setGpioPwm(uint32_t aGpioPwm1, uint32_t aGpioPwm2)
+void GM_dcMotorCon::setGpioPwm(uint32_t aGpioPwm1, uint32_t aGpioPwm2)
 {
     mPwmComp = 0;
     mPwmAkt = 0;
@@ -93,7 +93,7 @@ void gm_dcMotorCon::setGpioPwm(uint32_t aGpioPwm1, uint32_t aGpioPwm2)
     pwm_set_enabled(mPwmSlice, true);
 }
 
-void gm_dcMotorCon::setCurAdc(TAdc* aAdc, uint32_t aCh, uint32_t aFullScale)
+void GM_dcMotorCon::setCurAdc(TAdc* aAdc, uint32_t aCh, uint32_t aFullScale)
 {
     mAdc = aAdc;
     mCurAdcCh = aCh;
@@ -102,7 +102,7 @@ void gm_dcMotorCon::setCurAdc(TAdc* aAdc, uint32_t aCh, uint32_t aFullScale)
     mAdc->setFilterLen(aCh, 6);
 }
 
-void gm_dcMotorCon::setGpioCurLim(uint32_t aGpio, uint32_t aFullScale)
+void GM_dcMotorCon::setGpioCurLim(uint32_t aGpio, uint32_t aFullScale)
 {
     gpio_set_function(aGpio, GPIO_FUNC_PWM);
     mCurLimSlice = pwm_gpio_to_slice_num(aGpio);
@@ -115,9 +115,9 @@ void gm_dcMotorCon::setGpioCurLim(uint32_t aGpio, uint32_t aFullScale)
     pwm_set_enabled(mCurLimSlice, true);
 }
 
-void gm_dcMotorCon::paraPwmDutyCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void GM_dcMotorCon::paraPwmDutyCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aCbArg;
 
     int32_t locDuty = (int32_t) aPParaRec->para;
 
@@ -145,29 +145,29 @@ void gm_dcMotorCon::paraPwmDutyCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec
         pObj->aRampTimer->setTimer(1000);
 }
 
-void gm_dcMotorCon::paraRampCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void GM_dcMotorCon::paraRampCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aCbArg;
 
     pObj->mPwmRampInc = ((((uint64_t)aPParaRec->para) * ((uint64_t)pObj->mPeriod)) << 16)/1000000ULL;
 }
-void gm_dcMotorCon::paraCurCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void GM_dcMotorCon::paraCurCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aCbArg;
 
     aPParaRec->para = (((uint32_t)pObj->mAdc->getResult(pObj->mCurAdcCh)) * pObj->mCurAdcScale) >> 12;
 }
 
-void gm_dcMotorCon::paraCurLimCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void GM_dcMotorCon::paraCurLimCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aCbArg;
 
     pwm_set_chan_level(pObj->mCurLimSlice, pObj->mCurLimCh, (pObj->mCurLimScale * aPParaRec->para) >> 16);
 }
 
-void gm_dcMotorCon::paraFreq(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
+void GM_dcMotorCon::paraFreq(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aCbArg;
 
     uint32_t fsys = clock_get_hz(clk_sys);
     pObj->mPeriod = fsys/(pObj->mPara[PARA_FRQU].para * 1000);
@@ -175,9 +175,9 @@ void gm_dcMotorCon::paraFreq(void* aCbArg, TParaTable::paraRec_t* aPParaRec, boo
     pwm_set_wrap(pObj->mPwmSlice, pObj->mPeriod - 1);
 }
 
-uint32_t gm_dcMotorCon::rampTimerCb(void* aArg)
+uint32_t GM_dcMotorCon::rampTimerCb(void* aArg)
 {
-    gm_dcMotorCon* pObj = (gm_dcMotorCon*) aArg;
+    GM_dcMotorCon* pObj = (GM_dcMotorCon*) aArg;
 
     if(pObj->mPwmAkt == 0)
     {

@@ -38,7 +38,7 @@ static constexpr uint32_t CBusBaseRegAdr = 0x0100;
 static constexpr uint32_t CDefaultBaseRegAdr = 0x0200;
 
 static constexpr paraDef_t CEpNameDefs[] = {
-    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
+    {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P,  "epName0"},
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName1"},
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName2"},
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P , "epName3"},
@@ -105,6 +105,7 @@ typedef enum {
     EPT_LEAKSENSOR = 7,
     EPT_PULSSENSOR = 8,
     EPT_DIGITALIN = 9,
+    EPT_LEDCON = 10
 } epType_t; 
 
 class TEpSysDefs
@@ -374,6 +375,26 @@ protected:
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "digitalIn";       
+};
+
+class TEpLedConDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_DIM,
+        PARA_FREQ
+    } paraInd_t;  
+
+    static constexpr epType_t cType = EPT_LEDCON;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_DIM] =      {PARA_FLAG_FW | PARA_FLAG_RW,                "dimVal"},
+        [PARA_FREQ] =     {PARA_FLAG_FW | PARA_FLAG_RW,                "frquencie"},
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "ledCon";       
 };
 
 #endif /* GM_BUSDEFS_H_*/

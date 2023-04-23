@@ -7,10 +7,10 @@
 #include "gm_busDefs.h"
 #include "rp_adc.h"
 
-class gm_dcMotorCon : public TEpDcMotorConDefs
+class GM_dcMotorCon : public TEpDcMotorConDefs
 {
 public:
-    gm_dcMotorCon();
+    GM_dcMotorCon();
 
     void init(TParaTable* aPT, uint32_t aBaseRegAdr, TTimerServer* aTS);
     void setGpioPwmEn(uint32_t aGpioPwm, uint32_t aGpioEn);

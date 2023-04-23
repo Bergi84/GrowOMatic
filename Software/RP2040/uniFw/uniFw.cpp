@@ -34,7 +34,7 @@ gm_termMonitor gTermMonitor;
 TTimerServer gTimeServer;
 TTimerServer gTimeServer_c1;
 
-gm_pumpCon* gPumpCon;
+GM_pumpCon* gPumpCon;
 GM_dualCapSense* gDualCapSens;
 
 void idle(void* aArg)
@@ -132,7 +132,7 @@ int main()
                 TUart* uartList[] = {&gUart0,  &gUart1};
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
-                gPumpCon = new gm_pumpCon();
+                gPumpCon = new GM_pumpCon();
                 gPumpCon->init(&gParaTable, &gTimeServer_c1, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);

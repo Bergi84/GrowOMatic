@@ -10,6 +10,7 @@
 #include "rp_dmaIrqMng.h"
 #include "gm_leakSensor.h"
 #include "gm_pulsSensor.h"
+#include "gm_ledCon.h"
 
 #define gpio_pc_spiEn               8
 #define gpio_pc_spiCs               9
@@ -32,7 +33,7 @@
 #define PPC_DCMOTORS                2
 #define PPC_PULSSENSOR              2
 
-class gm_pumpCon {
+class GM_pumpCon {
 private:
     TParaTable *mPT;
     TTimerServer *mTS;
@@ -43,13 +44,14 @@ private:
 
     TDmaIrqMng mIrqMng;
     TAdc mAdc;
-    gm_dcMotorCon mDcMotor[PPC_DCMOTORS];
+    GM_dcMotorCon mDcMotor[PPC_DCMOTORS];
 
     GM_pulsSensor mPulsSensor[PPC_PULSSENSOR];
     GM_leakSensor mLeakSensor;
+    GM_ledCon mLedCon;
 
 public:
-    gm_pumpCon();
+    GM_pumpCon();
     void init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1);
 };
 

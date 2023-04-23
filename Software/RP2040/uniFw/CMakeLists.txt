@@ -39,6 +39,7 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_leakSensor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_pulsSensor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_digitalIn.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_ledCon.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC
