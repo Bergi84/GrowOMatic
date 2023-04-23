@@ -35,9 +35,7 @@ static constexpr uint32_t CInvalidUid = -1;
 static constexpr uint32_t CSystemBaseRegAdr = 0x0000;
 static constexpr uint32_t CEpListBaseRegAdr = 0x0020;
 static constexpr uint32_t CBusBaseRegAdr = 0x0100;
-static constexpr uint32_t CCapLevelBaseRegAdr = 0x0200;
-static constexpr uint32_t CPeriPumpBaseRegAdr = 0x0200;
-static constexpr uint32_t CPumpBaseRegAdr = 0x400;
+static constexpr uint32_t CDefaultBaseRegAdr = 0x0200;
 
 static constexpr paraDef_t CEpNameDefs[] = {
     {PARA_FLAG_RW | PARA_FLAG_NV | PARA_FLAG_P, "epName0"},
@@ -106,6 +104,7 @@ typedef enum {
     EPT_DCMOTORCON = 6,
     EPT_LEAKSENSOR = 7,
     EPT_PULSSENSOR = 8,
+    EPT_DIGITALIN = 9,
 } epType_t; 
 
 class TEpSysDefs
@@ -325,6 +324,7 @@ protected:
 
 class TEpLeakSensorDefs
 {
+protected:
     typedef enum
     {
         PARA_RESISTENCE
@@ -342,19 +342,38 @@ class TEpLeakSensorDefs
 
 class TEpPulsSensorDefs
 {
+protected:
     typedef enum
     {
-        PARA_PULSPERSEC
+        PARA_PULSPERMIN
     } paraInd_t;  
 
     static constexpr epType_t cType = EPT_PULSSENSOR;
 
     static constexpr paraDef_t cParaList[]  =
     {
-        [PARA_PULSPERSEC] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "pulsPerSec"},            
+        [PARA_PULSPERMIN] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "pulsPerMin"},            
     };
     static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
     static constexpr char cTypeName[] = "pulsSensor";       
+};
+
+class TEpDigitalInDefs
+{
+protected:
+    typedef enum
+    {
+        PARA_IN
+    } paraInd_t;  
+
+    static constexpr epType_t cType = EPT_DIGITALIN;
+
+    static constexpr paraDef_t cParaList[]  =
+    {
+        [PARA_IN] =      {PARA_FLAG_FRS | PARA_FLAG_R,                "in"},            
+    };
+    static constexpr uint32_t cParaListLength = sizeof(cParaList)/ sizeof(paraDef_t); 
+    static constexpr char cTypeName[] = "digitalIn";       
 };
 
 #endif /* GM_BUSDEFS_H_*/

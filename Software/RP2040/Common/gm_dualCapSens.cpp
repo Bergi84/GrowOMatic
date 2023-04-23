@@ -64,7 +64,7 @@ mPara( (TParaTable::paraRec_t[2][cParaListLength]) {
 mEndpoint( (TParaTable::endpoint_t[2]) { 
     {
         { { 
-            .baseInd = CCapLevelBaseRegAdr,
+            .baseInd = CDefaultBaseRegAdr,
             .type = (uint16_t)EPT_CAPLEVEL    
         } }, 
         .length = cParaListLength, 
@@ -74,7 +74,7 @@ mEndpoint( (TParaTable::endpoint_t[2]) {
     },
     {
         { { 
-            .baseInd = CCapLevelBaseRegAdr + 32,
+            .baseInd = CDefaultBaseRegAdr + 32,
             .type = (uint16_t)EPT_CAPLEVEL    
         } }, 
         .length = cParaListLength, 
@@ -88,11 +88,14 @@ mEndpoint( (TParaTable::endpoint_t[2]) {
     snprintf(mEndpoint[1].epName, EP_NAME_LEN + 1, "%s%i", cTypeName, 1);
 }
 
-void GM_dualCapSense::init(TParaTable* aParaTable, TSequencer* aSeq_c1)
+void GM_dualCapSense::init(TParaTable* aParaTable, uint32_t aBaseAdr, TSequencer* aSeq_c1)
 {
     mPT = aParaTable;
 
     mCapSens.init(pio0, gpio_dls_capSensExc_base, gpio_dls_capSens_base, gpio_dls_capSens_chNo, 0x000007FF, 62500, 125, aSeq_c1);
+
+    mEndpoint[0].epId.baseInd = aBaseAdr;
+    mEndpoint[1].epId.baseInd = aBaseAdr;
 
     mPT->addEndpoint(&mEndpoint[0]);
     mPT->addEndpoint(&mEndpoint[1]);

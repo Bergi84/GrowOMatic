@@ -12,7 +12,7 @@ mPara( (TParaTable::paraRec_t[cParaListLength]) {
 }),
 mEp( (TParaTable::endpoint_t) {  
     { { 
-        .baseInd = CPeriPumpBaseRegAdr,
+        .baseInd = CDefaultBaseRegAdr,
         .type = (uint16_t)EPT_STEPPERCON    
     } }, 
     .length = cParaListLength, 

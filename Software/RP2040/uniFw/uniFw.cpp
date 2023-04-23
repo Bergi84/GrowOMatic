@@ -32,11 +32,10 @@ GM_termPathMng gPathMng;
 TFlash gTableStorage;
 gm_termMonitor gTermMonitor;
 TTimerServer gTimeServer;
+TTimerServer gTimeServer_c1;
 
 gm_pumpCon* gPumpCon;
 GM_dualCapSense* gDualCapSens;
-
-
 
 void idle(void* aArg)
 {
@@ -54,6 +53,8 @@ void main_c1()
     gSeq_c1.init(&__StackOneTop, PICO_STACK_SIZE);
     gSeq_c1.setIdleFunc(idle, NULL);
 
+    gTimeServer_c1.init();
+
     gSeq_c1.startIdle();
 }
 
@@ -61,12 +62,12 @@ extern uint32_t __StackTop;
 
 int main() 
 {
-    multicore_launch_core1(main_c1);
-
     gSeq.init(&__StackTop, PICO_STACK_SIZE);
     gSeq.setIdleFunc(idle, NULL);
 
     gTimeServer.init();
+
+    multicore_launch_core1(main_c1);
 
     pico_unique_board_id_t uId;
     pico_get_unique_board_id(&uId);
@@ -99,7 +100,7 @@ int main()
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
                 gDualCapSens = new GM_dualCapSense();
-                gDualCapSens->init(&gParaTable, &gSeq_c1);
+                gDualCapSens->init(&gParaTable, CDefaultBaseRegAdr, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -132,7 +133,7 @@ int main()
                 gBus.init(uartList, sizeof(uartList)/sizeof(TUart*), &gSeq, &gTimeServer, &gParaTable);
 
                 gPumpCon = new gm_pumpCon();
-                gPumpCon->init(&gParaTable, &gTimeServer, &gSeq_c1);
+                gPumpCon->init(&gParaTable, &gTimeServer_c1, &gSeq_c1);
 
                 gPathMng.init(&gBus, &gParaTable);
             }
@@ -151,7 +152,7 @@ int main()
     
     gTerm.init(&gUartTerm, &gSeq, &gPathMng);
 
-    gTermMonitor.init(&gSeq);
+    gTermMonitor.init(&gSeq, &gTimeServer);
     gTerm.addApp(&gTermMonitor);
 
     gSeq.startIdle();

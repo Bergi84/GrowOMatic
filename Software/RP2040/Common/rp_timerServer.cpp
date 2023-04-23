@@ -19,7 +19,7 @@ void TTimer::setTimer(uint32_t aTck)
 {
     mTS->mAktTime = time_us_32();
 
-    uint32_t status = save_and_disable_interrupts();
+    uint32_t status = spin_lock_blocking(mTS->mSpinLock);
 
     if(mAktiv)
         mTS->unqueueTimer(this);
@@ -31,16 +31,16 @@ void TTimer::setTimer(uint32_t aTck)
 
     mTS->queueTimer(this, aTck);
 
-    restore_interrupts(status);
+    spin_unlock(mTS->mSpinLock, status);
 }
 
 void TTimer::stopTimer()
 {
     mTS->mAktTime = time_us_32();
 
-    uint32_t status = save_and_disable_interrupts();
+    uint32_t status = spin_lock_blocking(mTS->mSpinLock);
     mTS->unqueueTimer(this);
-    restore_interrupts(status);
+    spin_unlock(mTS->mSpinLock, status);
 }
 
 void TTimer::delTimer()
@@ -52,6 +52,7 @@ void TTimer::delTimer()
 void TTimerServer::init()
 {
     mAlarmNum = hardware_alarm_claim_unused(true);
+    mSpinLock = spin_lock_instance(spin_lock_claim_unused(true));
     mTimerList = 0;
     mIrqVeneer.init(this, irqHandler);
     setIrqHandler(mIrqVeneer.getFunc());
@@ -61,7 +62,7 @@ void TTimerServer::irqHandler(void* aArg)
 {
     TTimerServer* pObj = (TTimerServer*) aArg;
 
-    uint32_t status = save_and_disable_interrupts();
+    uint32_t status = spin_lock_blocking(pObj->mSpinLock);
 
     timer_hw->intf &= ~(1u << pObj->mAlarmNum);
 
@@ -108,13 +109,13 @@ void TTimerServer::irqHandler(void* aArg)
 
     pObj->mLastTime = pObj->mAktTime;
 
-    restore_interrupts(status);
+    spin_unlock(pObj->mSpinLock, status);
 }
 
 void TTimerServer::setIrqHandler(void (*aIrqHandler)())
 {
-    timer_hw->intr = 1u << mAlarmNum;
-    timer_hw->inte = 1u << mAlarmNum;
+    timer_hw->intr |= 1u << mAlarmNum;
+    timer_hw->inte |= 1u << mAlarmNum;
     irq_set_exclusive_handler(TIMER_IRQ_0 + mAlarmNum, aIrqHandler);
     irq_set_priority(TIMER_IRQ_0 + mAlarmNum, PICO_DEFAULT_IRQ_PRIORITY);
     irq_set_enabled(TIMER_IRQ_0 + mAlarmNum, true);

@@ -50,6 +50,7 @@
 #define gpio_pc_uart1_tx            4
 #define gpio_pc_uart1_rx            5    
 #define gpio_pc_systemLed           6 
+#define gpio_pc_usbPresent          18
 
 // sensor node
 

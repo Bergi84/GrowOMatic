@@ -36,6 +36,9 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_dmaIrqMng.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_dcMotorCon.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/rp_pwmCapture.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_leakSensor.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_pulsSensor.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_digitalIn.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC

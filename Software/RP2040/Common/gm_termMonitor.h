@@ -4,6 +4,7 @@
 #include "termApp.h"
 #include "gm_PathEle.h"
 #include "sequencer_armm0.h"
+#include "rp_timerServer.h"
 
 class gm_termMonitor : public TTermApp
 {
@@ -11,12 +12,15 @@ public:
     gm_termMonitor();
     virtual ~gm_termMonitor();
 
-    void init(TSequencer* aSeq);
+    void init(TSequencer* aSeq, TTimerServer* aTS);
 
 private:
     static constexpr char mName[] = "monitor"; 
 
     TSequencer* mSeq;
+    TTimerServer* mTS;
+
+    TTimer* mTimer; 
 
     TPathEle mPathEle;
     TPathEle mSubPathEle;
@@ -25,15 +29,13 @@ private:
 
     uint8_t mWorkerTaskId;
 
-    repeating_timer_t mScanAlertId;
-
     virtual void start(uint8_t* aStartArg);
     virtual void parse(uint8_t aChar);
     virtual void exit();
 
     void reqNext();
 
-    static bool timerCb(repeating_timer_t *rt);
+    static uint32_t timerCb(void* aArg);
 
     static void workerTask(void* aArg);
 

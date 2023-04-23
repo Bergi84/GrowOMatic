@@ -117,13 +117,57 @@ public:
     // EP helper functions
 };
 
-class TEpPeriPump : public TEpBase, private TEpStepperConDefs
+class TEpStepperCon : public TEpBase, private TEpStepperConDefs
 {
 private:
-    TEpPeriPump();
+    TEpStepperCon();
 
 public:
-    TEpPeriPump(GM_device* aDev);
+    TEpStepperCon(GM_device* aDev);
+    
+    // EP helper functions
+};
+
+class TEpDcMotorCon : public TEpBase, private TEpDcMotorConDefs
+{
+private:
+    TEpDcMotorCon();
+
+public:
+    TEpDcMotorCon(GM_device* aDev);
+    
+    // EP helper functions
+};
+
+class TEpLeakSensor : public TEpBase, private TEpLeakSensorDefs
+{
+private:
+    TEpLeakSensor();
+
+public:
+    TEpLeakSensor(GM_device* aDev);
+    
+    // EP helper functions
+};
+
+class TEpPulsSensor : public TEpBase, private TEpPulsSensorDefs
+{
+private:
+    TEpPulsSensor();
+
+public:
+    TEpPulsSensor(GM_device* aDev);
+    
+    // EP helper functions
+};
+
+class TEpDigitalIn : public TEpBase, private TEpDigitalInDefs
+{
+private:
+    TEpDigitalIn();
+
+public:
+    TEpDigitalIn(GM_device* aDev);
     
     // EP helper functions
 };

@@ -8,10 +8,10 @@ gm_pumpCon::gm_pumpCon()
 
 }
 
-void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1)
+void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1)
 {
     mPT = aPT;
-    mTS = aTS;
+    mTS = aTS_c1;
 
     gpio_set_mask(1 << gpio_pc_spiEn);
     gpio_set_function(gpio_pc_spiEn, GPIO_FUNC_SIO);
@@ -25,7 +25,7 @@ void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1)
 
     for(int i = 0; i < PPC_MAX_STEPPER; i++)
     {    
-        mStepper[i].init(aPT, aTS, CPeriPumpBaseRegAdr + i*16);
+        mStepper[i].init(aPT, mTS, CDefaultBaseRegAdr + i*16);
         mStepper[i].setOutCb(i*4, mIOE.setIO, &mIOE);
         snprintf(mStepper[i].getEpName(), EP_NAME_LEN + 1, "%s%i", periPumpName, i);
     }
@@ -37,8 +37,8 @@ void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1)
         (1UL << gpio_pc_leakSens),
         &mIrqMng);
 
-    mDcMotor[0].init(aPT, CPumpBaseRegAdr, aTS);
-    mDcMotor[1].init(aPT, CPumpBaseRegAdr+256, aTS);
+    mDcMotor[0].init(aPT, CDefaultBaseRegAdr + 256, mTS);
+    mDcMotor[1].init(aPT, CDefaultBaseRegAdr + 512, mTS);
     mDcMotor[0].setGpioPwmEn(gpio_pc_pwmP0, gpio_pc_enP0);
     mDcMotor[1].setGpioPwmEn(gpio_pc_pwmP1, gpio_pc_enP1);
     mDcMotor[0].setCurAdc(&mAdc, gpio_pc_iSens0 - TAdc::gpio_adc_ch0, 2000);
@@ -49,4 +49,11 @@ void gm_pumpCon::init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1)
     const char pumpName[] = "dcPump";
     snprintf(mDcMotor[0].getEpName(), EP_NAME_LEN + 1, "%s%i", pumpName, 0);
     snprintf(mDcMotor[1].getEpName(), EP_NAME_LEN + 1, "%s%i", pumpName, 1);
+
+    const char pulsName[] = "flowPuls";
+    mPulsSensor[0].init(aPT, CDefaultBaseRegAdr + 768, mTS, &mIrqMng, gpio_pc_flowPuls0, pio0, 1);
+    snprintf(mPulsSensor[0].getEpName(), EP_NAME_LEN + 1, "%s%i", pulsName, 0);
+    mPulsSensor[1].init(aPT, CDefaultBaseRegAdr + 1024, mTS, &mIrqMng, gpio_pc_flowPuls1, pio0, 2);
+    snprintf(mPulsSensor[1].getEpName(), EP_NAME_LEN + 1, "%s%i", pulsName, 1);
+    mLeakSensor.init(aPT, CDefaultBaseRegAdr + 1280, &mAdc, gpio_pc_leakSens - TAdc::gpio_adc_ch0);
 }

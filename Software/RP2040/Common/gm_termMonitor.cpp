@@ -15,9 +15,11 @@ gm_termMonitor::~gm_termMonitor()
 
 }
 
-void gm_termMonitor::init(TSequencer* aSeq)
+void gm_termMonitor::init(TSequencer* aSeq, TTimerServer* aTS)
 {
     mSeq = aSeq;
+    mTS = aTS;
+    mTimer = mTS->getTimer(timerCb, this);
     mSubReqAktiv = false;
     mSeq->addTask(mWorkerTaskId, workerTask, this);
 }
@@ -41,7 +43,7 @@ void gm_termMonitor::start(uint8_t* aStartArg)
     }
 
     mSeq->queueTask(mWorkerTaskId);
-    add_repeating_timer_us(100000, timerCb, this, &mScanAlertId);
+    mTimer->setTimer(100000);
 }
 
 void gm_termMonitor::parse(uint8_t aChar)
@@ -52,16 +54,16 @@ void gm_termMonitor::parse(uint8_t aChar)
 void gm_termMonitor::exit()
 {
     mSubReqAktiv = false;
-    cancel_repeating_timer(&mScanAlertId);
+    mTimer->stopTimer();
 }
 
-bool gm_termMonitor::timerCb(repeating_timer_t *rt)
+uint32_t gm_termMonitor::timerCb(void* aArg)
 {
-    gm_termMonitor* pObj = (gm_termMonitor*) rt->user_data;
+    gm_termMonitor* pObj = (gm_termMonitor*) aArg;
     if(!pObj->mSubReqAktiv)
         pObj->mSeq->queueTask(pObj->mWorkerTaskId);
 
-    return true;
+    return 100000;
 }
 
 void gm_termMonitor::workerTask(void* aArg)

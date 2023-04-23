@@ -13,8 +13,9 @@ nextLine:
     jmp pin highCntLoop
 
     // move transition to output
-    // push is done with autopush
+    // push must be done manualy
     mov isr, x
+    push
 
 lowCntLoop:    
     jmp pin endLowCntLoop
@@ -22,22 +23,35 @@ lowCntLoop:
 endLowCntLoop:
 
     // move transition to output
-    // push is done with autopush
+    // push must be done manualy
     mov isr, x
+    push
 
     .wrap
 
 
 % c-sdk {
+    
+static bool programLoadedPio0 = false;
+static bool programLoadedPio1 = false;
 
 static inline void pwmCaptureInit(PIO aPio, uint aSmNo, uint aGpio)
 {
     pio_gpio_init(aPio, aGpio);
 
-    uint offsteProg = pio_add_program(aPio, &pwmCapture_program);
+    uint offsteProg = 4;
+    if(aPio == pio0 && !programLoadedPio0)
+    {
+        programLoadedPio0 = true;
+        pio_add_program(aPio, &pwmCapture_program);
+    }
+    if(aPio == pio1 && !programLoadedPio0)
+    {
+        programLoadedPio1 = true;
+        pio_add_program(aPio, &pwmCapture_program);
+    }
     pio_sm_config c = pwmCapture_program_get_default_config(offsteProg);
-    sm_config_set_clkdiv_int_frac(&c, aClkdDiv, 0);
-    sm_config_set_in_shift(&c, false, true, 32);
+    sm_config_set_clkdiv_int_frac(&c, 1, 0);
     sm_config_set_jmp_pin(&c, aGpio);
 
     pio_sm_init(aPio, aSmNo, offsteProg, &c);

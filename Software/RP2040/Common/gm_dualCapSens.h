@@ -21,7 +21,7 @@ class GM_dualCapSense : public TEpCapLevelDefs
 public:
     GM_dualCapSense();
 
-    void init (TParaTable* aParaTable, TSequencer* aSeq_c1 = 0);
+    void init (TParaTable* aParaTable, uint32_t aBaseAdr, TSequencer* aSeq_c1 = 0);
 
 private:
     TCapSens mCapSens;

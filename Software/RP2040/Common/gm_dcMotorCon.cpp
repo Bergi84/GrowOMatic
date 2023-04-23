@@ -8,14 +8,14 @@ gm_dcMotorCon::gm_dcMotorCon() :
 mPara( (TParaTable::paraRec_t[cParaListLength]) {
     [PARA_PWMDUTY] =    {.para = 0,     .pFAccessCb = paraPwmDutyCb,.cbArg = this,  .defs = &cParaList[PARA_PWMDUTY]},
     [PARA_MAXPWMDUTY] = {.para = 1000,  .pFAccessCb = 0,            .cbArg = 0,     .defs = &cParaList[PARA_MAXPWMDUTY]},
-    [PARA_FRQU] =       {.para = 32,    .pFAccessCb = paraFreq,     .cbArg = this,  .defs = &cParaList[PARA_FRQU]},
+    [PARA_FRQU] =       {.para = 100,    .pFAccessCb = paraFreq,     .cbArg = this,  .defs = &cParaList[PARA_FRQU]},
     [PARA_PWMRAMP]  =   {.para = 1000,  .pFAccessCb = paraRampCb,   .cbArg = this,  .defs = &cParaList[PARA_PWMRAMP]},
     [PARA_CURRENT] =    {.para = 0,     .pFAccessCb = paraCurCb,    .cbArg = this,  .defs = &cParaList[PARA_CURRENT]},
     [PARA_CUR_LIM] =    {.para = 500,   .pFAccessCb = paraCurLimCb, .cbArg = this,  .defs = &cParaList[PARA_CUR_LIM]},
 }),
 mEp( (TParaTable::endpoint_t) {  
     { { 
-        .baseInd = CPumpBaseRegAdr,
+        .baseInd = CDefaultBaseRegAdr,
         .type = (uint16_t)EPT_DCMOTORCON    
     } }, 
     .length = cParaListLength, 
@@ -162,7 +162,7 @@ void gm_dcMotorCon::paraCurLimCb(void* aCbArg, TParaTable::paraRec_t* aPParaRec,
 {
     gm_dcMotorCon* pObj = (gm_dcMotorCon*) aCbArg;
 
-    pwm_set_chan_level(pObj->mCurLimSlice, pObj->mCurLimScale, (pObj->mCurLimScale * aPParaRec->para) >> 16);
+    pwm_set_chan_level(pObj->mCurLimSlice, pObj->mCurLimCh, (pObj->mCurLimScale * aPParaRec->para) >> 16);
 }
 
 void gm_dcMotorCon::paraFreq(void* aCbArg, TParaTable::paraRec_t* aPParaRec, bool aWrite)

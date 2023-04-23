@@ -123,7 +123,51 @@ TEpCapLevel::TEpCapLevel(GM_device* aDev)
     mNext = 0;
 }
 
-TEpPeriPump::TEpPeriPump(GM_device* aDev)
+TEpStepperCon::TEpStepperCon(GM_device* aDev)
+{
+    mType = cType;
+    mParaList = cParaList;
+    mParaListLen = cParaListLength;
+    mTypeName = cTypeName;
+    mPDev = aDev;
+    mName[0] = 0;
+    mNext = 0;
+}
+
+TEpDcMotorCon::TEpDcMotorCon(GM_device* aDev)
+{
+    mType = cType;
+    mParaList = cParaList;
+    mParaListLen = cParaListLength;
+    mTypeName = cTypeName;
+    mPDev = aDev;
+    mName[0] = 0;
+    mNext = 0;
+}
+
+TEpLeakSensor::TEpLeakSensor(GM_device* aDev)
+{
+    mType = cType;
+    mParaList = cParaList;
+    mParaListLen = cParaListLength;
+    mTypeName = cTypeName;
+    mPDev = aDev;
+    mName[0] = 0;
+    mNext = 0;
+}
+
+TEpPulsSensor::TEpPulsSensor(GM_device* aDev)
+{
+    mType = cType;
+    mParaList = cParaList;
+    mParaListLen = cParaListLength;
+    mTypeName = cTypeName;
+    mPDev = aDev;
+    mName[0] = 0;
+    mNext = 0;
+}
+
+TEpDigitalIn::TEpDigitalIn(GM_device* aDev)
 {
     mType = cType;
     mParaList = cParaList;
@@ -148,8 +192,19 @@ TEpBase* TEpBase::newEp(epType_t aEpType, GM_device* aDev)
             return new TEpCapLevel(aDev);
 
         case EPT_STEPPERCON:
-            return new TEpPeriPump(aDev);
+            return new TEpStepperCon(aDev);
 
+        case EPT_DCMOTORCON:
+            return new TEpDcMotorCon(aDev);
+
+        case EPT_LEAKSENSOR:
+            return new TEpLeakSensor(aDev);
+
+        case EPT_PULSSENSOR:
+            return new TEpPulsSensor(aDev);
+
+        case EPT_DIGITALIN:
+            return new TEpPulsSensor(aDev);
         default:
             return 0;
     }

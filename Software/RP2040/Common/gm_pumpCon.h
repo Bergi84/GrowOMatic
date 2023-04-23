@@ -8,6 +8,8 @@
 #include "gm_dcMotorCon.h"
 #include "rp_adc.h"
 #include "rp_dmaIrqMng.h"
+#include "gm_leakSensor.h"
+#include "gm_pulsSensor.h"
 
 #define gpio_pc_spiEn               8
 #define gpio_pc_spiCs               9
@@ -19,7 +21,6 @@
 #define gpio_pc_enP1                15
 #define gpio_pc_iRefP0              16
 #define gpio_pc_iRefP1              17
-#define gpio_pc_usbPresent          18
 #define gpio_pc_flowPuls1           21
 #define gpio_pc_flowPuls0           23
 #define gpio_pc_ledPwm              24
@@ -29,6 +30,7 @@
 
 #define PPC_MAX_STEPPER             8
 #define PPC_DCMOTORS                2
+#define PPC_PULSSENSOR              2
 
 class gm_pumpCon {
 private:
@@ -43,9 +45,12 @@ private:
     TAdc mAdc;
     gm_dcMotorCon mDcMotor[PPC_DCMOTORS];
 
+    GM_pulsSensor mPulsSensor[PPC_PULSSENSOR];
+    GM_leakSensor mLeakSensor;
+
 public:
     gm_pumpCon();
-    void init(TParaTable *aPT, TTimerServer *aTS, TSequencer* aSeq_c1);
+    void init(TParaTable *aPT, TTimerServer *aTS_c1, TSequencer* aSeq_c1);
 };
 
 #endif

@@ -45,7 +45,6 @@ public:
         return new TTimer(this, aCbFunc, aArg);
     }
 
-    
 
 private:
     friend class TTimer;
@@ -57,6 +56,8 @@ private:
     TTimer* mTimerList;
 
     irqVeneer_t mIrqVeneer;
+
+    spin_lock_t *mSpinLock;
 
     void __time_critical_func(queueTimer)(TTimer* aTimer, bool aStartNext = true);
     void __time_critical_func(unqueueTimer)(TTimer* aTimer, bool aStartNext = true);
