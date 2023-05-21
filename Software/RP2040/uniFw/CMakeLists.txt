@@ -39,7 +39,8 @@ target_sources(uniFw PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_leakSensor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_pulsSensor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../common/gm_digitalIn.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_ledCon.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../common/gm_ledCon.cpp 
+    ${CMAKE_CURRENT_LIST_DIR}/../common/rp_i2cMng.cpp
 )	
 		
 target_include_directories(uniFw PUBLIC
@@ -58,6 +59,7 @@ target_link_libraries(uniFw PUBLIC
     hardware_dma
     hardware_pwm
     hardware_clocks
+    hardware_i2c
     pico_multicore 
     pico_unique_id 
     tinyusb_device 
