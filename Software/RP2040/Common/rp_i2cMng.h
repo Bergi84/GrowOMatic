@@ -12,6 +12,9 @@
 #define I2C_QUEUELEN 8
 #endif
 
+#include "rp_timerServer.h"
+#include "sequencer_armm0.h"
+
 class TI2CMng;
 
 class TI2CReqRec
@@ -93,14 +96,44 @@ public:
 class TI2CMng
 {
 private:
+    i2c_inst_t* mI2C;
+    TTimerServer* mTS;
+    TSequencer* mSeq;
+
     TI2CReqRec* mQueueStart;
     TI2CReqRec* mQueueEnd;
 
     irqVeneer_t mIrqVeneer;
-    void irqHandler();
+    static void __time_critical_func(irqHandler)(void* aArg);
+    static void setIrqHandler(void* aArg);
+
+    typedef enum 
+    {
+        S_IDLE,
+        S_REGADR,
+        S_DATA,
+        S_TIMEOUT,
+        S_ERR,
+        S_RESET,
+        S_READY
+    } state_e;
+    state_e mState;
+    uint32_t mTxByteCnt;
+    uint32_t mRxByteCnt;
+
+    uint32_t mBaudRate;
+    uint32_t mByteTimeUs;
+
+    static void workerTask(void* aArg);
+    uint8_t mWorkerTaskId;
+
+    static uint32_t timeOutCb(void* aArg);
+
+    TTimer* mTimeoutTimer;
+    bool mTimeOut;
 
 public:
-    void init(i2c_inst_t* aI2C, uint8_t aSDAGpio, uint8_t aSCLGpio);
+    void init(i2c_inst_t* aI2C, TSequencer* aSeq, TTimerServer* aTS, uint8_t aSDAGpio, uint8_t aSCLGpio);
 
     void queueReq(TI2CReqRec* aReq);
 };

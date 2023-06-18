@@ -68,8 +68,6 @@ void TTimerServer::irqHandler(void* aArg)
 
     pObj->mAktTime = time_us_32();
 
-    gDebug.setPin(7);
-
     bool timerDisarmed = false;
     while(pObj->mTimerList != 0 && ((pObj->mTimerList->mTimerAlarmTic - pObj->mLastTime) <= (pObj->mAktTime - pObj->mLastTime)))
     {
@@ -104,8 +102,6 @@ void TTimerServer::irqHandler(void* aArg)
             timer_hw->intf |= 1u << pObj->mAlarmNum;   // force interrupt
         }
     }
-
-    gDebug.resetPin(7);
 
     pObj->mLastTime = pObj->mAktTime;
 

@@ -34,6 +34,7 @@ gm_termMonitor gTermMonitor;
 TTimerServer gTimeServer;
 TTimerServer gTimeServer_c1;
 
+// pointer to objects which are only instantiated if needed
 GM_pumpCon* gPumpCon;
 GM_dualCapSense* gDualCapSens;
 
