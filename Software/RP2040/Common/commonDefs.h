@@ -17,7 +17,9 @@ typedef enum
     EC_INVALID_VALUE,
     EC_NOTAFOLDER,
     EC_NOTAFILE,
-    EC_NOT_IMPLEMENTED
+    EC_NOT_IMPLEMENTED,
+    EC_ARB_ERR,
+    EC_USER_ABORT
 } errCode_T;
 
 constexpr const char* CErrorDesc[] = {
@@ -34,7 +36,10 @@ constexpr const char* CErrorDesc[] = {
     [EC_PROTECTED] = "protected",
     [EC_INVALID_VALUE] = "invalid value",
     [EC_NOTAFOLDER] = "not a folder",
-    [EC_NOTAFILE] = "not a file"
+    [EC_NOTAFILE] = "not a file",
+    [EC_NOT_IMPLEMENTED] = "not implemented",
+    [EC_ARB_ERR] = "arbitation error",
+    [EC_USER_ABORT] = "user abort"
 };
 
 #endif

@@ -112,7 +112,6 @@ private:
         S_IDLE,
         S_REGADR,
         S_DATA,
-        S_TIMEOUT,
         S_ERR,
         S_RESET,
         S_READY
@@ -131,6 +130,8 @@ private:
 
     TTimer* mTimeoutTimer;
     bool mTimeOut;
+
+    errCode_T mErr;
 
 public:
     void init(i2c_inst_t* aI2C, TSequencer* aSeq, TTimerServer* aTS, uint8_t aSDAGpio, uint8_t aSCLGpio);

@@ -140,7 +140,7 @@ void TI2CMng::irqHandler(void* aArg)
         if(!pObj->mTimeOut)
         {
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ABRT_USER_ABRT_BITS);
-                pObj->mErr = EC_USER_ABORT
+                pObj->mErr = EC_USER_ABORT;
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ARB_LOST_BITS)
             {
                 pObj->mErr = EC_ARB_ERR;
