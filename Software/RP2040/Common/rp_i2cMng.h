@@ -52,12 +52,14 @@ public:
         mData = 0;
     }
 
+    // request without register address zB digital poti
     void setAdr(uint8_t aDevAdr)
     {
         mRegAdrType = RAL_NONE;
         mDevAdr = aDevAdr;
     }
 
+    // request with 8Bit register address, most i2c use this mode
     void setAdr(uint8_t aDevAdr, uint8_t aRegAdr)
     {
         mRegAdrType = RAL_8Bit;
@@ -65,6 +67,7 @@ public:
         mDevAdr = aDevAdr;
     }
 
+    // request with 16Bit register address, used by some large eeproms
     void setAdr(uint8_t aDevAdr, uint16_t aRegAdr)
     {
         mRegAdrType = RAL_16Bit;
@@ -72,6 +75,7 @@ public:
         mDevAdr = aDevAdr;
     }
 
+    // request with 32Bit Register address
     void setAdr(uint8_t aDevAdr, uint32_t aRegAdr)
     {
         mRegAdrType = RAL_32Bit;
@@ -79,6 +83,7 @@ public:
         mDevAdr = aDevAdr;
     }
 
+    // set data pointer for write or read
     void setData(bool aWrite, uint8_t* aData, uint32_t aDataLen)
     {
         mWrite = aWrite;
@@ -86,6 +91,7 @@ public:
         mDataLen = aDataLen;
     }
 
+    // set callback, is always calles
     void setCb(void (*aCb) (void* aArg, uint8_t* data, errCode_T aStatus), void* aCbArg)
     {
         mCb = aCb;

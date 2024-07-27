@@ -72,17 +72,22 @@ void TI2CMng::workerTask(void* aArg)
 
     if(pObj->mState == S_READY)
     {
-        // todo: implement
+        pObj->mQueueStart->mCb(pObj->mQueueStart->mCbArg, pObj->mQueueStart->mData, EC_SUCCESS);
+        pObj->mQueueStart = pObj->mQueueStart->mNext;
+        pObj->mState = S_IDLE;
     }
 
     if(pObj->mState == S_ERR)
     {
-        // todo: implement
+        pObj->mQueueStart->mCb(pObj->mQueueStart->mCbArg, pObj->mQueueStart->mData, pObj->mErr);
+        pObj->mQueueStart = pObj->mQueueStart->mNext;
+        pObj->mState = S_IDLE;
     }
 
     if(pObj->mState == S_RESET)
     {
-        // todo: implement
+        // should never occure, most likly the scl line stucks at low
+        while(1);        
     }
 
     if(pObj->mState == S_IDLE)
@@ -142,9 +147,7 @@ void TI2CMng::irqHandler(void* aArg)
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ABRT_USER_ABRT_BITS);
                 pObj->mErr = EC_USER_ABORT;
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ARB_LOST_BITS)
-            {
                 pObj->mErr = EC_ARB_ERR;
-            }
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ABRT_SBYTE_ACKDET_BITS)
                 pObj->mErr = EC_UNKNOWEN;
             if(abortReason & I2C_IC_TX_ABRT_SOURCE_ABRT_HS_ACKDET_BITS)
@@ -280,7 +283,7 @@ uint32_t TI2CMng::timeOutCb(void* aArg)
     }
     else
     {
-        // timeout for I2C transaction
+        // timeout for I2C transaction, try to abort
 
         pObj->mI2C->hw->intr_mask = I2C_IC_INTR_MASK_M_TX_ABRT_BITS;
         pObj->mI2C->hw->enable = 3;
